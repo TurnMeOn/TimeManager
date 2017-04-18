@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">timeManager</string>
+    <string name="title_calendar">日程</string>
+    <string name="title_activities">活动</string>
+    <string name="title_groups">小组</string>
+    <string name="title_me">我</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>
