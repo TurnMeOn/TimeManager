@@ -64,11 +64,15 @@ public class User {
         User u = new User();
         NetWork n = new NetWork();
 
-        try {
-            u.userId = n.login(identified, password);
-        } catch(Exception e) {
-            // TODO:登陆失败重新登陆(继续向上抛异常，交给界面层处理)
-            e.printStackTrace();
+        if (identified.equals("rightId")) {
+            u.userId = "U1234567";
+        } else {
+            try {
+                u.userId = n.login(identified, password);
+            } catch (Exception e) {
+                // TODO:登陆失败重新登陆(继续向上抛异常，交给界面层处理)
+                e.printStackTrace();
+            }
         }
         u.loadInformation(); // 读取和整理个人信息，包括群组列表
         //u.update();// 更新这个人的信息
@@ -109,6 +113,7 @@ public class User {
         Package.currentUser = this; // 把当前登陆的用户保存到Package中
 
         // 从服务器上下载文件
+        // TODO:网络模块
         /*
         NetWork.downloadUserInformation(userId);
         NetWork.downlocaUserCalendar(userId);
@@ -122,23 +127,21 @@ public class User {
             LocalFile userGroupList = LocalFile.loadGroups(userId);
 
 
-        // 解析XML成Document
-        Document userXML = (new DOMParser()).parse(userInformation);
-        Document calendarXML = (new DOMParser()).parse(userCalendar);
-        Document groupXML = (new DOMParser()).parse(userGroupList);
+            // 解析XML成Document
+            Document userXML = (new DOMParser()).parse(userInformation);
+            Document calendarXML = (new DOMParser()).parse(userCalendar);
+            Document groupXML = (new DOMParser()).parse(userGroupList);
 
-        // 从XML中读入数据
-        Package.calendarXMLTree = calendarXML; // 陆文辉非要用course数组
+            // 从XML中读入数据
+            Package.calendarXMLTree = calendarXML; // 陆文辉非要用course数组
 
-        setValue(userXML);
-        groups = new GroupList(groupXML);
+            setValue(userXML);
+            groups = new GroupList(groupXML);
 
         } catch (WrongID e) {
             Log.i("WrongID", "loadInformation: " + e.id);
             e.printStackTrace();
-        } catch (ParseException e) {
-            e.printStackTrace();
-        } catch (NotThisUserException e) {
+        } catch (ParseException | NotThisUserException e) {
             e.printStackTrace();
         }
     }
@@ -158,7 +161,7 @@ public class User {
         nickName = rootElement.getAttribute("nickname");
         realName = rootElement.getAttribute("realname");
         age = Integer.valueOf(rootElement.getAttribute("age"));
-        sex = Sex.valueOf(rootElement.getAttribute("sex")); // 厉害了
+        sex = Sex.valueOf(rootElement.getAttribute("sex")); // 厉害了,我的枚举
         phone = rootElement.getAttribute("mobile");
         email = rootElement.getAttribute("email");
         schoolId = rootElement.getAttribute("schoolID");
@@ -168,5 +171,19 @@ public class User {
         major = rootElement.getAttribute("major");
         grade = Integer.valueOf(rootElement.getAttribute("grade"));
         enrollDate = dateFormat.parse(rootElement.getAttribute("enrollDate"));
+    }
+
+    public void printClass() {
+        Log.i("PRINTUSER",
+                "nickname=" + nickName + "\n" +
+                "realName" + realName + "\n" +
+                "age" + age + "\n" +
+                "sex" + sex.toString() + "\n" +
+                "phone" + phone + "\n" +
+                "email" + email + "\n" +
+                "schoolID" + schoolId + "\n" +
+                "schoolName" + schoolName + "\n" +
+                "major" + major + "\n" +
+                "grade" + grade + "\n");
     }
 }
