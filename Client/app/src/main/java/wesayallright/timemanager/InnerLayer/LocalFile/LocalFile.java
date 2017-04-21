@@ -1,5 +1,7 @@
 package wesayallright.timemanager.InnerLayer.LocalFile;
 
+import android.util.Log;
+
 import org.w3c.dom.Document;
 
 import wesayallright.timemanager.InnerLayer.exception.WrongID;
@@ -29,21 +31,28 @@ public class LocalFile extends java.io.File{
         if (userId.charAt(0) != 'U') {
             throw new WrongID(userId);
         }
-        return new LocalFile(workPath + "/" + "users" + "/" + "user_" + userId + ".xml");
+        return new LocalFile("users" + "/" + "user_" + userId + ".xml");
     }
 
     public static LocalFile loadCalendar(String userId) throws WrongID {
         if (userId.charAt(0) != 'U') {
             throw new WrongID(userId);
         }
-        return new LocalFile(workPath + "/" + "calendars" + "/" + "cal_" + userId + ".xml");
+        return new LocalFile("calendars" + "/" + "cal_" + userId + ".xml");
     }
 
-    public static LocalFile loadGroups(String userId) throws WrongID {
+    public static LocalFile loadGroupList(String userId) throws WrongID {
         if (userId.charAt(0) != 'U') {
             throw new WrongID(userId);
         }
-        return new LocalFile(workPath + "/" + "groupList" + "/" + "gpl_" + userId + ".xml");
+        return new LocalFile("groupList" + "/" + "gpl_" + userId + ".xml");
+    }
+
+    public static LocalFile loadGroup(String groupId) throws WrongID {
+        if (groupId.charAt(0) != 'G') {
+            throw new WrongID(groupId);
+        }
+        return new LocalFile("group/" + "gp_" + groupId + ".xml");
     }
 
 }

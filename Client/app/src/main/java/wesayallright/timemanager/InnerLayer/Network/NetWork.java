@@ -18,7 +18,7 @@ public class NetWork {
 
     // 登陆,登陆成功返回用户ID，失败抛异常
     public String login(String identified, String password) {
-        return "P1234567";
+        return "U1234567";
     }
 
     static public void downloadUserInformation(String userid) {

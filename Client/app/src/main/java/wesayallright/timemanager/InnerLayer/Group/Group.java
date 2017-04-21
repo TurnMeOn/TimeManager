@@ -5,13 +5,15 @@ import org.w3c.dom.Node;
 
 import java.util.ArrayList;
 
+import wesayallright.timemanager.InnerLayer.LocalFile.DOMParser;
+
 /**
  * Created by mj on 17-4-16.
  * 群组类
  */
 
 public class Group {
-    private enum Privilege {owner, manager, member};
+    private enum Privilege {owner, manager, member}
     public String name;
     public String id;
     public ArrayList<String> members;
@@ -22,10 +24,11 @@ public class Group {
     private Privilege whatsme;
 
     public Group(String groupId) {
-
+        id = groupId;
     }
 
-    public static Group simpleAdd(Element n) {
+    static Group simpleAdd(Element n) {
+        DOMParser.printXML(n);
         Group group = new Group(n.getAttribute("id"));
         group.name = n.getAttribute("name");
         group.visible = Boolean.valueOf(n.getAttribute("visible"));
@@ -33,5 +36,4 @@ public class Group {
         group.fullDetail = false;
         return group;
     }
-
 }

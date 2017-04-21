@@ -34,7 +34,7 @@ import wesayallright.timemanager.InnerLayer.exception.WrongID;
 
 public class User {
 
-    private enum Sex {male, female};
+    private enum Sex {male, female}
 
     public Date updateTime;
 
@@ -45,6 +45,7 @@ public class User {
 
     public int age;
     public Sex sex;
+    public String studentId;
     public String phone;
     public String email;
     public String schoolId;
@@ -63,16 +64,11 @@ public class User {
     public static User signIn(String identified, String password) {
         User u = new User();
         NetWork n = new NetWork();
-
-        if (identified.equals("rightId")) {
-            u.userId = "U1234567";
-        } else {
-            try {
-                u.userId = n.login(identified, password);
-            } catch (Exception e) {
-                // TODO:登陆失败重新登陆(继续向上抛异常，交给界面层处理)
-                e.printStackTrace();
-            }
+        try {
+            u.userId = n.login(identified, password);
+        } catch (Exception e) {
+            // TODO:登陆失败重新登陆(继续向上抛异常，交给界面层处理)
+            e.printStackTrace();
         }
         u.loadInformation(); // 读取和整理个人信息，包括群组列表
         //u.update();// 更新这个人的信息
@@ -122,9 +118,15 @@ public class User {
 
         // 在本地加载文件
         try {
+            Log.i("User at here", userId);
             LocalFile userInformation = LocalFile.loadUser(userId);
+
             LocalFile userCalendar = LocalFile.loadCalendar(userId);
-            LocalFile userGroupList = LocalFile.loadGroups(userId);
+            LocalFile userGroupList = LocalFile.loadGroupList(userId);
+
+            if (!userInformation.exists()) {
+                Log.e("FILE", "文件不存在");
+            }
 
 
             // 解析XML成Document
@@ -171,6 +173,7 @@ public class User {
         major = rootElement.getAttribute("major");
         grade = Integer.valueOf(rootElement.getAttribute("grade"));
         enrollDate = dateFormat.parse(rootElement.getAttribute("enrollDate"));
+        studentId = rootElement.getAttribute("studentID");
     }
 
     public void printClass() {
@@ -178,7 +181,7 @@ public class User {
                 "nickname=" + nickName + "\n" +
                 "realName" + realName + "\n" +
                 "age" + age + "\n" +
-                "sex" + sex.toString() + "\n" +
+                //"sex" + sex.toString() + "\n" +
                 "phone" + phone + "\n" +
                 "email" + email + "\n" +
                 "schoolID" + schoolId + "\n" +

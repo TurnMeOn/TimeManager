@@ -8,8 +8,8 @@
     maxMembers="9999"
 >
     <members>
-        <person id="P-1234567" privilege="owner" />
-        <person id="P-1234568" privilege="member" />
+        <person id="U1234567" privilege="owner" />
+        <person id="U1234568" privilege="member" />
     </members>
 
 </group>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!-- 某一个人的日程表 -->
 <!-- update是更新日期，用来比较缓存的有效性-->
-<schedule userId="U1234567" schoolWeek="9" update="2017-4-1">
+<calendar userId="U1234567" schoolWeek="9" update="2017-4-1">
     <!--一年的第9周开学-->
     <!-- 此文件的文件名就应该是这个人的ID，文件中保留id属性用于验证-->
     <!--以相对于年的星期为基本单位-->
@@ -51,4 +51,5 @@
             startTime="8-30"
             endTime="9-00"
         />
-</schedule>
+    </item>
+</calendar>

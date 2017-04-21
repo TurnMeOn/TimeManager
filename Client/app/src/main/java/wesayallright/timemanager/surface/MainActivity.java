@@ -12,6 +12,11 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
 import wesayallright.timemanager.InnerLayer.LocalFile.LocalFile;
 import wesayallright.timemanager.InnerLayer.User;
 import wesayallright.timemanager.R;
@@ -70,9 +75,9 @@ public class MainActivity extends AppCompatActivity implements
 
         // 设置程序路径
         LocalFile.setCwd(getApplicationContext().getFilesDir().getAbsolutePath());
-        //Log.i("Path", getApplicationContext().getFilesDir().getAbsolutePath());
+        Log.i("Path", getApplicationContext().getFilesDir().getAbsolutePath());
         User u = User.signIn("rightID", "rightPassword");
-        u.printClass();
+
 
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);

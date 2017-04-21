@@ -1,5 +1,7 @@
 package wesayallright.timemanager.InnerLayer.Group;
 
+import android.util.Log;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -13,6 +15,7 @@ import java.util.Date;
 import java.util.Locale;
 
 import wesayallright.timemanager.InnerLayer.Group.Group;
+import wesayallright.timemanager.InnerLayer.LocalFile.DOMParser;
 import wesayallright.timemanager.InnerLayer.Package;
 import wesayallright.timemanager.InnerLayer.exception.NotThisUserException;
 
@@ -31,14 +34,17 @@ public class GroupList {
         Element rootElement = groupXML.getDocumentElement();
         DateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss", Locale.CHINA);
         // 设置修改时间
-        if (! Package.currentUser.userId.equals(rootElement.getAttribute("userId"))) {
+        if (! Package.currentUser.userId.equals(rootElement.getAttribute("belongs"))) {
+            DOMParser.printXML(rootElement);
             throw new NotThisUserException();
         }
         updateTime = dateTimeFormat.parse(rootElement.getAttribute("updateTime"));
         // 循环添加每一个项目
         NodeList groups = rootElement.getElementsByTagName("group");
+
+        groupList = new ArrayList<>();
         for (int i = 0; i < groups.getLength(); i++) {
-            groupList.add(Group.simpleAdd((Element)groups.item(i)));
+             groupList.add(Group.simpleAdd((Element)groups.item(i)));
         }
         changedTimes = 0;
     }
