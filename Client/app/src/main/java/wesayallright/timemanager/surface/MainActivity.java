@@ -8,9 +8,11 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import wesayallright.timemanager.InnerLayer.LocalFile.LocalFile;
 import wesayallright.timemanager.R;
 
 public class MainActivity extends AppCompatActivity implements
@@ -64,6 +66,10 @@ public class MainActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         showFragment(CALENDAR);
+
+        // 设置程序路径
+        LocalFile.setCwd(getApplicationContext().getFilesDir().getAbsolutePath());
+        //Log.i("Path", getApplicationContext().getFilesDir().getAbsolutePath());
 
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);

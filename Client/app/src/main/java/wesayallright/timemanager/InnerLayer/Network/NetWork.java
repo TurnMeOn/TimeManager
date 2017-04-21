@@ -21,15 +21,15 @@ public class NetWork {
         return "P1234567";
     }
 
-    public void downloadUserInformation(String userid) {
+    static public void downloadUserInformation(String userid) {
         // TODO:下载
     }
 
-    public void uploadUserInformation(String userid) {
+    static public void uploadUserInformation(String userid) {
         // TODO: 上传
     }
 
-    public Date remoteUserInformationUpdateTime(String userid) {
+    static public Date remoteUserInformationUpdateTime(String userid) {
         // TODO: 远程个人信息更新时间
         return null;
     }

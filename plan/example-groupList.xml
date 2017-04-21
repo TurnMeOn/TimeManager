@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<groups belongs="U123"
+        updateTime="2017-04-01-08-00-00">
+    <!-- 可以有群组为隐藏，在界面上不显示出来，用于推送广告、同城交友（逃）-->
+    <!-- privilege 的值可以有owner，master和member-->
+    <group id="G10001"
+            name="沈阳市"
+            visible="false"
+            privilege="member"
+            />
+    <group id="G10002"
+            name="东北大学"
+            visible="true"
+            privilege="member"
+            />
+    <group id="G10003"
+            name="计算机1699班"
+            visible="true"
+            privilege="owner"
+            />
+</groups> 

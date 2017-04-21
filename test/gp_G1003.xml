@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<group update="2017-4-1"
+    id="G10003"
+    name="计算机1699班"
+    public="false"
+    establishDate="2017-3-10"
+    introduction="计算机1699班级群组"
+    maxMembers="9999"
+>
+    <members>
+        <person id="P-1234567" privilege="owner" />
+        <person id="P-1234568" privilege="member" />
+    </members>
+
+</group>

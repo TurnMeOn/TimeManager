@@ -7,7 +7,7 @@ package wesayallright.timemanager.InnerLayer;
 
 public class Location {
 
-    public String country;
+    //public String country;
     public String province;
     public String city;
     public String zipCode;
@@ -21,6 +21,10 @@ public class Location {
         String[] sp = Line.split("-");
         province = sp[0];
         city = sp[1];
+    }
+
+    public void setZipCode(String z) {
+        zipCode = z;
     }
 
     public String toString() {

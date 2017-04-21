@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- yyyy-MM-dd-HH-mm-ss, Locale.CHINA-->
+<person updateTime="2017-04-01-08-00-00"
+    id="U1234567"
+    nickname="张小花"
+    realname="张大花"
+    age="20"
+    sex="female"
+    mobile="18640361234"
+    email="zhangxiaohua@stumail.neu.edu.cn"
+
+    schoolID="10145"
+    schoolName="东北大学"
+    location="辽宁省-沈阳市"
+    zipCode="110000"
+    major="CSE"
+    grade="1"
+    enrollDate="2017-1-1"
+    >
+</person>

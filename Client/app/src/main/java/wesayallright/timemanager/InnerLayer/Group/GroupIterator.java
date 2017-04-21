@@ -1,5 +1,4 @@
-package wesayallright.schedule.InnerLayer.Group;
-
+package wesayallright.timemanager.InnerLayer.Group;
 import java.util.Iterator;
 
 import wesayallright.timemanager.InnerLayer.Group.Group;
@@ -31,13 +30,13 @@ public class GroupIterator implements Iterator {
 
     public void reset() {
         index = 0;
-        max = g.groupList.length;
+        max = g.groupList.size();
         lastChange = g.changedTimes;
     }
 
     public Group next() {
         isAvailable();
-        return g.groupList[index++];
+        return g.groupList.get(index++);
     }
 
     public boolean hasNext() {

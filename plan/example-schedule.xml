@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- 某一个人的日程表 -->
+<!-- update是更新日期，用来比较缓存的有效性-->
+<schedule userId="U1234567" schoolWeek="9" update="2017-4-1">
+    <!--一年的第9周开学-->
+    <!-- 此文件的文件名就应该是这个人的ID，文件中保留id属性用于验证-->
+    <!--以相对于年的星期为基本单位-->
+    <!--日期：yyyy-mm-dd-->
+    <!--时间：HH-mm-->
+    <!--type分为course、activity、target 同时编号的第一个字母也为C、A、T-->
+    <item type="course"
+            id="C-NEU-大学生心理与健康教育㈡"
+            name="大学生心理与健康教育㈡"
+            details="教师：小明"
+            priority="true"
+            firstDate="2017-2-27"
+            lastDate="2017-4-17"
+    >
+        <time
+            place="建筑A302"
+            day="Monday"
+            startTime="08-30"
+            endTime="10-30"
+        />
+        <time
+            place="建筑A309"
+            day="Tuesday"
+            startTime="08-30"
+            endTime="10-30"
+        />
+        <expectTime time="08-31"/>
+        
+    </item>
+    <!-- course和target为重复任务，只设置起始日期和终止日期，time里仅设在具体每周哪天的时间地点
+         而大部分activity仅进行一次或者是在不相关的几天进行活动，所以不设置起止日期，而是对每天单独设置-->
+    <!-- 子标签中的属性可以继承父标签，也可以将其覆盖-->
+    <item type="activity"
+          id="A12138"
+          name="学雷锋捉迷藏大赛"
+          details="捉迷藏大赛，获胜有奖"
+          priority="false"
+          place=""
+          >
+        <time
+            date="2016-4-1"
+            startTime="8-30"
+            endTime="9-00"
+        />
+        <time
+            date="2016-4-8"
+            startTime="8-30"
+            endTime="9-00"
+        />
+</schedule>
