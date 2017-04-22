@@ -15,6 +15,7 @@ import wesayallright.timemanager.InnerLayer.LocalFile.LocalFile;
 import wesayallright.timemanager.InnerLayer.Network.NetWork;
 
 import java.io.File;
+import java.io.UnsupportedEncodingException;
 import java.text.DateFormat;
 import java.text.FieldPosition;
 import java.text.ParseException;
@@ -61,7 +62,7 @@ public class User {
     public User() {}
 
     // 登陆
-    public static User signIn(String identified, String password) {
+    public static User signIn(String identified, String password) throws UnsupportedEncodingException {
         User u = new User();
         NetWork n = new NetWork();
         try {
@@ -76,13 +77,13 @@ public class User {
         return u;
     }
     // 注册
-    public static User signUp(String identified, String password, String email) {
+    public static User signUp(String identified, String password, String email) throws UnsupportedEncodingException {
         // TODO: 注册
 
         return signIn(identified, password);
     }
     // 同步数据
-    public void update() {
+    public void update() throws UnsupportedEncodingException {
         if (updateTime == null) {
             NetWork.downloadUserInformation(userId);
         } else {
@@ -105,16 +106,16 @@ public class User {
         return false;
     }
     // 读取个人信息
-    public void loadInformation() {
+    public void loadInformation() throws UnsupportedEncodingException {
         Package.currentUser = this; // 把当前登陆的用户保存到Package中
 
         // 从服务器上下载文件
         // TODO:网络模块
-        /*
+
         NetWork.downloadUserInformation(userId);
         NetWork.downlocaUserCalendar(userId);
         NetWork.downloadUserGroupList(userId);
-        */
+
 
         // 在本地加载文件
         try {

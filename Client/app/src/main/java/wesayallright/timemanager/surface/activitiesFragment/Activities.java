@@ -1,12 +1,24 @@
-package wesayallright.timemanager.surface;
+package wesayallright.timemanager.surface.activitiesFragment;
 
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.TextView;
+
+import org.w3c.dom.Text;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.annotation.Nonnull;
 
 import wesayallright.timemanager.R;
 
@@ -20,14 +32,10 @@ import wesayallright.timemanager.R;
  * create an instance of this fragment.
  */
 public class Activities extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+
+    List<ActivityViewItem> activitiesData = new ArrayList<>();
+
 
     private OnFragmentInteractionListener mListener;
 
@@ -51,14 +59,27 @@ public class Activities extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        Log.i("活动界面", "进入onCreate方法");
+        // 测试
+        for (int i = 0; i < 20; i++) {
+            activitiesData.add(new ActivityViewItem("活动"+i, new Date(i + 3600)));
+        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_activities, container, false);
+
+        Log.i("活动界面", "进入onCreateView方法");
+
+        View v = inflater.inflate(R.layout.fragment_activities, container, false);
+        ListView activitiesList = (ListView)v.findViewById(R.id.fa_activityList);
+        // 首先用inflater取得相应的布局文件,然后再findview.
+        // 设置适配器
+        ActivityListAdapter ap = new ActivityListAdapter(this.getContext(), activitiesData);
+        activitiesList.setAdapter(ap);
+        return v;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
