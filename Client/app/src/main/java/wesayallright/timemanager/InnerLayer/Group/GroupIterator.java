@@ -1,8 +1,6 @@
 package wesayallright.timemanager.InnerLayer.Group;
-import java.util.Iterator;
 
-import wesayallright.timemanager.InnerLayer.Group.Group;
-import wesayallright.timemanager.InnerLayer.Group.GroupList;
+import java.util.Iterator;
 
 /**
  * Created by mj on 17-4-16.

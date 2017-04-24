@@ -4,7 +4,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
-
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
@@ -18,6 +17,7 @@ import wesayallright.timemanager.InnerLayer.LocalFile.LocalFile;
 import wesayallright.timemanager.InnerLayer.User;
 import wesayallright.timemanager.R;
 import wesayallright.timemanager.surface.activitiesFragment.Activities;
+import wesayallright.timemanager.surface.scheduleFragment.ScheduleFragment;
 
 public class MainActivity extends AppCompatActivity implements
         Calendar.OnFragmentInteractionListener,
@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity implements
 
     // 保存每个fragment的实例对象，防止重复初始化
     private Activities activities_fragment_instance;
-    private Calendar calendar_fragment_instance;
+    private ScheduleFragment calendar_fragment_instance;
     private Groups groups_fragment_instance;
     private Me me_fragment_instance;
 
@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        showFragment(CALENDAR);
+        // showFragment(ACTIVITIES);
 
         // 设置程序路径
         LocalFile.setCwd(getApplicationContext().getFilesDir().getAbsolutePath());
@@ -105,7 +105,7 @@ public class MainActivity extends AppCompatActivity implements
         switch (fragmentIndex) {
             case CALENDAR:
                 if (calendar_fragment_instance == null) {
-                    calendar_fragment_instance = new Calendar();
+                    calendar_fragment_instance = new ScheduleFragment();
                     ft.add(R.id.content, calendar_fragment_instance);
                 } else {
                     ft.show(calendar_fragment_instance);

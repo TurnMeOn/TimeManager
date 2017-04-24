@@ -1,30 +1,21 @@
 package wesayallright.timemanager.InnerLayer;
 
-import android.media.TimedText;
-import android.nfc.Tag;
-import android.provider.DocumentsContract;
-import android.sax.RootElement;
 import android.util.Log;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 
-import wesayallright.timemanager.InnerLayer.LocalFile.DOMParser;
-import wesayallright.timemanager.InnerLayer.LocalFile.LocalFile;
-import wesayallright.timemanager.InnerLayer.Network.NetWork;
-
-import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.text.DateFormat;
-import java.text.FieldPosition;
 import java.text.ParseException;
-import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
 import wesayallright.timemanager.InnerLayer.Group.GroupList;
+import wesayallright.timemanager.InnerLayer.LocalFile.DOMParser;
+import wesayallright.timemanager.InnerLayer.LocalFile.LocalFile;
+import wesayallright.timemanager.InnerLayer.Network.NetWork;
 import wesayallright.timemanager.InnerLayer.exception.NotThisUserException;
 import wesayallright.timemanager.InnerLayer.exception.WrongID;
 

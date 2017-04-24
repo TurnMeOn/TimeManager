@@ -1,11 +1,8 @@
 package wesayallright.timemanager.InnerLayer.Group;
 
-import android.util.Log;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -14,7 +11,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
-import wesayallright.timemanager.InnerLayer.Group.Group;
 import wesayallright.timemanager.InnerLayer.LocalFile.DOMParser;
 import wesayallright.timemanager.InnerLayer.Package;
 import wesayallright.timemanager.InnerLayer.exception.NotThisUserException;

@@ -1,7 +1,5 @@
 package wesayallright.timemanager.InnerLayer.LocalFile;
 
-import android.util.Log;
-
 import org.w3c.dom.Document;
 
 import wesayallright.timemanager.InnerLayer.exception.WrongID;

@@ -10,7 +10,7 @@ FILE_INFO_LENGTH = struct.calcsize(b'128sq32s') # 文件名, 文件大小, MD5
 if __name__ == '__main__':
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     try:
-        server.connect(('127.0.0.1', 9999))
+        server.connect(('alphamj.cn', 9999))
         print('connected to server')
         cmdPack = struct.pack(b'128s', 'gp_G1003.xml'.encode())
         server.send(cmdPack)

@@ -8,17 +8,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.TextView;
-
-import org.w3c.dom.Text;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import javax.annotation.Nonnull;
 
 import wesayallright.timemanager.R;
 
@@ -62,7 +58,7 @@ public class Activities extends Fragment {
         Log.i("活动界面", "进入onCreate方法");
         // 测试
         for (int i = 0; i < 20; i++) {
-            activitiesData.add(new ActivityViewItem("活动"+i, new Date(i + 3600)));
+            activitiesData.add(new ActivityViewItem("活动"+i, new Date(i + 3600), "A"+i));
         }
     }
 
@@ -74,11 +70,20 @@ public class Activities extends Fragment {
         Log.i("活动界面", "进入onCreateView方法");
 
         View v = inflater.inflate(R.layout.fragment_activities, container, false);
-        ListView activitiesList = (ListView)v.findViewById(R.id.fa_activityList);
+        final ListView activitiesList = (ListView)v.findViewById(R.id.fa_activityList);
         // 首先用inflater取得相应的布局文件,然后再findview.
         // 设置适配器
         ActivityListAdapter ap = new ActivityListAdapter(this.getContext(), activitiesData);
         activitiesList.setAdapter(ap);
+        // 监听点击事件
+        activitiesList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Toast.makeText(getContext(),
+                        ("you click " + activitiesData.get(position).name +"id=" +activitiesData.get(position).activityId),
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
         return v;
     }
 
@@ -120,4 +125,5 @@ public class Activities extends Fragment {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
+
 }

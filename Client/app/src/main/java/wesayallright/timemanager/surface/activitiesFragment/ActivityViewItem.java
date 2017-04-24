@@ -10,8 +10,10 @@ import java.util.Date;
 public class ActivityViewItem {
     public String name;
     public Date date;
-    public ActivityViewItem(String n, Date d) {
+    public String activityId;
+    public ActivityViewItem(String n, Date d, String i) {
         name = n;
         date = d;
+        activityId = i;
     }
 }

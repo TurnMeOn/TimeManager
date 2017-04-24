@@ -3,19 +3,15 @@ package wesayallright.timemanager.InnerLayer.Network;
 import android.accounts.NetworkErrorException;
 import android.util.Log;
 
-import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.util.Date;
-import java.net.Socket;
 
 /**
  * Created by mj on 17-4-16.

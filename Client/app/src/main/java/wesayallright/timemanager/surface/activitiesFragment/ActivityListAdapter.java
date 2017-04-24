@@ -1,14 +1,12 @@
 package wesayallright.timemanager.surface.activitiesFragment;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import java.util.Date;
 import java.util.List;
 
 import wesayallright.timemanager.R;
@@ -63,6 +61,7 @@ public class ActivityListAdapter extends BaseAdapter {
         viewHolder.name.setText(item.name);
         viewHolder.data.setText(item.date.toString());
         // Log.i("时间", item.date.toString());
+
 
         return convertView;
     }
