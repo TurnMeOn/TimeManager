@@ -2,8 +2,13 @@ package wesayallright.timemanager.surface.scheduleFragment;
 
 
 import android.content.SharedPreferences;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
+import android.util.Log;
 
 import com.github.lzyzsd.randomcolor.RandomColor;
+
+import java.util.Objects;
 
 public class Course {
     public String week;
@@ -35,7 +40,19 @@ public class Course {
         this.color = color;
         this.priority = priority;
     }
-
+    public Course(Course copy){
+        this.week=copy.week;
+        this.day = copy.day;
+        this.starthour = copy.starthour;
+        this.startmin = copy.startmin;
+        this.endhour = copy.endhour;
+        this.endmin = copy.endmin;
+        this.name = copy.name;
+        this.room = copy.room;
+        this.teacher = copy.teacher;
+        this.color = copy.color;
+        this.priority = copy.priority;
+    }
     public Course() {
         week=null;
         day = -1;
@@ -46,10 +63,9 @@ public class Course {
         name = "未填写";
         room = "未填写";
         teacher = "未填写";
-        color = (new RandomColor()).randomColor();
-        priority = -1;
+        color = (new RandomColor()).randomColor()-0x30000000;
+        priority = 0;
     }
-
     public void recover() {
         week=null;
         day = -1;
@@ -61,13 +77,13 @@ public class Course {
         room = "未填写";
         teacher = "未填写";
         color = -1;
-        priority = -1;
+        priority = 0;
     }
-
     public boolean empty() {
         return day < 0;
     }
-    public void addinfile(SharedPreferences sharedPreferences,SharedPreferences.Editor editor) {
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    public void addinfile(SharedPreferences sharedPreferences, SharedPreferences.Editor editor) {
         int num;
         for (num = 0; ; num++)
             if (sharedPreferences.getString("week" + num, null) == null)
@@ -86,34 +102,33 @@ public class Course {
         editor.putInt("priority" + num, priority);
         editor.commit();
     }
-    public void removeinfile(SharedPreferences sharedPreferences,SharedPreferences.Editor editor) {
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    public void removeinfile(SharedPreferences sharedPreferences, SharedPreferences.Editor editor) {
+        Log.i(TAG, "removeinfile: REMOVE FILE START!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         int num;
         for (num = 0; ; num++)
             if (sharedPreferences.getString("week" + num, null) == null)
                 break;
+        Log.i(TAG, "removeinfile: week="+week+" day="+day+" "+starthour+":"+startmin+"-"+endhour+":"+endmin+" name"+name+" room"+room+" teacher="+teacher+" color"+color+" priority"+priority);
         for (int i = 0; i < num; i++) {
-            if (sharedPreferences.getString("week" + i, null) == week &&
+            Log.i(TAG, "removeinfile: week="+sharedPreferences.getString("week" + i, null)
+                    +" day="+sharedPreferences.getInt("day" + i, -1)+" "+sharedPreferences.getInt("starthour" + i, -1) +":"+
+                    sharedPreferences.getInt("startmin" + i, -1) +"-"+sharedPreferences.getInt("endhour" + i, -1)
+                    +":"+sharedPreferences.getInt("endmin" + i, -1) +" name"+sharedPreferences.getString("name" + i, null)
+                    +" room"+sharedPreferences.getString("room" + i, null) +" teacher="+sharedPreferences.getString("teacher" + i, null)
+                    +" color"+sharedPreferences.getInt("color" + i, -1) +" priority"+sharedPreferences.getInt("priority" + i, -1));
+            if (Objects.equals(sharedPreferences.getString("week" + i, null), week) &&
                     sharedPreferences.getInt("day" + i, -1) == day &&
                     sharedPreferences.getInt("starthour" + i, -1) == starthour &&
                     sharedPreferences.getInt("startmin" + i, -1) == startmin &&
                     sharedPreferences.getInt("endhour" + i, -1) == endhour &&
                     sharedPreferences.getInt("endmin" + i, -1) == endmin &&
-                    sharedPreferences.getString("name" + i, null) == name &&
-                    sharedPreferences.getString("room" + i, null) == room &&
-                    sharedPreferences.getString("teacher" + i, null) == teacher &&
+                    Objects.equals(sharedPreferences.getString("name" + i, null), name) &&
+                    Objects.equals(sharedPreferences.getString("room" + i, null), room) &&
+                    Objects.equals(sharedPreferences.getString("teacher" + i, null), teacher) &&
                     sharedPreferences.getInt("color" + i, -1) == color &&
                     sharedPreferences.getInt("priority" + i, -1) == priority) {
-                editor.remove("week" + i);
-                editor.remove("day" + i);
-                editor.remove("starthour" + i);
-                editor.remove("startmin" + i);
-                editor.remove("endhour" + i);
-                editor.remove("endmin" + i);
-                editor.remove("name" + i);
-                editor.remove("room" + i);
-                editor.remove("teacher" + i);
-                editor.remove("color" + i);
-                editor.remove("priority" + i);
+                Log.i(TAG, "removeinfile: DELETE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
                 editor.putString("week" + i     ,sharedPreferences.getString( "week" + (num-1),null));
                 editor.putInt("day" + i         ,sharedPreferences.getInt( "day" + (num-1),-1));
                 editor.putInt("starthour" + i   ,sharedPreferences.getInt( "starthour" + (num-1),-1));
@@ -126,12 +141,26 @@ public class Course {
                 editor.putInt("color" + i       ,sharedPreferences.getInt( "color" + (num-1),-1));
                 editor.putInt("priority" +  i   ,sharedPreferences.getInt( "priority" + (num-1),-1));
                 editor.commit();
+                editor.remove("week" + (num-1));
+                editor.remove("day" + (num-1));
+                editor.remove("starthour" + (num-1));
+                editor.remove("startmin" + (num-1));
+                editor.remove("endhour" + (num-1));
+                editor.remove("endmin" + (num-1));
+                editor.remove("name" + (num-1));
+                editor.remove("room" + (num-1));
+                editor.remove("teacher" + (num-1));
+                editor.remove("color" + (num-1));
+                editor.remove("priority" + (num-1));
+                editor.commit();
                 break;
             }
         }
+        Log.i(TAG, "removeinfile: REMOVE FILE END!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
     }
-    public void updateinfile(SharedPreferences sharedPreferences,SharedPreferences.Editor editor,Course beupdated){
-        beupdated.removeinfile(sharedPreferences,editor);
-        this.addinfile(sharedPreferences,editor);
-    }
+//    @TargetApi(Build.VERSION_CODES.KITKAT)
+//    public void updateinfile(SharedPreferences sharedPreferences, SharedPreferences.Editor editor, Course beupdated){
+//        beupdated.removeinfile(sharedPreferences,editor);
+//        this.addinfile(sharedPreferences,editor);
+//    }
 }

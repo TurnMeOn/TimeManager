@@ -21,6 +21,7 @@
             android:textSize="25sp"
             android:padding="4dp"
             android:hint="未填写"
+            android:background="@drawable/edittext"
             />
     </LinearLayout>
 
@@ -46,7 +47,9 @@
                 android:layout_height="wrap_content"
                 android:textSize="25sp"
                 android:padding="4dp"
-                android:hint="未填写"/>
+                android:hint="未填写"
+                android:background="@drawable/edittext"
+                />
         </LinearLayout>
     </LinearLayout>
     <LinearLayout

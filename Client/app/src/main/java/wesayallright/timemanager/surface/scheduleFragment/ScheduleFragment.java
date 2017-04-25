@@ -2,7 +2,7 @@ package wesayallright.timemanager.surface.scheduleFragment;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.support.v4.app.Fragment;
+import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
@@ -10,6 +10,7 @@ import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
+import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -30,15 +32,10 @@ import android.widget.ToggleButton;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Objects;
-import java.util.regex.Pattern;
 
 import wesayallright.timemanager.R;
 
-public class ScheduleFragment extends Fragment implements
-        View.OnClickListener , AdapterView.OnItemSelectedListener ,
-        View.OnTouchListener , ToggleButton.OnCheckedChangeListener ,
-        NumberPicker.OnValueChangeListener {
-
+public class ScheduleFragment extends Fragment implements View.OnClickListener , AdapterView.OnItemSelectedListener , View.OnTouchListener , ToggleButton.OnCheckedChangeListener , NumberPicker.OnValueChangeListener {
     private RelativeLayout layout1, layout2, layout3, layout4, layout5, layout6, layout7;
     private ArrayList<ArrayList<TextView>> textarr = new ArrayList<>();         //          textarr.get(day).get(xth in day)
     private ArrayList<ArrayList<ArrayList<Course>>> pcourse = new ArrayList<>();//pcourse.get(week).get(day).get(xth in day)
@@ -69,8 +66,9 @@ public class ScheduleFragment extends Fragment implements
         return view;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public void initializing() {
-        sharedPreferences = getActivity().getSharedPreferences("Schedule_Fragment_data0",Context.MODE_PRIVATE);
+        sharedPreferences = getActivity().getSharedPreferences("Schedule_Fragment_data0", Context.MODE_PRIVATE);
         editor = sharedPreferences.edit();
         //pcourse
         for (int i = 0; i < 20; i++) {
@@ -93,8 +91,9 @@ public class ScheduleFragment extends Fragment implements
         layout.add(layout5 = (RelativeLayout) view.findViewById(R.id.SBrelative5));
         layout.add(layout6 = (RelativeLayout) view.findViewById(R.id.SBrelative6));
         layout.add(layout7 = (RelativeLayout) view.findViewById(R.id.SBrelative7));
-        for (int i = 0; i < 7; i++)
+        for (int i = 0; i < 7; i++) {
             layout.get(i).setOnClickListener(this);
+        }
         //course
 //        course.add(new Course("0 6", 0, 8, 30, 10, 20, "大学生心理与健康教育(二)", "建筑A302", "未设置", 0xcf11ee11, 1));
 //        course.add(new Course("0 6", 0, 10, 40, 12, 30, "高等数学(二)", "信息A112", "宋叔尼", 0xcfff0000, 1));
@@ -144,9 +143,9 @@ public class ScheduleFragment extends Fragment implements
         list.add("第十八周");
         list.add("第十九周");
         list.add("第二十周");
-        MyAdapter adapter = new MyAdapter(this.getActivity(), list, nowweek - firstweek -1);//变红的!!!
+        MyAdapter adapter = new MyAdapter(this.getActivity(), list, realweek - firstweek);//变红的!!!
         spinner.setAdapter(adapter);
-        spinner.setSelection(nowweek - firstweek - 1);
+        spinner.setSelection(realweek - firstweek);
         spinner.setOnItemSelectedListener(this);
         //ImageButton
         ImageView imageButton = (ImageView) view.findViewById(R.id.STRimageview);
@@ -185,7 +184,30 @@ public class ScheduleFragment extends Fragment implements
         return string;
     }
 
-    /*checked*/
+    private ArrayList<Integer> timeparse(String time) {
+        ArrayList<Integer> arrayList = new ArrayList<>();
+        String[] day = new String[]{"一", "二", "三", "四", "五", "六", "日"};
+        for (int i = 0; i < 7; i++)
+            if (time.contains(day[i]))
+                arrayList.add(i);
+        int num = -1;
+        for (int i = 0; i < time.length(); i++)
+            if ('0' <= time.charAt(i) && time.charAt(i) <= '9')
+                if (num != -1)
+                    num = num * 10 + time.charAt(i) - '0';
+                else
+                    num = time.charAt(i) - '0';
+            else {
+                if (num != -1) {
+                    arrayList.add(num);
+                    num = -1;
+                }
+            }
+        if (num != -1)
+            arrayList.add(num);
+        return arrayList;
+    }
+
     private void addcourse(ArrayList<Course> course, ArrayList<RelativeLayout> layout) {
         Log.i(TAG, "addcourse: ADD COURSE START!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         for (int i = 0; i < textarr.size(); i++)
@@ -196,23 +218,26 @@ public class ScheduleFragment extends Fragment implements
         textarr.clear();
         for (int i = 0; i < 7; i++)
             textarr.add(new ArrayList<TextView>());
+        pcourse.clear();
+        for (int i = 0; i < 20; i++) {
+            pcourse.add(new ArrayList<ArrayList<Course>>());
+            for (int j = 0; j < 7; j++)
+                pcourse.get(i).add(new ArrayList<Course>());
+        }
         for (int i = 0; i < course.size(); i++) {
             boolean in = false;
             ArrayList<Integer> parseweek = weekparse(course.get(i).week);
             for (int j = 0; j < parseweek.size(); j += 2) {
-                if (parseweek.get(j) <= (nowweek - firstweek - 1) && (nowweek - firstweek - 1) <= parseweek.get(j + 1))
+                if (parseweek.get(j) <= (nowweek - firstweek) && (nowweek - firstweek) <= parseweek.get(j + 1))
                     in = true;
-                Log.i(TAG, "addcourse: " + course.get(i).name + " is weeked from " + parseweek.get(j) + " to " + parseweek.get(j + 1) + " and the realweek is " + (nowweek - firstweek - 1));
+                Log.i(TAG, "addcourse: " + course.get(i).name + " is weeked from " + parseweek.get(j) + " to " + parseweek.get(j + 1) + " and the realweek is " + (nowweek - firstweek) + "   priority:" + course.get(i).priority);
                 if (in) break;
             }
-            if (in)
-                Log.i(TAG, "addcourse: in successed!");
-            else
-                Log.i(TAG, "addcourse: in failed");
             if (!in) continue;
             //25dp:30min
             double min, length;
             textarr.get(course.get(i).day).add(new TextView(getActivity()));
+            pcourse.get(nowweek - firstweek).get(course.get(i).day).add(course.get(i));
             TextView textView = textarr.get(course.get(i).day).get(textarr.get(course.get(i).day).size() - 1);
             min = (course.get(i).endhour - course.get(i).starthour) * 60 + (course.get(i).endmin - course.get(i).startmin);
             length = min * 5.0 / 6;
@@ -228,7 +253,6 @@ public class ScheduleFragment extends Fragment implements
             textView.setHeight(dip2px(getActivity().getApplicationContext(), length));
             textView.setText("@" + course.get(i).room + "\n" + course.get(i).name);
             textView.setTextSize(12);
-            textView.setBackgroundColor(course.get(i).color);
             textView.setTextColor(0xffffffff);
             textView.setEms(4);
             textView.setPadding(10, 0, 0, 0);
@@ -236,9 +260,14 @@ public class ScheduleFragment extends Fragment implements
             textView.setBackgroundResource(R.drawable.textview_style);
             GradientDrawable myGrad = (GradientDrawable) textView.getBackground();
             myGrad.setColor(course.get(i).color);
-            pcourse.get(nowweek - firstweek - 1).get(course.get(i).day).add(course.get(i));
             layout.get(course.get(i).day).addView(textView);
         }
+        for (int i = 0; i < textarr.size(); i++)
+            for (int j = 0; j < textarr.get(i).size(); j++)
+                Log.i(TAG, "addcourse: " + textarr.get(i).get(j).getText());
+        for (int i = 0; i < pcourse.get(nowweek - firstweek).size(); i++)
+            for (int j = 0; j < pcourse.get(nowweek - firstweek).get(i).size(); j++)
+                Log.i(TAG, "addcourse: " + pcourse.get(nowweek - firstweek).get(i).get(j).name);
         //postinvalidate
         for (int i = 0; i < textarr.size(); i++)
             for (int j = 0; j < textarr.get(i).size(); j++)
@@ -253,27 +282,31 @@ public class ScheduleFragment extends Fragment implements
         for (num = 0; ; num++)
             if (sharedPreferences.getString("week" + num, null) == null)
                 break;
-        Log.i(TAG, "readcourse: num:"+num);
-        for(int i=0;i<num;i++)
-        {
-            course.add(new Course(
-            sharedPreferences.getString( "week" + i,null),
-            sharedPreferences.getInt( "day" + i,-1),
-            sharedPreferences.getInt( "starthour" + i,-1),
-            sharedPreferences.getInt( "startmin" + i,-1),
-            sharedPreferences.getInt( "endhour" + i,-1),
-            sharedPreferences.getInt( "endmin" + i,-1),
-            sharedPreferences.getString( "name" + i,null),
-            sharedPreferences.getString( "room" + i,null),
-            sharedPreferences.getString( "teacher" + i,null),
-            sharedPreferences.getInt( "color" + i,-1),
-            sharedPreferences.getInt( "priority" + i,-1)
-            ));
+        Log.i(TAG, "readcourse: num:" + num);
+        for (int i = 0; i < num; i++) {
+            course.add(
+                    new Course(
+                            sharedPreferences.getString("week" + i, null),
+                            sharedPreferences.getInt("day" + i, -1),
+                            sharedPreferences.getInt("starthour" + i, -1),
+                            sharedPreferences.getInt("startmin" + i, -1),
+                            sharedPreferences.getInt("endhour" + i, -1),
+                            sharedPreferences.getInt("endmin" + i, -1),
+                            sharedPreferences.getString("name" + i, null),
+                            sharedPreferences.getString("room" + i, null),
+                            sharedPreferences.getString("teacher" + i, null),
+//            sharedPreferences.getInt( "color" + i,-1)>0xd0000000?sharedPreferences.getInt( "color" + i,-1)-0x30000000:sharedPreferences.getInt( "color" + i,-1),
+                            sharedPreferences.getInt("color" + i, -1),
+                            sharedPreferences.getInt("priority" + i, -1)
+                    )
+            );
         }
+        for (int i = 0; i < course.size(); i++)
+            Log.i(TAG, "readcourse: name:" + course.get(i).name);
         Log.i(TAG, "readcourse: READ COURSE END!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
     }
 
-    /*checked*/
+
     private void redate(int position) {
         //更改SM日期
         Calendar calendar = Calendar.getInstance();
@@ -282,6 +315,7 @@ public class ScheduleFragment extends Fragment implements
         calendar.set(Calendar.DATE, firstday);
         calendar.add(Calendar.DAY_OF_YEAR, 7 * position);
         TextView month = (TextView) view.findViewById(R.id.SMmonth);
+
         int Month = calendar.get(Calendar.MONTH) + 1;
         month.setText(" " + Month + "月");
         month.postInvalidate();
@@ -304,24 +338,26 @@ public class ScheduleFragment extends Fragment implements
 
         int firstdayofweek = calendar.get(Calendar.DAY_OF_MONTH);
         for (int i = 0; i < 7; i++)
-            if ((firstdayofweek + i) == (calendar.getActualMaximum(Calendar.DATE)+1))
+            if ((firstdayofweek + i) == (calendar.getActualMaximum(Calendar.DATE) + 1))
                 day[i].setText(" " + "周" + daystr[i] + " " + " " + (Month + 1) + "月");
-            else if((firstdayofweek + i) < (calendar.getActualMaximum(Calendar.DATE)+1))
-                day[i].setText(" " + "周" + daystr[i] + " " + " " + ((firstdayofweek + i) % (calendar.getActualMaximum(Calendar.DATE)+1)) + "日");
+            else if ((firstdayofweek + i) < (calendar.getActualMaximum(Calendar.DATE) + 1))
+                day[i].setText(" " + "周" + daystr[i] + " " + " " + ((firstdayofweek + i) % (calendar.getActualMaximum(Calendar.DATE) + 1)) + "日");
             else
                 day[i].setText(" " + "周" + daystr[i] + " " + " " + ((firstdayofweek + i) % (calendar.getActualMaximum(Calendar.DATE))) + "日");
         for (int i = 0; i < 7; i++)
             day[i].postInvalidate();
     }
 
-    /*checked*/
+
     public static int dip2px(Context context, double dpValue) {
         final float scale = context.getResources().getDisplayMetrics().density;
         return (int) (dpValue * scale + 0.5f);
     }
 
-    /*checked*/   private ArrayList<Integer> weeks = new ArrayList<>();
+    private ArrayList<Integer> weeks = new ArrayList<>();
 
+
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
@@ -332,47 +368,6 @@ public class ScheduleFragment extends Fragment implements
                 View weekview = inflaterweek.inflate(R.layout.schedule_week_dialog, null);
                 final AlertDialog.Builder weekbuilder = new AlertDialog.Builder(getActivity());
                 weekbuilder.setTitle("周数选择");
-                //解析view.gettext()中的周数 start
-                String str = Pattern.compile("[^0-9-]").matcher(((TextView) view).getText()).replaceAll(" ");
-                weeks.clear();
-                ArrayList<Integer> singleweek = new ArrayList<>();
-                boolean inweeks = false;
-                int x = -1;
-                for (int i = 0; i < str.length(); i++)
-                    if (str.charAt(i) >= '0' && str.charAt(i) <= '9')
-                        if (x == -1)
-                            x = str.charAt(i) - '0';
-                        else
-                            x = x * 10 + str.charAt(i) - '0';
-                    else if (str.charAt(i) == '-' && x != -1) {
-                        weeks.add(x);
-                        x = -1;
-                        inweeks = true;
-                    } else if (x != -1 && inweeks) {
-                        weeks.add(x);
-                        x = -1;
-                        inweeks = false;
-                    } else if (x != -1) {
-                        singleweek.add(x);
-                        x = -1;
-                    }
-                if (x != -1 && inweeks)
-                    weeks.add(x);
-                else if (x != -1)
-                    singleweek.add(x);
-                for (int i = 0; i < 20; i++)
-                    week_togglebutton[i] = false;
-                for (int i = 0; i < weeks.size(); i++)
-                    Log.i(TAG, "onClick: weeks[" + i + "]=" + weeks.get(i));
-                for (int i = 0; i < singleweek.size(); i++)
-                    Log.i(TAG, "onClick: singleweeks[" + i + "]=" + singleweek.get(i));
-                for (int i = 0; i < singleweek.size(); i++)
-                    week_togglebutton[singleweek.get(i) - 1] = true;
-                for (int i = 0; i < weeks.size(); i += 2)
-                    for (int j = weeks.get(i); j <= weeks.get(i + 1); j++)
-                        week_togglebutton[j - 1] = true;
-                //end
-                //更改toggle button的状态
                 weekbuilder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int which) {
@@ -443,11 +438,26 @@ public class ScheduleFragment extends Fragment implements
                 togglearray.add((ToggleButton) weekwindow.findViewById(R.id.week_togglebuttonsingle));
                 togglearray.add((ToggleButton) weekwindow.findViewById(R.id.week_togglebuttondouble));
                 togglearray.add((ToggleButton) weekwindow.findViewById(R.id.week_togglebuttonall));
-                for (int i = 0; i < togglearray.size(); i++) {
+                togglearray.add((ToggleButton) weekwindow.findViewById(R.id.week_togglebuttonthis));
+                for (int i = 0; i < togglearray.size(); i++)
                     togglearray.get(i).setOnCheckedChangeListener(this);
-                }
                 for (int i = 0; i < 20; i++)
-                    togglearray.get(i).setChecked(week_togglebutton[i]);
+                    togglearray.get(i).setChecked(false);
+                for (int i = 0; i < weeks.size(); i += 2)
+                    for (int j = weeks.get(i); j <= weeks.get(i + 1); j++)
+                        togglearray.get(j).setChecked(true);
+                break;
+            case R.id.starthhplus:
+                starthhpicker.setValue((starthhpicker.getValue() + 6) % (starthhpicker.getMaxValue() + 1));
+                break;
+            case R.id.startmmplus:
+                startmmpicker.setValue((startmmpicker.getValue() + 15) % (startmmpicker.getMaxValue() + 1));
+                break;
+            case R.id.endhhplus:
+                endhhpicker.setValue((endhhpicker.getValue() + 6) % (endhhpicker.getMaxValue() + 1));
+                break;
+            case R.id.endmmplus:
+                endmmpicker.setValue((endmmpicker.getValue() + 15) % (endmmpicker.getMaxValue() + 1));
                 break;
             case R.id.dialogtime:
                 /*
@@ -463,12 +473,16 @@ public class ScheduleFragment extends Fragment implements
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         //saving time!!!
+                        dialog_starthh = starthhpicker.getValue() + 7;
+                        dialog_startmm = startmmpicker.getValue();
+                        dialog_endhh = endhhpicker.getValue() + 7;
+                        dialog_endmm = endmmpicker.getValue();
                         texttime.setText(
-                                daypicker.getDisplayedValues()[dialog_day = daypicker.getValue()] + " "
-                                        + starthhpicker.getDisplayedValues()[dialog_starthh = starthhpicker.getValue()] + ":"
-                                        + startmmpicker.getDisplayedValues()[dialog_startmm = startmmpicker.getValue()] + "-"
-                                        + endhhpicker.getDisplayedValues()[dialog_endhh = endhhpicker.getValue()] + ":"
-                                        + endmmpicker.getDisplayedValues()[dialog_endmm = endmmpicker.getValue()]);
+                                daypicker.getDisplayedValues()[(dialog_day = daypicker.getValue())] + " " +
+                                        starthhpicker.getDisplayedValues()[starthhpicker.getValue()] +
+                                        startmmpicker.getDisplayedValues()[startmmpicker.getValue()] + "到" +
+                                        endhhpicker.getDisplayedValues()[endhhpicker.getValue()] +
+                                        endmmpicker.getDisplayedValues()[endmmpicker.getValue()]);
                         dialogInterface.dismiss();
                     }
                 });
@@ -487,43 +501,65 @@ public class ScheduleFragment extends Fragment implements
                 startmmpicker = (NumberPicker) timewindow.findViewById(R.id.startmmpicker);
                 endhhpicker = (NumberPicker) timewindow.findViewById(R.id.endhhpicker);
                 endmmpicker = (NumberPicker) timewindow.findViewById(R.id.endmmpicker);
-                String[] hh = new String[24];
-                for (int i = 0; i < 24; i++)
+                Button starthhplus = (Button) timewindow.findViewById(R.id.starthhplus);
+                Button startmmplus = (Button) timewindow.findViewById(R.id.startmmplus);
+                Button endhhplus = (Button) timewindow.findViewById(R.id.endhhplus);
+                Button endmmplus = (Button) timewindow.findViewById(R.id.endmmplus);
+                starthhplus.setOnClickListener(this);
+                startmmplus.setOnClickListener(this);
+                endhhplus.setOnClickListener(this);
+                endmmplus.setOnClickListener(this);
+                String[] hh = new String[17];
+                for (int i = 7; i < 24; i++)
                     if (i < 10)
-                        hh[i] = "0" + ((Integer) i).toString();
+                        hh[i - 7] = "0" + ((Integer) i).toString() + "点";
                     else
-                        hh[i] = ((Integer) i).toString();
+                        hh[i - 7] = ((Integer) i).toString() + "点";
                 String[] mm = new String[60];
                 for (int i = 0; i < 60; i++)
                     if (i < 10)
-                        mm[i] = "0" + ((Integer) i).toString();
+                        mm[i] = "0" + ((Integer) i).toString() + "分";
                     else
-                        mm[i] = ((Integer) i).toString();
+                        mm[i] = ((Integer) i).toString() + "分";
                 daypicker.setOnValueChangedListener(this);
                 starthhpicker.setOnValueChangedListener(this);
                 startmmpicker.setOnValueChangedListener(this);
                 endhhpicker.setOnValueChangedListener(this);
                 endmmpicker.setOnValueChangedListener(this);
+                daypicker.setDisplayedValues(new String[]{"周一", "周二", "周三", "周四", "周五", "周六", "周日"});
                 daypicker.setMinValue(0);
                 daypicker.setMaxValue(6);
-                daypicker.setValue(0);
-                daypicker.setDisplayedValues(new String[]{"周一", "周二", "周三", "周四", "周五", "周六", "周日"});
-                starthhpicker.setMinValue(0);
-                starthhpicker.setMaxValue(23);
-                starthhpicker.setValue(8);
                 starthhpicker.setDisplayedValues(hh);
+                starthhpicker.setMinValue(0);
+                starthhpicker.setMaxValue(16);
+                startmmpicker.setDisplayedValues(mm);
                 startmmpicker.setMinValue(0);
                 startmmpicker.setMaxValue(59);
-                startmmpicker.setValue(30);
-                startmmpicker.setDisplayedValues(mm);
-                endhhpicker.setMinValue(0);
-                endhhpicker.setMaxValue(23);
-                endhhpicker.setValue(10);
                 endhhpicker.setDisplayedValues(hh);
+                endhhpicker.setMinValue(0);
+                endhhpicker.setMaxValue(16);
+                endmmpicker.setDisplayedValues(mm);
                 endmmpicker.setMinValue(0);
                 endmmpicker.setMaxValue(59);
-                endmmpicker.setValue(30);
-                endmmpicker.setDisplayedValues(mm);
+                daypicker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
+                starthhpicker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
+                startmmpicker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
+                endhhpicker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
+                endmmpicker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
+                ArrayList<Integer> time = timeparse(texttime.getText().toString());
+                if (time.size() == 5) {
+                    daypicker.setValue(time.get(0));
+                    starthhpicker.setValue(time.get(1) - 7);
+                    startmmpicker.setValue(time.get(2));
+                    endhhpicker.setValue(time.get(3) - 7);
+                    endmmpicker.setValue(time.get(4));
+                } else {
+                    daypicker.setValue(0);
+                    starthhpicker.setValue(1);
+                    startmmpicker.setValue(30);
+                    endhhpicker.setValue(3);
+                    endmmpicker.setValue(20);
+                }
                 /*
                  *
                  * DIALOGTIME END!!!
@@ -531,32 +567,34 @@ public class ScheduleFragment extends Fragment implements
                  */
                 break;
             default:
+                boolean is = false;
+                int Break = 0;
+                for (int i = 0; i < 7; i++)
+                    if (view.equals(layout.get(i)))
+                        is = true;
+                if (!is)
+                    break;
+                using = new Course();
                 weeks.add(0);
                 weeks.add(19);
-                int i;
-                boolean isnull = true;
-                using = new Course();
-                for (i = 0; i < 7; i++)
-                    if (view == layout.get(i))
-                        isnull = false;
-                if (isnull)
-                    return;
-                using.day = (today.get(Calendar.DAY_OF_WEEK) + 5) % 7;
                 LayoutInflater inflater = LayoutInflater.from(getActivity());
                 View dialogview = inflater.inflate(R.layout.schedule_course_dialog, null);
                 //先注册一些控件
-                final EditText editname, editroom;
-                final TextView Textweek, Texttime;
                 editname = (EditText) dialogview.findViewById(R.id.SCourseEditTextName);
                 editroom = (EditText) dialogview.findViewById(R.id.SCourseEditTextRoom);
-                Textweek = (TextView) dialogview.findViewById(R.id.dialogweek);
-                Texttime = (TextView) dialogview.findViewById(R.id.dialogtime);
+                editname.setSingleLine(false);
+                editroom.setSingleLine(false);
+                editname.setHorizontallyScrolling(false);
+                editroom.setHorizontallyScrolling(false);
+                editname.setInputType(InputType.TYPE_TEXT_FLAG_MULTI_LINE);
+                editroom.setInputType(InputType.TYPE_TEXT_FLAG_MULTI_LINE);
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                 builder.setTitle("添加新课程");
                 builder.setPositiveButton("保存", new DialogInterface.OnClickListener() {
+                    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        if (editname.getText().toString().trim() != "未填写" && editroom.getText().toString().trim() != "未填写" && Texttime.getText() != "未填写") {
+                        if (!Objects.equals(editname.getText().toString().trim(), "") && !Objects.equals(editroom.getText().toString().trim(), "")) {
                             using.name = editname.getText().toString().trim();
                             using.room = editroom.getText().toString().trim();
                             using.week = weekproduce(weeks);
@@ -568,13 +606,12 @@ public class ScheduleFragment extends Fragment implements
                             using.startmin = dialog_startmm;
                             using.endhour = dialog_endhh;
                             using.endmin = dialog_endmm;
-                            using.addinfile(sharedPreferences,editor);
+                            using.addinfile(sharedPreferences, editor);
                             Log.i(TAG, "onClick: addinfile successed!");
                             readcourse();
                             addcourse(course, layout);
                             dialogInterface.dismiss();
                         }
-
                     }
                 });
                 builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
@@ -588,40 +625,169 @@ public class ScheduleFragment extends Fragment implements
                 dialog.show();
                 textweek = (TextView) dialog.getWindow().findViewById(R.id.dialogweek);
                 texttime = (TextView) dialog.getWindow().findViewById(R.id.dialogtime);
-                dialog.getWindow().findViewById(R.id.dialogweek).setOnClickListener(this);
-                dialog.getWindow().findViewById(R.id.dialogtime).setOnClickListener(this);
+                textweek.setOnClickListener(this);
+                texttime.setOnClickListener(this);
                 break;
+//                using = new Course();
+//                weeks.add(0);
+//                weeks.add(19);
+//                using.day = (today.get(Calendar.DAY_OF_WEEK) + 5) % 7;
+//                LayoutInflater inflater = LayoutInflater.from(getActivity());
+//                View dialogview = inflater.inflate(R.layout.schedule_course_dialog, null);
+//                //先注册一些控件
+//                final EditText editname, editroom;
+//                final TextView Textweek, Texttime;
+//                editname = (EditText) dialogview.findViewById(R.id.SCourseEditTextName);
+//                editroom = (EditText) dialogview.findViewById(R.id.SCourseEditTextRoom);
+//                Textweek = (TextView) dialogview.findViewById(R.id.dialogweek);
+//                Texttime = (TextView) dialogview.findViewById(R.id.dialogtime);
+//                editname.setSingleLine(false);
+//                editroom.setSingleLine(false);
+//                editname.setHorizontallyScrolling(false);
+//                editroom.setHorizontallyScrolling(false);
+//                editname.setInputType(InputType.TYPE_TEXT_FLAG_MULTI_LINE);
+//                editroom.setInputType(InputType.TYPE_TEXT_FLAG_MULTI_LINE);
+//                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+//                builder.setTitle("添加新课程");
+//                builder.setPositiveButton("保存", new DialogInterface.OnClickListener() {
+//                    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+//                    @Override
+//                    public void onClick(DialogInterface dialogInterface, int i) {
+//                        if (editname.getText().toString().trim() != "未填写" && editroom.getText().toString().trim() != "未填写" && Texttime.getText() != "未填写") {
+//                            using.name = editname.getText().toString().trim();
+//                            using.room = editroom.getText().toString().trim();
+//                            using.week = weekproduce(weeks);
+//                            Log.i(TAG, "onClick: the " + using.name + " is in the positive button!! And the weeks information is below:");
+//                            for (i = 0; i < weeks.size(); i++)
+//                                Log.i(TAG, "onClick: weeks[" + i + "]=" + weeks.get(i));
+//                            using.day = dialog_day;
+//                            using.starthour = dialog_starthh;
+//                            using.startmin = dialog_startmm;
+//                            using.endhour = dialog_endhh;
+//                            using.endmin = dialog_endmm;
+//                            using.addinfile(sharedPreferences, editor);
+//                            Log.i(TAG, "onClick: addinfile successed!");
+//                            readcourse();
+//                            addcourse(course, layout);
+//                            dialogInterface.dismiss();
+//                        }
+//
+//                    }
+//                });
+//                builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialogInterface, int i) {
+//                        dialogInterface.dismiss();
+//                    }
+//                });
+//                builder.setView(dialogview);
+//                AlertDialog dialog = builder.create();
+//                dialog.show();
+//                textweek = (TextView) dialog.getWindow().findViewById(R.id.dialogweek);
+//                texttime = (TextView) dialog.getWindow().findViewById(R.id.dialogtime);
+//                dialog.getWindow().findViewById(R.id.dialogweek).setOnClickListener(this);
+//                dialog.getWindow().findViewById(R.id.dialogtime).setOnClickListener(this);
+//                break;
         }
     }
 
-
     @Override
-    /*checked*/ public void onItemSelected(AdapterView<?> adapterView, View view1, int position, long id) {
-        nowweek = position + firstweek + 1;
+    public void onItemSelected(AdapterView<?> adapterView, View view1, int position, long id) {
+        nowweek = position + firstweek;
         readcourse();
         addcourse(course, layout);
         redate(position);
     }
 
     @Override
-    /*checked*/ public void onNothingSelected(AdapterView<?> adapterView) {
+    public void onNothingSelected(AdapterView<?> adapterView) {
     }
 
-    /*checked*/   private EditText editname;
-    /*checked*/   private EditText editroom;
-    /*checked*/   private TextView textweek;
-    /*checked*/   private TextView texttime;
-    /*checked*/    private int bereplacedx, bereplacedy, bereplacedz;
+    private EditText editname;
+    private EditText editroom;
+    private TextView textweek;
+    private TextView texttime;
+    private int bereplacedx, bereplacedy, bereplacedz;
+    private android.os.Handler handler;
+    private View RunnableView;
+    private boolean stop = false;
+    private boolean running = false;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
-    public boolean onTouch(View view, MotionEvent motionEvent) {
+    public boolean onTouch(final View view, MotionEvent motionEvent) {
         Log.i(TAG, "onTouch: INTO ONTOUCH !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+        Log.i(TAG, "onTouch: Y:"+motionEvent.getY());
+        RunnableView = view;
         int backgroundColor;
-        int i, j, Break;
+        int i, j, Break,day=-1;
         boolean is;
         switch (motionEvent.getAction()) {
             case MotionEvent.ACTION_DOWN:
+                ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                stop = false;
+                handler = new android.os.Handler();
+                final Runnable runnable = new Runnable() {
+                    @Override
+                    public void run() {
+                        if (stop) return;
+                        running = true;
+                        boolean is = false;
+                        int Break = 0;
+                        for (int i = 0; i < 7; i++)
+                            if (RunnableView.getParent() == layout.get(i))
+                                is = true;
+                        if (!is)
+                            return;
+
+                        //背景色变换
+                        for (int i = 0; i < textarr.size(); i++) {
+                            for (int j = 0; j < textarr.get(i).size(); j++) {
+                                Log.i(TAG, "onTouch: textarr.get(" + i + ").get(" + j + "):" + textarr.get(i).get(j).getText() + " Y" + textarr.get(i).get(j).getY());
+                                if (textarr.get(i).get(j).getText() == ((TextView) RunnableView).getText()
+                                        && textarr.get(i).get(j).getParent() == RunnableView.getParent()
+                                        && textarr.get(i).get(j).getY() == RunnableView.getY()) {
+                                    using = new Course(pcourse.get(nowweek - firstweek).get(i).get(j));
+                                    Log.i(TAG, "onTouch: usingname:" + using.name);
+                                    bereplacedx = nowweek - firstweek;
+                                    bereplacedy = i;
+                                    bereplacedz = j;
+                                    Break = 1;
+                                    break;
+                                }
+                            }
+                            if (Break == 1)
+                                break;
+                        }
+                        ((GradientDrawable) RunnableView.getBackground()).setColor(using.color);
+                        RunnableView.postInvalidate();
+                        LayoutInflater inflater = LayoutInflater.from(getActivity());
+                        View dialogview = inflater.inflate(R.layout.schedule_delete_dialog, null);
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                        builder.setTitle("删除课程");
+                        builder.setPositiveButton("是", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                running = false;
+                                using.removeinfile(sharedPreferences, editor);
+                                readcourse();
+                                addcourse(course, layout);
+                            }
+                        });
+                        builder.setNegativeButton("否", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                running = false;
+                                dialogInterface.dismiss();
+                            }
+                        });
+                        builder.setView(dialogview);
+                        AlertDialog dialog = builder.create();
+                        dialog.show();
+                    }
+                };
+                handler.postDelayed(runnable, 1000);
+                /////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 switch (view.getId()) {
                     case R.id.STRimageview:
                         view.setBackgroundResource(R.drawable.plus_reverse);
@@ -636,13 +802,12 @@ public class ScheduleFragment extends Fragment implements
                                 is = true;
                         if (!is)
                             return false;
-
                         for (i = 0; i < textarr.size(); i++) {
                             for (j = 0; j < textarr.get(i).size(); j++)
                                 if (textarr.get(i).get(j).getText() == ((TextView) view).getText()
                                         && textarr.get(i).get(j).getParent() == view.getParent()
                                         && textarr.get(i).get(j).getY() == view.getY()) {
-                                    backgroundColor = pcourse.get(nowweek - firstweek - 1).get(i).get(j).color;
+                                    backgroundColor = pcourse.get(nowweek - firstweek).get(i).get(j).color;
                                     Break = 1;
                                     break;
                                 }
@@ -657,46 +822,50 @@ public class ScheduleFragment extends Fragment implements
                 break;
             case MotionEvent.ACTION_CANCEL:
             case MotionEvent.ACTION_UP:
+                if (running) {
+                    running = false;
+                    break;
+                }
+                stop = true;
                 switch (view.getId()) {
                     case R.id.STRimageview:
                         view.setBackgroundResource(R.drawable.plus);
                         view.postInvalidate();
                         break;
                     default:
-                        using = new Course();
                         //筛选 view
                         is = false;
                         Break = 0;
-                        backgroundColor = 0;
                         for (i = 0; i < 7; i++)
                             if (view.getParent() == layout.get(i))
                                 is = true;
                         if (!is)
                             return false;
+                        //添加新课程
 
                         //背景色变换
                         for (i = 0; i < textarr.size(); i++) {
-                            for (j = 0; j < textarr.get(i).size(); j++)
+                            for (j = 0; j < textarr.get(i).size(); j++) {
+                                Log.i(TAG, "onTouch: textarr.get(" + i + ").get(" + j + "):" + textarr.get(i).get(j).getText() + " Y" + textarr.get(i).get(j).getY());
                                 if (textarr.get(i).get(j).getText() == ((TextView) view).getText()
                                         && textarr.get(i).get(j).getParent() == view.getParent()
                                         && textarr.get(i).get(j).getY() == view.getY()) {
-                                    backgroundColor = pcourse.get(nowweek - firstweek - 1).get(i).get(j).color;
-                                    using = pcourse.get(nowweek - firstweek - 1).get(i).get(j);
-                                    bereplacedx = nowweek - firstweek -1;
+                                    using = new Course(pcourse.get(nowweek - firstweek).get(i).get(j));
+                                    Log.i(TAG, "onTouch: usingname:" + using.name);
+                                    bereplacedx = nowweek - firstweek;
                                     bereplacedy = i;
                                     bereplacedz = j;
                                     Break = 1;
                                     break;
                                 }
+                            }
                             if (Break == 1)
                                 break;
                         }
-                        ((GradientDrawable) view.getBackground()).setColor(backgroundColor);
+                        ((GradientDrawable) view.getBackground()).setColor(using.color);
                         view.postInvalidate();
-
                         //响应点击事件 弹出dialog
                         if (motionEvent.getAction() != MotionEvent.ACTION_CANCEL) {
-                            //onclick     dialog!!!
                             LayoutInflater inflater = LayoutInflater.from(getActivity());
                             View dialogview = inflater.inflate(R.layout.schedule_course_dialog, null);
                             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -704,18 +873,42 @@ public class ScheduleFragment extends Fragment implements
                             editroom = (EditText) dialogview.findViewById(R.id.SCourseEditTextRoom);
                             textweek = (TextView) dialogview.findViewById(R.id.dialogweek);
                             texttime = (TextView) dialogview.findViewById(R.id.dialogtime);
+                            editname.setSingleLine(false);
+                            editroom.setSingleLine(false);
+                            editname.setHorizontallyScrolling(false);
+                            editroom.setHorizontallyScrolling(false);
+                            editname.setInputType(InputType.TYPE_TEXT_FLAG_MULTI_LINE);
+                            editroom.setInputType(InputType.TYPE_TEXT_FLAG_MULTI_LINE);
                             builder.setTitle(using.name);
                             String[] dayname = {"周一", "周二", "周三", "周四", "周五", "周六", "周日"};
                             editname.setText(using.name);
                             editroom.setText(using.room);
                             textweek.setText("");
                             ArrayList<Integer> weekparse = weekparse(using.week);
+                            weeks = weekparse;
                             for (i = 0; i < weekparse.size(); i += 2)
                                 if (Objects.equals(weekparse.get(i), weekparse.get(i + 1)))
                                     textweek.setText(textweek.getText() + "" + (weekparse.get(i) + 1) + "周 ");
                                 else
                                     textweek.setText(textweek.getText() + "" + (weekparse.get(i) + 1) + "-" + (weekparse.get(i + 1) + 1) + "周 ");
-                            texttime.setText(dayname[using.day] + " " + using.starthour + ":" + using.startmin + "-" + using.endhour + " " + using.endmin);
+                            dialog_day = using.day;
+                            dialog_starthh = using.starthour;
+                            dialog_startmm = using.startmin;
+                            dialog_endhh = using.endhour;
+                            dialog_endmm = using.endmin;
+                            texttime.setText(dayname[dialog_day] + " ");
+                            if (dialog_starthh < 10)
+                                texttime.setText(texttime.getText() + "0");
+                            texttime.setText(texttime.getText() + "" + dialog_starthh + ":");
+                            if (dialog_startmm < 10)
+                                texttime.setText(texttime.getText() + "0");
+                            texttime.setText(texttime.getText() + "" + dialog_startmm + "-");
+                            if (dialog_endhh < 10)
+                                texttime.setText(texttime.getText() + "0");
+                            texttime.setText(texttime.getText() + "" + dialog_endhh + ":");
+                            if (dialog_endmm < 10)
+                                texttime.setText(texttime.getText() + "0");
+                            texttime.setText(texttime.getText() + "" + dialog_endmm);
                             builder.setPositiveButton("保存", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
@@ -728,7 +921,9 @@ public class ScheduleFragment extends Fragment implements
                                     using.endhour = dialog_endhh;
                                     using.endmin = dialog_endmm;
                                     Log.i(TAG, "onClick: now you release the " + using.name + "     room:" + using.room + "          day:" + using.day + "         from" + using.starthour + ":" + using.startmin + " to " + using.endhour + ":" + using.endmin);
-                                    using.updateinfile(sharedPreferences,editor,pcourse.get(bereplacedx).get(bereplacedy).get(bereplacedz));
+                                    Log.i(TAG, "onClick: now you release the " + pcourse.get(bereplacedx).get(bereplacedy).get(bereplacedz).name + "     room:" + pcourse.get(bereplacedx).get(bereplacedy).get(bereplacedz).room + "          day:" + pcourse.get(bereplacedx).get(bereplacedy).get(bereplacedz).day + "         from" + pcourse.get(bereplacedx).get(bereplacedy).get(bereplacedz).starthour + ":" + pcourse.get(bereplacedx).get(bereplacedy).get(bereplacedz).startmin + " to " + pcourse.get(bereplacedx).get(bereplacedy).get(bereplacedz).endhour + ":" + pcourse.get(bereplacedx).get(bereplacedy).get(bereplacedz).endmin);
+                                    pcourse.get(bereplacedx).get(bereplacedy).get(bereplacedz).removeinfile(sharedPreferences, editor);
+                                    using.addinfile(sharedPreferences, editor);
                                     readcourse();
                                     addcourse(course, layout);
                                     dialogInterface.dismiss();
@@ -760,7 +955,6 @@ public class ScheduleFragment extends Fragment implements
 
     @Override
     public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-//        Log.i(TAG, "onCheckedChanged: ");
         boolean togglebuttonbool[] = new boolean[27];
         switch (compoundButton.getId()) {
             case R.id.week_togglebutton1:
@@ -876,12 +1070,22 @@ public class ScheduleFragment extends Fragment implements
                 check();
                 recover(togglebuttonbool);
                 break;
+            case R.id.week_togglebuttonthis:
+                compoundButton.setChecked(b);
+                if (b)
+                    togglearray.get(realweek - firstweek).setChecked(true);
+                else
+                    togglearray.get(realweek - firstweek).setChecked(false);
+                save(togglebuttonbool);
+                check();
+                recover(togglebuttonbool);
+                break;
         }
         for (int i = 0; i < 20; i++)
             togglearray.get(i).postInvalidate();
     }
 
-    /*checked*/
+
     public void check() {
         boolean line1, line2, line3, line4, dialine1, dialine2;
         line1 = true;
@@ -908,6 +1112,10 @@ public class ScheduleFragment extends Fragment implements
         for (int i = 1; i < 20; i += 2)
             if (!togglearray.get(i).isChecked())
                 dialine2 = false;
+        if (togglearray.get(realweek - firstweek).isChecked() && !togglearray.get(27).isChecked())
+            togglearray.get(27).setChecked(true);
+        if (!togglearray.get(realweek - firstweek).isChecked() && togglearray.get(27).isChecked())
+            togglearray.get(27).setChecked(false);
         if (line1 && !togglearray.get(20).isChecked())
             togglearray.get(20).setChecked(true);
         if (!line1 && togglearray.get(20).isChecked())
@@ -938,22 +1146,22 @@ public class ScheduleFragment extends Fragment implements
             togglearray.get(26).setChecked(false);
     }
 
-    /*checked*/
+
     public void save(boolean[] togglebuttonbool) {
         for (int i = 0; i < 20; i++)
             togglebuttonbool[i] = togglearray.get(i).isChecked();
     }
 
-    /*checked*/
+
     public void recover(boolean[] togglebuttonbool) {
         for (int i = 0; i < 20; i++)
             togglearray.get(i).setChecked(togglebuttonbool[i]);
     }
 
-    /*checked*/   private boolean onValueChange_have_changed = false;
+    private boolean onValueChange_have_changed = false;
 
     @Override
-    /*checked*/ public void onValueChange(NumberPicker numberPicker, int i, int i1) {
+    public void onValueChange(NumberPicker numberPicker, int i, int i1) {
         switch (numberPicker.getId()) {
             case R.id.daypicker:
                 //do nothing
@@ -980,4 +1188,5 @@ public class ScheduleFragment extends Fragment implements
                 break;
         }
     }
+
 }
