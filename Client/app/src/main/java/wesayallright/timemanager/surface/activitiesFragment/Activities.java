@@ -1,6 +1,7 @@
 package wesayallright.timemanager.surface.activitiesFragment;
 
 import android.content.Context;
+import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -79,9 +80,7 @@ public class Activities extends Fragment {
         activitiesList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(getContext(),
-                        ("you click " + activitiesData.get(position).name +"id=" +activitiesData.get(position).activityId),
-                        Toast.LENGTH_SHORT).show();
+                JoinDialog.show(getActivity(), activitiesData.get(position));
             }
         });
         return v;

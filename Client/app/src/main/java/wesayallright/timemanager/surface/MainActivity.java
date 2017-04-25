@@ -20,7 +20,6 @@ import wesayallright.timemanager.surface.activitiesFragment.Activities;
 import wesayallright.timemanager.surface.scheduleFragment.ScheduleFragment;
 
 public class MainActivity extends AppCompatActivity implements
-        Calendar.OnFragmentInteractionListener,
         Activities.OnFragmentInteractionListener,
         Groups.OnFragmentInteractionListener,
         Me.OnFragmentInteractionListener {

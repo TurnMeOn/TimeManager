@@ -13,6 +13,6 @@
     <string name="dayofcourse">上课日</string>
     <string name="terminationtime">结束时间</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="joinDialogTitle"> 加入</string>
+    <string name="jd_zzzjhd">组织者将获得您的:</string>
 </resources>
