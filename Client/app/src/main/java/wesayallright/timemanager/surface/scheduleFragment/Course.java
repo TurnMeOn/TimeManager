@@ -10,24 +10,23 @@ import com.github.lzyzsd.randomcolor.RandomColor;
 
 import java.util.Objects;
 
-public class Course {
-    public String week;
-    public int day;
-    public int starthour;
-    public int startmin;
-    public int endhour;
-    public int endmin;
+class Course {
+    String week;
+    int day;
+    int starthour;
+    int startmin;
+    int endhour;
+    int endmin;
     public String name;
-    public String room;
-    public String teacher;
+    String room;
+    private String teacher;
     public int color;
-    public int priority;//0:normal 1:course 2:alert
-    public final int PRIORITY_ACTIVITY = 2;
-    public final int PRIORITY_COURSE = 1;
-    public final int PRIORITY_NORMAL = 0;
-    private static final String DATABASE_NAME = "Schedule_Fragment_data.db";
+    int priority;//0:normal 1:course 2:alert
+//    public final int PRIORITY_ACTIVITY = 2;
+//    public final int PRIORITY_COURSE = 1;
+//    public final int PRIORITY_NORMAL = 0;
     private static final String TAG = "Course";
-    public Course(String week, int day, int starthour, int startmin, int endhour, int endmin, String name, String room, String teacher, int color, int priority) {
+    Course(String week, int day, int starthour, int startmin, int endhour, int endmin, String name, String room, String teacher, int color, int priority) {
         this.week=week;
         this.day = day;
         this.starthour = starthour;
@@ -40,7 +39,7 @@ public class Course {
         this.color = color;
         this.priority = priority;
     }
-    public Course(Course copy){
+    Course(Course copy){
         this.week=copy.week;
         this.day = copy.day;
         this.starthour = copy.starthour;
@@ -53,7 +52,7 @@ public class Course {
         this.color = copy.color;
         this.priority = copy.priority;
     }
-    public Course() {
+    Course() {
         week=null;
         day = -1;
         starthour = -1;
@@ -66,29 +65,14 @@ public class Course {
         color = (new RandomColor()).randomColor()-0x30000000;
         priority = 0;
     }
-    public void recover() {
-        week=null;
-        day = -1;
-        starthour = -1;
-        startmin = -1;
-        endhour = -1;
-        endmin = -1;
-        name = "未填写";
-        room = "未填写";
-        teacher = "未填写";
-        color = -1;
-        priority = 0;
-    }
-    public boolean empty() {
-        return day < 0;
-    }
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    public void addinfile(SharedPreferences sharedPreferences, SharedPreferences.Editor editor) {
+    void addinfile(SharedPreferences sharedPreferences) {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
         int num;
         for (num = 0; ; num++)
             if (sharedPreferences.getString("week" + num, null) == null)
                 break;
-        this.removeinfile(sharedPreferences, editor);
+        this.removeinfile(sharedPreferences);
         editor.putString("week" + num, week);
         editor.putInt("day" + num, day);
         editor.putInt("starthour" + num, starthour);
@@ -100,10 +84,11 @@ public class Course {
         editor.putString("teacher" + num, teacher);
         editor.putInt("color" + num, color);
         editor.putInt("priority" + num, priority);
-        editor.commit();
+        editor.apply();
     }
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    public void removeinfile(SharedPreferences sharedPreferences, SharedPreferences.Editor editor) {
+    void removeinfile(SharedPreferences sharedPreferences) {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
         Log.i(TAG, "removeinfile: REMOVE FILE START!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         int num;
         for (num = 0; ; num++)
@@ -140,7 +125,7 @@ public class Course {
                 editor.putString("teacher" + i  ,sharedPreferences.getString( "teacher" + (num-1),null));
                 editor.putInt("color" + i       ,sharedPreferences.getInt( "color" + (num-1),-1));
                 editor.putInt("priority" +  i   ,sharedPreferences.getInt( "priority" + (num-1),-1));
-                editor.commit();
+                editor.apply();
                 editor.remove("week" + (num-1));
                 editor.remove("day" + (num-1));
                 editor.remove("starthour" + (num-1));
