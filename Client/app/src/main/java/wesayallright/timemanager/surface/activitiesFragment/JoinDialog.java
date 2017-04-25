@@ -2,18 +2,9 @@ package wesayallright.timemanager.surface.activitiesFragment;
 
 
 import android.app.Activity;
-import android.content.res.ColorStateList;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.ListAdapter;
-import android.widget.ListView;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
-
-
-import java.util.ArrayList;
-import java.util.HashMap;
 
 import wesayallright.timemanager.R;
 
@@ -24,10 +15,10 @@ import wesayallright.timemanager.R;
 
 public class JoinDialog{
 
-    static String authorities = "电话\n学号\n真实姓名\n";
+    private static String authorities = "电话\n学号\n真实姓名\n";
 
 
-     static public  AlertDialog.Builder show(Activity a, ActivityViewItem item) {
+     static public AlertDialog.Builder show(Activity a, ActivityViewItem item) {
          AlertDialog.Builder builder = new AlertDialog.Builder(a);
          View v = View.inflate(a, R.layout.join_dialog, null);
          builder.setTitle(item.name);

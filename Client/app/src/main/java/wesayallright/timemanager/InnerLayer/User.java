@@ -103,9 +103,9 @@ public class User {
         // 从服务器上下载文件
         // TODO:网络模块
 
-        NetWork.downloadUserInformation(userId);
-        NetWork.downlocaUserCalendar(userId);
-        NetWork.downloadUserGroupList(userId);
+//        NetWork.downloadUserInformation(userId);
+//        NetWork.downlocaUserCalendar(userId);
+//        NetWork.downloadUserGroupList(userId);
 
 
         // 在本地加载文件
@@ -119,7 +119,6 @@ public class User {
             if (!userInformation.exists()) {
                 Log.e("FILE", "文件不存在");
             }
-
 
             // 解析XML成Document
             Document userXML = (new DOMParser()).parse(userInformation);
