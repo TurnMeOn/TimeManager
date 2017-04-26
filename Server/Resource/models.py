@@ -27,7 +27,7 @@ class User(models.Model):
     mobile = models.IntegerField()
     email = models.EmailField()
 
-    school_id = models.ForeignKey('School', on_delete=models.CASCADE)
+    school_id = models.ForeignKey(School, on_delete=models.CASCADE)
     major = models.CharField(max_length=30)
     def __str__(self):
         return self.realname
@@ -44,8 +44,8 @@ class Group(models.Model):
         return self.group_name
 
 class Group_User(models.Model):
-    group_id = models.ForeignKey('Group', on_delete=models.CASCADE)
-    user_id = models.ForeignKey('User', on_delete=models.CASCADE)
+    group_id = models.ForeignKey(Group, on_delete=models.CASCADE)
+    user_id = models.ForeignKey(User, on_delete=models.CASCADE)
     privilege = models.CharField(max_length=20)
-    def __str__(self):
-        return str(self.group_id) + '---' + str(self.user_id)
+    # def __str__(self):
+    #     return str(self.group_id.group_name)
