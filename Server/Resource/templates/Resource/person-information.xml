@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- yyyy-MM-dd-HH-mm-ss, Locale.CHINA-->
+<person updateTime={{ 'NULL' }}
+    id={{ stu_id }}
+    nickname={{ nickname }}
+    realname={{ realname }}
+    age={{ age }}
+    sex={{ gender }}
+    mobile={{ mobile }}
+    email={{ email }}
+
+    schoolID={{ school_id }}
+    schoolName={{ school_name }}
+    location={{ province }}
+    zipCode={{ 10000 }}
+    major={{ major }}
+    grade={{ 'NULL' }}
+    enrollDate={{ 'NULL' }}
+    >
+</person>
