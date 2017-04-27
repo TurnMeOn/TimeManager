@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<group update="{{ update }}"
+    id="{{ id }}"
+    name="{{ name }}"
+    public="{{ public }}"
+    establishDate="{{ establishdate }}"
+    introduction="{{ introduction }}"
+    maxMembers="{{ max }}"
+>
+    <members>
+        {% for member in members %}
+        <person id="{{ member.user_id.user_id }}" privilege="{{ member.privilege }}" />
+        {% endfor %}
+    </members>
+
+</group>
