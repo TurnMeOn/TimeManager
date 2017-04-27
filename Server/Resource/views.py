@@ -21,7 +21,7 @@ def QueryUser(request, user_id):
         'stu_id': user.stu_id,
         'nickname': user.nickname,
         'realname': user.realname,
-        'age': age,
+        'birthday': str(user.birthday),
         'gender': user.gender,
         'email': user.email,
         'mobile':user.mobile,

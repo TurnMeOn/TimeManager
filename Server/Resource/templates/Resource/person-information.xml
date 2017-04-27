@@ -4,7 +4,7 @@
     id={{ stu_id }}
     nickname={{ nickname }}
     realname={{ realname }}
-    age={{ age }}
+    birthday={{ birthday }}
     sex={{ gender }}
     mobile={{ mobile }}
     email={{ email }}
