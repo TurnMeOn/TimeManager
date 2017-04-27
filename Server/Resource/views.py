@@ -33,4 +33,4 @@ def QueryUser(request, user_id):
     }
     # return render(request, 'Resource/person_information.xml', data)
     # return HttpResponse(data['city'])
-    return render(request, 'Resource/person-information.xml', data)
+    return render(request, 'Resource/person-information.xml', data, content_type='application/xml')
