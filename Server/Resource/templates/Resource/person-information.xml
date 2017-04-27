@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- yyyy-MM-dd-HH-mm-ss, Locale.CHINA-->
-<person updateTime="{{ 'NULL' }}"
+<person updateTime="{{ updatetime }}"
     id="{{ stu_id }}"
     nickname="{{ nickname }}"
     realname="{ realname }}"

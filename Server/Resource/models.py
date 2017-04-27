@@ -26,6 +26,7 @@ class User(models.Model):
     birthday = models.DateField()
     mobile = models.IntegerField()
     email = models.EmailField()
+    user_updatetime = models.DateField(auto_now_add=True)
 
     school_id = models.ForeignKey(School, on_delete=models.CASCADE)
     major = models.CharField(max_length=30)

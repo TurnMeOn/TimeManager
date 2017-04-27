@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from Resource.models import School, User, Group
+from Resource.models import School, User, Group, Group_User
 from django.utils import timezone
 # Create your views here.
 
@@ -8,15 +8,16 @@ def index(request):
     return HttpResponse("Here you come!")
 
 def QueryUser(request, user_id):
+    """"""
     user = User.objects.get(user_id=user_id)
     school = user.school_id
-    birthdate = (str(user.birthday).split('-'))
-    b_y, b_m, b_d = (int(birthdate[0]), int(birthdate[1]), int(birthdate[2]))
-    now = timezone.datetime.now()
-    n_y, n_m, n_d = (now.year, now.month, now.day)
-    age = n_y - b_y
-    if n_m < b_m or (n_m == b_m and n_d < b_d):
-        age -= 1
+    # birthdate = (str(user.birthday).split('-'))
+    # b_y, b_m, b_d = (int(birthdate[0]), int(birthdate[1]), int(birthdate[2]))
+    # now = timezone.datetime.now()
+    # n_y, n_m, n_d = (now.year, now.month, now.day)
+    # age = n_y - b_y
+    # if n_m < b_m or (n_m == b_m and n_d < b_d):
+    #     age -= 1
     data = {
         'stu_id': user.stu_id,
         'nickname': user.nickname,
@@ -30,7 +31,22 @@ def QueryUser(request, user_id):
         'province': school.school_province,
         'city': school.school_city,
         'major': user.major,
+        'updatetime': str(user.user_updatetime),
     }
-    # return render(request, 'Resource/person_information.xml', data)
-    # return HttpResponse(data['city'])
     return render(request, 'Resource/person-information.xml', data, content_type='application/xml')
+
+def QueryGroup(request, group_id):
+    group = Group.objects.get(group_id=group_id)
+    members = Group_User.objects.filter(group_id=group_id)
+    data = {
+        'id': group.group_id,
+        'name': group.group_name,
+        'public': group.group_is_public,
+        'establishdate': str(group.group_establish_date),
+        'introduction': group.group_introduction,
+        'max': group.group_max_member,
+        'update': str(group.group_update_date),
+        'members': members,
+    }
+
+    return render(request, 'Resource/group.xml', data, content_type='application/xml')
