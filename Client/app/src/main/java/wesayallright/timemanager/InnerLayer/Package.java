@@ -11,4 +11,5 @@ public class Package {
     public static Document calendarXMLTree;
     //public static GroupList groups;
     public static User currentUser;
+    public static boolean debug;
 }
