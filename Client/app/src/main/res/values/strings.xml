@@ -15,4 +15,6 @@
 
     <string name="joinDialogTitle"> 加入</string>
     <string name="jd_zzzjhd">组织者将获得您的:</string>
+    <string name="nad_place">地点: </string>
+    <string name="nad_commit">请输入活动描述: </string>
 </resources>

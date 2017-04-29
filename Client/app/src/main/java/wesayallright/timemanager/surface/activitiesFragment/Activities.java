@@ -2,6 +2,7 @@ package wesayallright.timemanager.surface.activitiesFragment;
 
 import android.content.Context;
 import android.graphics.Paint;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -10,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -83,6 +85,14 @@ public class Activities extends Fragment {
                 JoinDialog.show(getActivity(), activitiesData.get(position));
             }
         });
+
+        ImageView plus = (ImageView)v.findViewById(R.id.nad_plus);
+        plus.setOnClickListener(new ImageView.OnClickListener() {
+            public void onClick(View v) {
+                NewActivityDialog.NewActivity(getActivity());
+            }
+
+        });
         return v;
     }
 
@@ -124,5 +134,7 @@ public class Activities extends Fragment {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
+
+
 
 }

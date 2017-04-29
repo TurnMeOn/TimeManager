@@ -12,8 +12,12 @@ import android.view.MenuItem;
 import android.widget.TextView;
 
 import java.io.UnsupportedEncodingException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Locale;
 
 import wesayallright.timemanager.InnerLayer.LocalFile.LocalFile;
+import wesayallright.timemanager.InnerLayer.Package;
 import wesayallright.timemanager.InnerLayer.User;
 import wesayallright.timemanager.R;
 import wesayallright.timemanager.surface.activitiesFragment.Activities;
@@ -74,6 +78,11 @@ public class MainActivity extends AppCompatActivity implements
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
+
+        Package.dateFormatter = new SimpleDateFormat("yyyy-MM-dd", Locale.CHINA);
+        Package.timeFormatter = new SimpleDateFormat("hh:mm", Locale.CHINA);
+        Package.dateTimeFormatter = SimpleDateFormat.getDateTimeInstance();
+        Package.today = Calendar.getInstance();
 
 
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
