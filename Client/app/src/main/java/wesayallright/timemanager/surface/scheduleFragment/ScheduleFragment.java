@@ -80,7 +80,10 @@ public class ScheduleFragment extends Fragment implements View.OnClickListener ,
                 pcourse.get(i).add(new ArrayList<Course>());
         }
         //initializing date
-        realweek = today.get(Calendar.WEEK_OF_YEAR);
+        if(today.get(Calendar.DAY_OF_WEEK)==Calendar.SUNDAY)
+            realweek = today.get(Calendar.WEEK_OF_YEAR) - 1;
+        else
+            realweek = today.get(Calendar.WEEK_OF_YEAR);
         first.set(Calendar.YEAR, 2017);
         first.set(Calendar.MONTH, firstmonth - 1);
         first.set(Calendar.DATE, firstday);
@@ -98,28 +101,28 @@ public class ScheduleFragment extends Fragment implements View.OnClickListener ,
             layout.get(i).setOnClickListener(this);
         }
         //course
-        course.add(new Course("0 6", 0, 8, 30, 10, 20, "大学生心理与健康教育(二)", "建筑A302", "未设置", 0xcf11ee11, 1));
-        course.add(new Course("0 6", 0, 10, 40, 12, 30, "高等数学(二)", "信息A112", "宋叔尼", 0xcfff0000, 1));
-        course.add(new Course("10 17", 0, 10, 40, 12, 30, "面向对象程序设计(C++)", "生命B502", "张天成", 0xcff7f709, 1));
-        course.add(new Course("5 16", 0, 14, 0, 15, 50, "大学英语(二)(听说)", "信息A309", "马新", 0xcf9222dd, 1));
-        course.add(new Course("0 8", 0, 16, 10, 18, 0, "大学物理(双语)(一)", "文管B230", "陈肖慧", 0xcf3CA9C4, 1));
-        course.add(new Course("0 18", 1, 8, 30, 10, 20, "高等数学(二)", "生命B201", "宋叔尼", 0xcfff0000, 1));
-        course.add(new Course("0 9", 1, 14, 0, 15, 50, "离散数学(二)", "文管A129", "张一飞", 0xcfDD9222, 1));
-        course.add(new Course("13 16", 1, 16, 10, 18, 0, "形势与政策(1)", "文管A227", "未设置", 0xcf09F7F7, 1));
-        course.add(new Course("5 16", 2, 8, 30, 10, 20, "大学英语(二)", "建筑B517", "马新", 0xcf9222dd, 1));
-        course.add(new Course("0 5 7 8 10 15", 2, 10, 40, 12, 30, "大学物理(双语)(一)", "文管B230", "陈肖慧", 0xcf3CA9C4, 1));
-        course.add(new Course("0 1 3 3 5 18", 3, 8, 30, 10, 20, "高等数学(二)", "建筑A302", "宋叔尼", 0xcfff0000, 1));
-        course.add(new Course("2 2", 3, 8, 30, 10, 20, "高等数学(二)", "信息A211", "宋叔尼", 0xcfff0000, 1));
-        course.add(new Course("0 9", 3, 10, 40, 12, 30, "离散数学(二)", "文管B230", "张一飞", 0xcfDD9222, 1));
-        course.add(new Course("10 17", 3, 10, 40, 12, 30, "面向对象程序设计(C++)", "建筑B403", "张天成", 0xcff7f709, 1));
-        course.add(new Course("3 14", 3, 14, 0, 15, 50, "体育(二)", "风雨操场", "厉中山", 0xcf0909F7, 1));
-        course.add(new Course("0 15", 3, 16, 10, 18, 0, "创业基础", "文管A227", "未设置", 0xcf42E61A, 1));
-        course.add(new Course("5 5", 4, 8, 30, 10, 20, "高等数学(二)", "信息A214", "宋叔尼", 0xcfff0000, 1));
-        course.add(new Course("13 13 15 15 17 17", 4, 8, 30, 10, 20, "高等数学(二)", "生命B201", "宋叔尼", 0xcfff0000, 1));
-        course.add(new Course("0 11", 4, 14, 0, 15, 50, "中国近现代史纲要", "生命B401", "段炼", 0xcf09F7F7, 1));
-        course.add(new Course("2 11", 6, 18, 30, 21, 20, "程序设计技术", "信息A210", "赵长宽", 0xcfDD2248, 1));
-        for(int i=0;i<course.size();i++)
-            course.get(i).addinfile(sharedPreferences);
+//        course.add(new Course("0 6", 0, 8, 30, 10, 20, "大学生心理与健康教育(二)", "建筑A302", "未设置", 0xcf11ee11, 1));
+//        course.add(new Course("0 6", 0, 10, 40, 12, 30, "高等数学(二)", "信息A112", "宋叔尼", 0xcfff0000, 1));
+//        course.add(new Course("10 17", 0, 10, 40, 12, 30, "面向对象程序设计(C++)", "生命B502", "张天成", 0xcff7f709, 1));
+//        course.add(new Course("5 16", 0, 14, 0, 15, 50, "大学英语(二)(听说)", "信息A309", "马新", 0xcf9222dd, 1));
+//        course.add(new Course("0 8", 0, 16, 10, 18, 0, "大学物理(双语)(一)", "文管B230", "陈肖慧", 0xcf3CA9C4, 1));
+//        course.add(new Course("0 18", 1, 8, 30, 10, 20, "高等数学(二)", "生命B201", "宋叔尼", 0xcfff0000, 1));
+//        course.add(new Course("0 9", 1, 14, 0, 15, 50, "离散数学(二)", "文管A129", "张一飞", 0xcfDD9222, 1));
+//        course.add(new Course("13 16", 1, 16, 10, 18, 0, "形势与政策(1)", "文管A227", "未设置", 0xcf09F7F7, 1));
+//        course.add(new Course("5 16", 2, 8, 30, 10, 20, "大学英语(二)", "建筑B517", "马新", 0xcf9222dd, 1));
+//        course.add(new Course("0 5 7 8 10 15", 2, 10, 40, 12, 30, "大学物理(双语)(一)", "文管B230", "陈肖慧", 0xcf3CA9C4, 1));
+//        course.add(new Course("0 1 3 3 5 18", 3, 8, 30, 10, 20, "高等数学(二)", "建筑A302", "宋叔尼", 0xcfff0000, 1));
+//        course.add(new Course("2 2", 3, 8, 30, 10, 20, "高等数学(二)", "信息A211", "宋叔尼", 0xcfff0000, 1));
+//        course.add(new Course("0 9", 3, 10, 40, 12, 30, "离散数学(二)", "文管B230", "张一飞", 0xcfDD9222, 1));
+//        course.add(new Course("10 17", 3, 10, 40, 12, 30, "面向对象程序设计(C++)", "建筑B403", "张天成", 0xcff7f709, 1));
+//        course.add(new Course("3 14", 3, 14, 0, 15, 50, "体育(二)", "风雨操场", "厉中山", 0xcf0909F7, 1));
+//        course.add(new Course("0 15", 3, 16, 10, 18, 0, "创业基础", "文管A227", "未设置", 0xcf42E61A, 1));
+//        course.add(new Course("5 5", 4, 8, 30, 10, 20, "高等数学(二)", "信息A214", "宋叔尼", 0xcfff0000, 1));
+//        course.add(new Course("13 13 15 15 17 17", 4, 8, 30, 10, 20, "高等数学(二)", "生命B201", "宋叔尼", 0xcfff0000, 1));
+//        course.add(new Course("0 11", 4, 14, 0, 15, 50, "中国近现代史纲要", "生命B401", "段炼", 0xcf09F7F7, 1));
+//        course.add(new Course("2 11", 6, 18, 30, 21, 20, "程序设计技术", "信息A210", "赵长宽", 0xcfDD2248, 1));
+//        for(int i=0;i<course.size();i++)
+//            course.get(i).addinfile(sharedPreferences);
         //textview
         for (int i = 0; i < 7; i++)
             textarr.add(new ArrayList<TextView>());

@@ -94,14 +94,7 @@ class Course {
         for (num = 0; ; num++)
             if (sharedPreferences.getString("week" + num, null) == null)
                 break;
-        Log.i(TAG, "removeinfile: week="+week+" day="+day+" "+starthour+":"+startmin+"-"+endhour+":"+endmin+" name"+name+" room"+room+" teacher="+teacher+" color"+color+" priority"+priority);
         for (int i = 0; i < num; i++) {
-            Log.i(TAG, "removeinfile: week="+sharedPreferences.getString("week" + i, null)
-                    +" day="+sharedPreferences.getInt("day" + i, -1)+" "+sharedPreferences.getInt("starthour" + i, -1) +":"+
-                    sharedPreferences.getInt("startmin" + i, -1) +"-"+sharedPreferences.getInt("endhour" + i, -1)
-                    +":"+sharedPreferences.getInt("endmin" + i, -1) +" name"+sharedPreferences.getString("name" + i, null)
-                    +" room"+sharedPreferences.getString("room" + i, null) +" teacher="+sharedPreferences.getString("teacher" + i, null)
-                    +" color"+sharedPreferences.getInt("color" + i, -1) +" priority"+sharedPreferences.getInt("priority" + i, -1));
             if (Objects.equals(sharedPreferences.getString("week" + i, null), week) &&
                     sharedPreferences.getInt("day" + i, -1) == day &&
                     sharedPreferences.getInt("starthour" + i, -1) == starthour &&
