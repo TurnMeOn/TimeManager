@@ -47,6 +47,12 @@ class Group(models.Model):
 class Group_User(models.Model):
     group_id = models.ForeignKey(Group, on_delete=models.CASCADE)
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
-    privilege = models.CharField(max_length=20)
+    privilege = models.CharField(max_length=20, choices=(
+                                ('owner', 'owner'),
+                                ('master', 'master'),
+                                ('member', 'member'),
+                                ))
+    visible = models.BooleanField(default=True)
+    update_time = models.DateTimeField(auto_now_add=True)
     # def __str__(self):
     #     return str(self.group_id.group_name)

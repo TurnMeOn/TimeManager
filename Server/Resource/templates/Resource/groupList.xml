@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<groups belongs="{{ belongs }}"
+        updateTime="{{ '???' }}">
+    <!-- 可以有群组为隐藏，在界面上不显示出来，用于推送广告、同城交友（逃）-->
+    <!-- privilege 的值可以有owner，master和member-->
+    {% for group in groups %}
+    <group id="{{ group.group_id.group_id }}"
+            name="{{ group.group_id.group_name }}"
+            visible="{{ group.visible }}"
+            privilege="{{ group.privilege }}"
+            />
+    {% endfor %}
+</groups>
