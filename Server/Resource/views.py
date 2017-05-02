@@ -50,3 +50,11 @@ def QueryGroup(request, group_id):
     }
 
     return render(request, 'Resource/group.xml', data, content_type='application/xml')
+
+def QueryGroupList(request, user_id):
+    groups = Group_User.objects.filter(user_id=user_id)
+    data = {
+        'belongs': user_id,
+        'groups': groups,
+    }
+    return render(request, 'Resource/groupList.xml', data, content_type='application/xml')
