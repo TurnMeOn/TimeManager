@@ -28,11 +28,17 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.Objects;
 
+import wesayallright.timemanager.InnerLayer.Network.NetWork;
 import wesayallright.timemanager.R;
+import wesayallright.timemanager.surface.SaveViewToImage;
+
 public class ScheduleFragment extends Fragment implements View.OnClickListener , AdapterView.OnItemSelectedListener , View.OnTouchListener , ToggleButton.OnCheckedChangeListener , NumberPicker.OnValueChangeListener {
     private static final String TAG = "ScheduleFragment";
     private ArrayList<ArrayList<ArrayList<Course>>> pcourse = new ArrayList<>();//pcourse.get(week).get(day).get(xth in day)
@@ -358,8 +364,27 @@ public class ScheduleFragment extends Fragment implements View.OnClickListener ,
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void onClick(View view) {
+        Log.i("ON CLICK", "ON CLICK CLICK CLICK CLICK CLICK CLICK CLICK CLICK");
         switch (view.getId()) {
             case R.id.STRimageview:
+                /* 分享 */
+                // send Information to server
+                // get return from server
+                // create image and save
+                // shareDialog();
+                Log.i("点击按钮", "分享");
+                View v = View.inflate(getActivity(), R.layout.schedule_fragment, null);
+                View schedule = v.findViewById(R.id.Sframe);
+
+                if(schedule == null) try {
+                    throw new Exception("获取日程view失败");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                //(new SaveViewToImage()).save(schedule);
+                (new NetWork()).POST("", new HashMap<String, String>());
+
                 break;
             case R.id.dialogweek:
                 LayoutInflater inflaterweek = LayoutInflater.from(getActivity());

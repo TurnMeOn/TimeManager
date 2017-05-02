@@ -68,16 +68,16 @@ public class MainActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        showFragment(ACTIVITIES);
+        showFragment(CALENDAR);
 
         // 设置程序路径
         LocalFile.setCwd(getApplicationContext().getFilesDir().getAbsolutePath());
-        Log.i("Path", getApplicationContext().getFilesDir().getAbsolutePath());
-        try {
-            User u = User.signIn("rightID", "rightPassword");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
+//        Log.i("Path", getApplicationContext().getFilesDir().getAbsolutePath());
+//        try {
+//            User u = User.signIn("rightID", "rightPassword");
+//        } catch (UnsupportedEncodingException e) {
+//            e.printStackTrace();
+//        }
 
         Package.dateFormatter = new SimpleDateFormat("yyyy-MM-dd", Locale.CHINA);
         Package.timeFormatter = new SimpleDateFormat("hh:mm", Locale.CHINA);

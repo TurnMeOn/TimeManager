@@ -94,7 +94,6 @@ abstract public class NewActivityDialog{
                             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
                                 chosenTime[3] = hourOfDay;
                                 chosenTime[4] = minute;
-                                chosenTime[5] = 2;
                                 time.setText(String.format(Locale.CHINA, "%02d:%02d",
                                         chosenTime[3], chosenTime[4]));
                             }
