@@ -1,9 +1,7 @@
 package wesayallright.timemanager.surface.scheduleFragment;
 
-import android.support.v4.app.Fragment;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.support.v4.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
@@ -11,6 +9,7 @@ import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
+import android.support.v4.app.Fragment;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Log;
@@ -30,16 +29,11 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.Objects;
 
-import wesayallright.timemanager.InnerLayer.Network.NetWork;
 import wesayallright.timemanager.R;
-import wesayallright.timemanager.surface.SaveViewToImage;
 
 public class ScheduleFragment extends Fragment implements View.OnClickListener , AdapterView.OnItemSelectedListener , View.OnTouchListener , ToggleButton.OnCheckedChangeListener , NumberPicker.OnValueChangeListener {
     private RelativeLayout layout1, layout2, layout3, layout4, layout5, layout6, layout7;
@@ -386,10 +380,23 @@ public class ScheduleFragment extends Fragment implements View.OnClickListener ,
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-
-                //(new SaveViewToImage()).save(schedule);
                 ShareDialog s = new  ShareDialog();
-                s.addPramas("key", "value"); // 就这样循环添加
+                //user name::
+
+                //::
+                s.setTime("7:00","23:59");
+                int count=0;
+                for(int i =0;i<course.size();i++)
+                {
+                    ArrayList<Integer> parseweek = weekparse(course.get(i).week);
+                    for (int j = 0; j < parseweek.size(); j += 2) {
+                        if (parseweek.get(j) <= (nowweek - firstweek) && (nowweek - firstweek) <= parseweek.get(j + 1)){
+                            Course c =course.get(i);
+                            s.addPramas(""+count,c.name+"/"+(c.day+1)+"/"+c.starthour+":"+(c.startmin<10?"0"+c.startmin:c.startmin)+"/"+c.endhour+":"+(c.endmin<10?"0"+c.endmin:c.endmin));
+                        }
+                    }
+                }
+                //(new SaveViewToImage()).save(schedule);
                 s.show(getActivity());
 
                 break;

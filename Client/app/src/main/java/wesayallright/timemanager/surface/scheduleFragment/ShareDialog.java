@@ -5,10 +5,8 @@ import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.widget.TextView;
 
-
 import java.util.HashMap;
 
-import wesayallright.timemanager.InnerLayer.Network.NetWork;
 import wesayallright.timemanager.InnerLayer.Network.SendPost;
 import wesayallright.timemanager.R;
 
@@ -25,10 +23,19 @@ public class ShareDialog {
         data = new HashMap<>();
     }
 
+    public void setCount(int count)
+    {
+        data.put("count",""+count);
+    }
 
+    public void setTime(String start,String end)
+    {
+        data.put("startAndEnd",start+"/"+end);
+    }
 
     public void addPramas(String key, String value) {
         data.put(key, value);
+
     }
 
     public void show(Activity a) {
