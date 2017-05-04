@@ -1,8 +1,8 @@
 package wesayallright.timemanager.surface.scheduleFragment;
 
+import android.support.v4.app.Fragment;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
@@ -119,7 +119,7 @@ public class ScheduleFragment extends Fragment implements View.OnClickListener ,
 //        course.add(new Course("0 11", 4, 14, 0, 15, 50, "中国近现代史纲要", "生命B401", "段炼", 0xcf09F7F7, 1));
 //        course.add(new Course("2 11", 6, 18, 30, 21, 20, "程序设计技术", "信息A210", "赵长宽", 0xcfDD2248, 1));
 //        for(int i=0;i<course.size();i++)
-//            course.get(i).addinfile(sharedPreferences,editor);
+//            course.get(i).addinfile(sharedPreferences);
         //textview
         for (int i = 0; i < 7; i++)
             textarr.add(new ArrayList<TextView>());

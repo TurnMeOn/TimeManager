@@ -9,16 +9,15 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.Window;
 import android.widget.TextView;
 
-import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
 
 import wesayallright.timemanager.InnerLayer.LocalFile.LocalFile;
 import wesayallright.timemanager.InnerLayer.Package;
-import wesayallright.timemanager.InnerLayer.User;
 import wesayallright.timemanager.R;
 import wesayallright.timemanager.surface.activitiesFragment.Activities;
 import wesayallright.timemanager.surface.scheduleFragment.ScheduleFragment;
@@ -67,17 +66,21 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //保证程序没有标题栏 start
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getSupportActionBar().hide();
+        //end
         setContentView(R.layout.activity_main);
         showFragment(ACTIVITIES);
 
         // 设置程序路径
         LocalFile.setCwd(getApplicationContext().getFilesDir().getAbsolutePath());
         Log.i("Path", getApplicationContext().getFilesDir().getAbsolutePath());
-        try {
-            User u = User.signIn("rightID", "rightPassword");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            User u = User.signIn("rightID", "rightPassword");
+//        } catch (UnsupportedEncodingException e) {
+//            e.printStackTrace();
+//        }
 
         Package.dateFormatter = new SimpleDateFormat("yyyy-MM-dd", Locale.CHINA);
         Package.timeFormatter = new SimpleDateFormat("hh:mm", Locale.CHINA);
@@ -91,7 +94,7 @@ public class MainActivity extends AppCompatActivity implements
 
     private void hideFragments(FragmentTransaction ft) {
         if (calendar_fragment_instance != null) {
-            ft.hide(calendar_fragment_instance);
+            ft.hide( calendar_fragment_instance);
         }
         if (activities_fragment_instance != null) {
             ft.hide(activities_fragment_instance);
