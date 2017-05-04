@@ -12,9 +12,12 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
+<<<<<<< HEAD
         android:theme="@style/AppTheme"
         >
+=======
         android:theme="@style/AppTheme">
+>>>>>>> c9a922cf064797d1e97c964849b8d934f2b2141f
 
         <activity android:name="wesayallright.timemanager.surface.MainActivity">
             <intent-filter>
