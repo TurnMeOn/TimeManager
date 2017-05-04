@@ -75,11 +75,8 @@ public class MainActivity extends AppCompatActivity implements
 
         // 设置程序路径
         LocalFile.setCwd(getApplicationContext().getFilesDir().getAbsolutePath());
-<<<<<<< HEAD
 //        Log.i("Path", getApplicationContext().getFilesDir().getAbsolutePath());
-=======
         Log.i("Path", getApplicationContext().getFilesDir().getAbsolutePath());
->>>>>>> c9a922cf064797d1e97c964849b8d934f2b2141f
 //        try {
 //            User u = User.signIn("rightID", "rightPassword");
 //        } catch (UnsupportedEncodingException e) {
