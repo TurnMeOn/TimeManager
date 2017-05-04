@@ -388,7 +388,9 @@ public class ScheduleFragment extends Fragment implements View.OnClickListener ,
                 }
 
                 //(new SaveViewToImage()).save(schedule);
-                (new ShareDialog()).show(getActivity());
+                ShareDialog s = new  ShareDialog();
+                s.addPramas("key", "value"); // 就这样循环添加
+                s.show(getActivity());
 
                 break;
             case R.id.dialogweek:
