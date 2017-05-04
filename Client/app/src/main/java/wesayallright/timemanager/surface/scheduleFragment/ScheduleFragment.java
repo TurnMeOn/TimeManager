@@ -392,10 +392,11 @@ public class ScheduleFragment extends Fragment implements View.OnClickListener ,
                     for (int j = 0; j < parseweek.size(); j += 2) {
                         if (parseweek.get(j) <= (nowweek - firstweek) && (nowweek - firstweek) <= parseweek.get(j + 1)){
                             Course c =course.get(i);
-                            s.addPramas(""+count,c.name+"/"+(c.day+1)+"/"+c.starthour+":"+(c.startmin<10?"0"+c.startmin:c.startmin)+"/"+c.endhour+":"+(c.endmin<10?"0"+c.endmin:c.endmin));
+                            s.addPramas(""+(++count),c.name+"/"+(c.day+1)+"/"+c.starthour+":"+(c.startmin<10?"0"+c.startmin:c.startmin)+"/"+c.endhour+":"+(c.endmin<10?"0"+c.endmin:c.endmin));
                         }
                     }
                 }
+                s.setCount(count);
                 //(new SaveViewToImage()).save(schedule);
                 s.show(getActivity());
 
