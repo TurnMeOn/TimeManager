@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -26,11 +27,14 @@ import java.util.Map;
  * 与网络相关的一些操作
  */
 
-public class NetWork {
+public class NetWork implements Runnable{
     private static String host;
     private static int port;
     private static boolean connected;
     public NetWork() {}
+
+    public boolean finished = false;
+    public String result;
 
     public void setAddress(String s) {
         NetWork.host = s;
@@ -162,17 +166,12 @@ public class NetWork {
         return ans;
     }
 
-    public void POST (String addr, HashMap<String, String> data) {
-        addr = "http://alphamj.cn/timemanager/share.php";
+    @Override
+    public void run() {
+        String addr = "http://alphamj.cn/timemanager/share.php";
+        HashMap<String, String> data = new HashMap<>();
+
         try {
-            URL url = new URL(addr);
-
-
-            HttpURLConnection con = (HttpURLConnection)url.openConnection();
-
-            con.setRequestMethod("POST");
-            con.setRequestProperty("User-Agent", "Mozilla/5.0");
-            con.setRequestProperty("Accept-Language", "en-US,en;q=0.5");
 
             data.put("user", "super");
             data.put("count",  "10");
@@ -187,19 +186,23 @@ public class NetWork {
             data.put("8",  "课8/7/7:00/8:00");
             data.put("9",  "课9/2/10:00/13:00");
             data.put("10",  "课10/3/10:00/12:00");
-
             StringBuilder d = new StringBuilder();
-
             for (Map.Entry<String, String> i : data.entrySet()) {
                 d.append(i.getKey() + "=" + i.getValue() + "&");
             }
 
             String sd = new String(d);
 
+            URL url = new URL(addr);
+            HttpURLConnection con = (HttpURLConnection)url.openConnection();
+            con.setRequestMethod("POST");
+            con.setRequestProperty("User-Agent", "Mozilla/5.0");
+            con.setRequestProperty("Accept-Language", "en-US,en;q=0.5");
             con.setDoOutput(true);
             con.setDoInput(true);
-            DataOutputStream o = new DataOutputStream(con.getOutputStream());
-            o.writeBytes(sd);
+
+            OutputStream o = con.getOutputStream();
+            o.write(sd.getBytes("UTF-8"));
             o.flush();
             o.close();
 
@@ -220,10 +223,12 @@ public class NetWork {
 
             //打印结果
             System.out.println(response.toString());
+            result = response.toString();
 
         } catch (IOException e) {
+            result = "fail";
             e.printStackTrace();
         }
-
+        finished = true;
     }
 }

@@ -387,7 +387,7 @@ public class ScheduleFragment extends Fragment implements View.OnClickListener ,
                 }
 
                 //(new SaveViewToImage()).save(schedule);
-                (new NetWork()).POST("", new HashMap<String, String>());
+                (new ShareDialog()).show(getActivity());
 
                 break;
             case R.id.dialogweek:
