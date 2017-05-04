@@ -2,6 +2,7 @@ package wesayallright.timemanager.surface.scheduleFragment;
 
 import android.app.Activity;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -45,7 +46,7 @@ public class ShareDialog {
         TextView url = (TextView)v.findViewById(R.id.sd_destination);
 
 
-//        data.put("user", "super");
+       data.put("user", "super");
 //        data.put("count",  "10");
 //        data.put("startAndEnd","7:00/16:00");
 //        data.put("1",  "课1/1/7:00/10:00");
@@ -67,6 +68,8 @@ public class ShareDialog {
 
         while (!remote.finished)
             ;
+
+        Log.i("返回结果", "11" + remote.result);
 
         if (!remote.result.equals("fail")) {
             success.setText("成功");

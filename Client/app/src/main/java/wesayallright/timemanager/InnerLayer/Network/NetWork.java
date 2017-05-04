@@ -27,7 +27,7 @@ import java.util.Map;
  * 与网络相关的一些操作
  */
 
-public class NetWork implements Runnable{
+public class NetWork{
     private static String host;
     private static int port;
     private static boolean connected;
@@ -166,69 +166,5 @@ public class NetWork implements Runnable{
         return ans;
     }
 
-    @Override
-    public void run() {
-        String addr = "http://alphamj.cn/timemanager/share.php";
-        HashMap<String, String> data = new HashMap<>();
 
-        try {
-
-            data.put("user", "super");
-            data.put("count",  "10");
-            data.put("startAndEnd","7:00/16:00");
-            data.put("1",  "课1/1/7:00/10:00");
-            data.put("2",  "课2/2/7:00/8:00");
-            data.put("3",  "课3/3/8:00/9:30");
-            data.put("4",  "课4/4/7:00/8:00");
-            data.put("5",  "课5/5/11:00/13:00");
-            data.put("6",  "课6/4/10:00/15:00");
-            data.put("7",  "课7/6/7:00/9:00");
-            data.put("8",  "课8/7/7:00/8:00");
-            data.put("9",  "课9/2/10:00/13:00");
-            data.put("10",  "课10/3/10:00/12:00");
-            StringBuilder d = new StringBuilder();
-            for (Map.Entry<String, String> i : data.entrySet()) {
-                d.append(i.getKey() + "=" + i.getValue() + "&");
-            }
-
-            String sd = new String(d);
-
-            URL url = new URL(addr);
-            HttpURLConnection con = (HttpURLConnection)url.openConnection();
-            con.setRequestMethod("POST");
-            con.setRequestProperty("User-Agent", "Mozilla/5.0");
-            con.setRequestProperty("Accept-Language", "en-US,en;q=0.5");
-            con.setDoOutput(true);
-            con.setDoInput(true);
-
-            OutputStream o = con.getOutputStream();
-            o.write(sd.getBytes("UTF-8"));
-            o.flush();
-            o.close();
-
-            int responseCode = con.getResponseCode();
-            System.out.println("\nSending 'POST' request to URL : " + url);
-            System.out.println("Post parameters : " + addr);
-            System.out.println("Response Code : " + responseCode);
-
-            BufferedReader in = new BufferedReader(
-                    new InputStreamReader(con.getInputStream()));
-            String inputLine;
-            StringBuffer response = new StringBuffer();
-
-            while ((inputLine = in.readLine()) != null) {
-                response.append(inputLine);
-            }
-            in.close();
-
-            //打印结果
-            System.out.println(response.toString());
-            result = response.toString();
-
-        } catch (IOException e) {
-            result = "fail";
-            e.printStackTrace();
-        }
-        finished = true;
-    }
 }
