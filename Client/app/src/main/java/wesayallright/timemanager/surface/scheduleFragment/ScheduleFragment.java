@@ -36,12 +36,10 @@ import java.util.Objects;
 import wesayallright.timemanager.R;
 
 public class ScheduleFragment extends Fragment implements View.OnClickListener , AdapterView.OnItemSelectedListener , View.OnTouchListener , ToggleButton.OnCheckedChangeListener , NumberPicker.OnValueChangeListener {
-    private RelativeLayout layout1, layout2, layout3, layout4, layout5, layout6, layout7;
     private ArrayList<ArrayList<TextView>> textarr = new ArrayList<>();         //          textarr.get(day).get(xth in day)
     private ArrayList<ArrayList<ArrayList<Course>>> pcourse = new ArrayList<>();//pcourse.get(week).get(day).get(xth in day)
     private ArrayList<Course> course = new ArrayList<>();
     private ArrayList<RelativeLayout> layout = new ArrayList<>();
-    private boolean[] week_togglebutton = new boolean[21];
     private static final String TAG = "ScheduleFragment";
     private View view;
     private int firstmonth = 2;
@@ -56,7 +54,6 @@ public class ScheduleFragment extends Fragment implements View.OnClickListener ,
     private NumberPicker daypicker, starthhpicker, startmmpicker, endhhpicker, endmmpicker;
     private int dialog_day, dialog_starthh, dialog_startmm, dialog_endhh, dialog_endmm;
     private SharedPreferences sharedPreferences;
-    private SharedPreferences.Editor editor;
 
     @SuppressLint("NewApi")
     @Override
@@ -69,7 +66,6 @@ public class ScheduleFragment extends Fragment implements View.OnClickListener ,
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public void initializing() {
         sharedPreferences = getActivity().getSharedPreferences("Schedule_Fragment_data0", Context.MODE_PRIVATE);
-        editor = sharedPreferences.edit();
         //pcourse
         for (int i = 0; i < 20; i++) {
             pcourse.add(new ArrayList<ArrayList<Course>>());
@@ -77,7 +73,7 @@ public class ScheduleFragment extends Fragment implements View.OnClickListener ,
                 pcourse.get(i).add(new ArrayList<Course>());
         }
         //initializing date
-        if(today.get(Calendar.DAY_OF_WEEK)==Calendar.SUNDAY)
+        if (today.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY)
             realweek = today.get(Calendar.WEEK_OF_YEAR) - 1;
         else
             realweek = today.get(Calendar.WEEK_OF_YEAR);
@@ -87,13 +83,13 @@ public class ScheduleFragment extends Fragment implements View.OnClickListener ,
         firstweek = first.get(Calendar.WEEK_OF_YEAR);
         nowweek = today.get(Calendar.WEEK_OF_YEAR);
         //layout
-        layout.add(layout1 = (RelativeLayout) view.findViewById(R.id.SBrelative1));
-        layout.add(layout2 = (RelativeLayout) view.findViewById(R.id.SBrelative2));
-        layout.add(layout3 = (RelativeLayout) view.findViewById(R.id.SBrelative3));
-        layout.add(layout4 = (RelativeLayout) view.findViewById(R.id.SBrelative4));
-        layout.add(layout5 = (RelativeLayout) view.findViewById(R.id.SBrelative5));
-        layout.add(layout6 = (RelativeLayout) view.findViewById(R.id.SBrelative6));
-        layout.add(layout7 = (RelativeLayout) view.findViewById(R.id.SBrelative7));
+        layout.add((RelativeLayout) view.findViewById(R.id.SBrelative1));
+        layout.add((RelativeLayout) view.findViewById(R.id.SBrelative2));
+        layout.add((RelativeLayout) view.findViewById(R.id.SBrelative3));
+        layout.add((RelativeLayout) view.findViewById(R.id.SBrelative4));
+        layout.add((RelativeLayout) view.findViewById(R.id.SBrelative5));
+        layout.add((RelativeLayout) view.findViewById(R.id.SBrelative6));
+        layout.add((RelativeLayout) view.findViewById(R.id.SBrelative7));
         for (int i = 0; i < 7; i++) {
             layout.get(i).setOnClickListener(this);
         }
@@ -177,7 +173,7 @@ public class ScheduleFragment extends Fragment implements View.OnClickListener ,
     }
 
     private String weekproduce(ArrayList<Integer> week) {
-        String string = new String();
+        String string = "";
         for (int i = 0; i < week.size(); i++) {
             if (i != week.size() - 1)
                 string += week.get(i) + " ";
@@ -375,24 +371,23 @@ public class ScheduleFragment extends Fragment implements View.OnClickListener ,
                 View v = View.inflate(getActivity(), R.layout.schedule_fragment, null);
                 View schedule = v.findViewById(R.id.Sframe);
 
-                if(schedule == null) try {
+                if (schedule == null) try {
                     throw new Exception("获取日程view失败");
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                ShareDialog s = new  ShareDialog();
+                ShareDialog s = new ShareDialog();
                 //user name::
 
                 //::
-                s.setTime("7:00","23:59");
-                int count=0;
-                for(int i =0;i<course.size();i++)
-                {
+                s.setTime("7:00", "23:59");
+                int count = 0;
+                for (int i = 0; i < course.size(); i++) {
                     ArrayList<Integer> parseweek = weekparse(course.get(i).week);
                     for (int j = 0; j < parseweek.size(); j += 2) {
-                        if (parseweek.get(j) <= (nowweek - firstweek) && (nowweek - firstweek) <= parseweek.get(j + 1)){
-                            Course c =course.get(i);
-                            s.addPramas(""+(++count),c.name+"/"+(c.day+1)+"/"+c.starthour+":"+(c.startmin<10?"0"+c.startmin:c.startmin)+"/"+c.endhour+":"+(c.endmin<10?"0"+c.endmin:c.endmin));
+                        if (parseweek.get(j) <= (nowweek - firstweek) && (nowweek - firstweek) <= parseweek.get(j + 1)) {
+                            Course c = course.get(i);
+                            s.addPramas("" + (++count), c.name + "/" + (c.day + 1) + "/" + c.starthour + ":" + (c.startmin < 10 ? "0" + c.startmin : c.startmin) + "/" + c.endhour + ":" + (c.endmin < 10 ? "0" + c.endmin : c.endmin));
                         }
                     }
                 }
@@ -429,7 +424,7 @@ public class ScheduleFragment extends Fragment implements View.OnClickListener ,
                             weeks.add(19);
                         textweek.setText("");
                         for (int i = 0; i < weeks.size(); i += 2)
-                            if (weeks.get(i) == weeks.get(i + 1))
+                            if (Objects.equals(weeks.get(i), weeks.get(i + 1)))
                                 textweek.setText(textweek.getText() + "" + (weeks.get(i) + 1) + "周 ");
                             else
                                 textweek.setText(textweek.getText() + "" + (weeks.get(i) + 1) + "-" + (weeks.get(i + 1) + 1) + "周 ");
@@ -449,6 +444,7 @@ public class ScheduleFragment extends Fragment implements View.OnClickListener ,
                 weekdialog.show();
                 Window weekwindow = weekdialog.getWindow();
                 togglearray.clear();
+                assert weekwindow != null;
                 togglearray.add((ToggleButton) weekwindow.findViewById(R.id.week_togglebutton1));
                 togglearray.add((ToggleButton) weekwindow.findViewById(R.id.week_togglebutton2));
                 togglearray.add((ToggleButton) weekwindow.findViewById(R.id.week_togglebutton3));
@@ -534,6 +530,7 @@ public class ScheduleFragment extends Fragment implements View.OnClickListener ,
                 AlertDialog timedialog = timebuilder.create();
                 timedialog.show();
                 Window timewindow = timedialog.getWindow();
+                assert timewindow != null;
                 daypicker = (NumberPicker) timewindow.findViewById(R.id.daypicker);
                 starthhpicker = (NumberPicker) timewindow.findViewById(R.id.starthhpicker);
                 startmmpicker = (NumberPicker) timewindow.findViewById(R.id.startmmpicker);
@@ -600,13 +597,12 @@ public class ScheduleFragment extends Fragment implements View.OnClickListener ,
                 }
                 /*
                  *
-                 * DIALOGTIME END!!!
+                 * DIALOG TIME END!!!
                  *
                  */
                 break;
             default:
                 boolean is = false;
-                int Break = 0;
                 for (int i = 0; i < 7; i++)
                     if (view.equals(layout.get(i)))
                         is = true;
@@ -626,6 +622,7 @@ public class ScheduleFragment extends Fragment implements View.OnClickListener ,
                 editroom.setHorizontallyScrolling(false);
                 editname.setInputType(InputType.TYPE_TEXT_FLAG_MULTI_LINE);
                 editroom.setInputType(InputType.TYPE_TEXT_FLAG_MULTI_LINE);
+
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                 builder.setTitle("添加新课程");
                 builder.setPositiveButton("保存", new DialogInterface.OnClickListener() {
@@ -661,71 +658,12 @@ public class ScheduleFragment extends Fragment implements View.OnClickListener ,
                 builder.setView(dialogview);
                 AlertDialog dialog = builder.create();
                 dialog.show();
+                assert dialog.getWindow() !=null;
                 textweek = (TextView) dialog.getWindow().findViewById(R.id.dialogweek);
                 texttime = (TextView) dialog.getWindow().findViewById(R.id.dialogtime);
                 textweek.setOnClickListener(this);
                 texttime.setOnClickListener(this);
                 break;
-//                using = new Course();
-//                weeks.add(0);
-//                weeks.add(19);
-//                using.day = (today.get(Calendar.DAY_OF_WEEK) + 5) % 7;
-//                LayoutInflater inflater = LayoutInflater.from(getActivity());
-//                View dialogview = inflater.inflate(R.layout.schedule_course_dialog, null);
-//                //先注册一些控件
-//                final EditText editname, editroom;
-//                final TextView Textweek, Texttime;
-//                editname = (EditText) dialogview.findViewById(R.id.SCourseEditTextName);
-//                editroom = (EditText) dialogview.findViewById(R.id.SCourseEditTextRoom);
-//                Textweek = (TextView) dialogview.findViewById(R.id.dialogweek);
-//                Texttime = (TextView) dialogview.findViewById(R.id.dialogtime);
-//                editname.setSingleLine(false);
-//                editroom.setSingleLine(false);
-//                editname.setHorizontallyScrolling(false);
-//                editroom.setHorizontallyScrolling(false);
-//                editname.setInputType(InputType.TYPE_TEXT_FLAG_MULTI_LINE);
-//                editroom.setInputType(InputType.TYPE_TEXT_FLAG_MULTI_LINE);
-//                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-//                builder.setTitle("添加新课程");
-//                builder.setPositiveButton("保存", new DialogInterface.OnClickListener() {
-//                    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-//                    @Override
-//                    public void onClick(DialogInterface dialogInterface, int i) {
-//                        if (editname.getText().toString().trim() != "未填写" && editroom.getText().toString().trim() != "未填写" && Texttime.getText() != "未填写") {
-//                            using.name = editname.getText().toString().trim();
-//                            using.room = editroom.getText().toString().trim();
-//                            using.week = weekproduce(weeks);
-//                            Log.i(TAG, "onClick: the " + using.name + " is in the positive button!! And the weeks information is below:");
-//                            for (i = 0; i < weeks.size(); i++)
-//                                Log.i(TAG, "onClick: weeks[" + i + "]=" + weeks.get(i));
-//                            using.day = dialog_day;
-//                            using.starthour = dialog_starthh;
-//                            using.startmin = dialog_startmm;
-//                            using.endhour = dialog_endhh;
-//                            using.endmin = dialog_endmm;
-//                            using.addinfile(sharedPreferences, editor);
-//                            Log.i(TAG, "onClick: addinfile successed!");
-//                            readcourse();
-//                            addcourse(course, layout);
-//                            dialogInterface.dismiss();
-//                        }
-//
-//                    }
-//                });
-//                builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialogInterface, int i) {
-//                        dialogInterface.dismiss();
-//                    }
-//                });
-//                builder.setView(dialogview);
-//                AlertDialog dialog = builder.create();
-//                dialog.show();
-//                textweek = (TextView) dialog.getWindow().findViewById(R.id.dialogweek);
-//                texttime = (TextView) dialog.getWindow().findViewById(R.id.dialogtime);
-//                dialog.getWindow().findViewById(R.id.dialogweek).setOnClickListener(this);
-//                dialog.getWindow().findViewById(R.id.dialogtime).setOnClickListener(this);
-//                break;
         }
     }
 
@@ -746,7 +684,6 @@ public class ScheduleFragment extends Fragment implements View.OnClickListener ,
     private TextView textweek;
     private TextView texttime;
     private int bereplacedx, bereplacedy, bereplacedz;
-    private android.os.Handler handler;
     private View RunnableView;
     private boolean stop = false;
     private boolean running = false;
@@ -755,16 +692,16 @@ public class ScheduleFragment extends Fragment implements View.OnClickListener ,
     @Override
     public boolean onTouch(final View view, MotionEvent motionEvent) {
         Log.i(TAG, "onTouch: INTO ONTOUCH !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-        Log.i(TAG, "onTouch: Y:"+motionEvent.getY());
+        Log.i(TAG, "onTouch: Y:" + motionEvent.getY());
         RunnableView = view;
         int backgroundColor;
-        int i, j, Break,day=-1;
+        int i, j, Break;
         boolean is;
         switch (motionEvent.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 stop = false;
-                handler = new android.os.Handler();
+                android.os.Handler handler = new android.os.Handler();
                 final Runnable runnable = new Runnable() {
                     @Override
                     public void run() {
@@ -934,19 +871,20 @@ public class ScheduleFragment extends Fragment implements View.OnClickListener ,
                             dialog_startmm = using.startmin;
                             dialog_endhh = using.endhour;
                             dialog_endmm = using.endmin;
-                            texttime.setText(dayname[dialog_day] + " ");
+                            String time = "" + dayname[dialog_day] + " ";
                             if (dialog_starthh < 10)
-                                texttime.setText(texttime.getText() + "0");
-                            texttime.setText(texttime.getText() + "" + dialog_starthh + ":");
+                                time += "0";
+                            time += dialog_starthh + ":";
                             if (dialog_startmm < 10)
-                                texttime.setText(texttime.getText() + "0");
-                            texttime.setText(texttime.getText() + "" + dialog_startmm + "-");
+                                time += "0";
+                            time += dialog_startmm + "-";
                             if (dialog_endhh < 10)
-                                texttime.setText(texttime.getText() + "0");
-                            texttime.setText(texttime.getText() + "" + dialog_endhh + ":");
+                                time += "0";
+                            time += dialog_endhh + ":";
                             if (dialog_endmm < 10)
-                                texttime.setText(texttime.getText() + "0");
-                            texttime.setText(texttime.getText() + "" + dialog_endmm);
+                                time += "0";
+                            time += dialog_endmm;
+                            texttime.setText(time);
                             builder.setPositiveButton("保存", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
@@ -976,6 +914,7 @@ public class ScheduleFragment extends Fragment implements View.OnClickListener ,
                             builder.setView(dialogview);
                             AlertDialog dialog = builder.create();
                             dialog.show();
+                            assert dialog.getWindow()!=null;
                             textweek = (TextView) dialog.getWindow().findViewById(R.id.dialogweek);
                             texttime = (TextView) dialog.getWindow().findViewById(R.id.dialogtime);
                             textweek.setOnClickListener(this);
@@ -1226,5 +1165,4 @@ public class ScheduleFragment extends Fragment implements View.OnClickListener ,
                 break;
         }
     }
-
 }
