@@ -11,15 +11,15 @@ import java.util.List;
 
 import wesayallright.timemanager.R;
 
-public class MyAdapter extends BaseAdapter {
+class MyAdapter extends BaseAdapter {
     private List<String> mList;
     private Context mContext;
     private int itemid;
 
-    public MyAdapter(Context pContext, List<String> pList,int itemid) {
+    MyAdapter(Context pContext, List<String> pList, int itemid) {
         this.mContext = pContext;
         this.mList = pList;
-        this.itemid =itemid;
+        this.itemid = itemid;
     }
 
     @Override
@@ -44,7 +44,7 @@ public class MyAdapter extends BaseAdapter {
         if (convertView != null) {
             TextView _TextView1 = (TextView) convertView.findViewById(R.id.textView1);
             _TextView1.setText(mList.get(position));
-            if(position==itemid)
+            if (position == itemid)
                 _TextView1.setTextColor(0xffff0000);
         }
         return convertView;
