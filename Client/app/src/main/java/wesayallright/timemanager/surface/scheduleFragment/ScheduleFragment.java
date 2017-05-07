@@ -34,40 +34,23 @@ import java.util.Objects;
 import wesayallright.timemanager.R;
 
 public class ScheduleFragment extends Fragment implements View.OnClickListener , AdapterView.OnItemSelectedListener , View.OnTouchListener , ToggleButton.OnCheckedChangeListener , NumberPicker.OnValueChangeListener {
-    private ArrayList<ArrayList<TextView>> textarr = new ArrayList<>();         //          textarr.get(day).get(xth in day)
-    private ArrayList<ArrayList<ArrayList<Course>>> pcourse = new ArrayList<>();//pcourse.get(week).get(day).get(xth in day)
-    private ArrayList<Course> course = new ArrayList<>();
-    private ArrayList<RelativeLayout> layout = new ArrayList<>();
-    private static final String TAG = "ScheduleFragment";
-    private View view;
-    private int firstmonth = 2;
-    private int firstday = 27;
-    private Calendar first = Calendar.getInstance();
-    private Calendar today = Calendar.getInstance();
-    private int firstweek;
-    private int nowweek;
-    private int realweek;
-    private Course using;
-    private ArrayList<ToggleButton> togglearray = new ArrayList<>();
+    private int dialog_day, dialog_starthh, dialog_startmm, dialog_endhh, dialog_endmm,firstmonth = 2,firstday = 27,firstweek,realweek,nowweek,bereplacedx, bereplacedy, bereplacedz;
+    private boolean activated=false,running = false,islonger=false,stop = false,onValueChange_have_changed = false,bot=false,top=false;
     private NumberPicker daypicker, starthhpicker, startmmpicker, endhhpicker, endmmpicker;
-    private int dialog_day, dialog_starthh, dialog_startmm, dialog_endhh, dialog_endmm;
+    private Calendar today = Calendar.getInstance(),first = Calendar.getInstance();
+    private ArrayList<ArrayList<ArrayList<Course>>> pcourse = new ArrayList<>();//pcourse.get(week).get(day).get(xth in day)
+    private ArrayList<ArrayList<TextView>> textarr = new ArrayList<>();//textarr.get(day).get(xth in day)
+    private ArrayList<ToggleButton> togglearray = new ArrayList<>();
+    private ArrayList<RelativeLayout> layout = new ArrayList<>();
+    private ArrayList<Course> course = new ArrayList<>();
+    private static final String TAG = "ScheduleFragment";
+    private Course nullCourse = new Course(),using;
     private SharedPreferences sharedPreferences;
-    private EditText editname;
-    private EditText editroom;
-    private TextView textweek;
-    private TextView texttime;
-    private int bereplacedx, bereplacedy, bereplacedz;
-    private View RunnableView;
-    private boolean stop = false;
-    private boolean running = false;
-    private float lastY;
-    private boolean islonger=false;
-    private boolean top=false;
-    private boolean bot=false;
-    private boolean activated=false;
-    private Course nullCourse = new Course();
+    private EditText editname,editroom;
+    private TextView texttime,textweek;
     private ImageView STRImageView2;
-    private boolean onValueChange_have_changed = false;
+    private View RunnableView,view;
+    private float lastY;
 
     @SuppressLint("NewApi")
     @Override
