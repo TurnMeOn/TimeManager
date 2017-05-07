@@ -8,7 +8,8 @@
         android:id="@+id/SImage"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:src="@drawable/back_ground_image"/>
+        android:src="@drawable/backgroundimage3"
+        android:scaleType="fitXY"/>
     <LinearLayout
         android:id="@+id/SLinear"
         android:layout_width="match_parent"
@@ -273,10 +274,10 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:gravity="center"
-                        android:layout_weight="0.99"
+                        android:layout_weight="1"
                         android:textSize="20sp"
                         android:textColor="#ffffffff"
-                        android:text=""/>
+                        android:text="23"/>
                 </LinearLayout>
                 <RelativeLayout
                     android:id="@+id/SBrelative1"
