@@ -1,56 +1,60 @@
 package wesayallright.timemanager.surface.scheduleFragment;
 
+import android.graphics.drawable.GradientDrawable;
+import android.support.annotation.RequiresApi;
+import android.support.annotation.NonNull;
+import android.content.SharedPreferences;
 import android.annotation.SuppressLint;
+import android.content.DialogInterface;
+import android.support.v4.app.Fragment;
+import android.widget.CompoundButton;
+import android.widget.RelativeLayout;
+import android.view.LayoutInflater;
+import android.widget.NumberPicker;
+import android.widget.ToggleButton;
+import android.widget.AdapterView;
+import android.view.MotionEvent;
+import android.widget.ImageView;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.SharedPreferences;
-import android.graphics.drawable.GradientDrawable;
-import android.os.Build;
-import android.os.Bundle;
-import android.support.annotation.RequiresApi;
-import android.support.v4.app.Fragment;
+import android.widget.EditText;
+import android.widget.TextView;
 import android.text.InputType;
 import android.text.TextUtils;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.MotionEvent;
-import android.view.View;
+import android.widget.Button;
+import android.widget.Spinner;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.CompoundButton;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.NumberPicker;
-import android.widget.RelativeLayout;
-import android.widget.Spinner;
-import android.widget.TextView;
-import android.widget.ToggleButton;
+import android.os.Bundle;
+import android.view.View;
+import android.util.Log;
+import android.os.Build;
+
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Objects;
+import java.util.Arrays;
+
 import wesayallright.timemanager.R;
 
-public class ScheduleFragment extends Fragment implements View.OnClickListener , AdapterView.OnItemSelectedListener , View.OnTouchListener , ToggleButton.OnCheckedChangeListener , NumberPicker.OnValueChangeListener {
-    private int dialog_day, dialog_starthh, dialog_startmm, dialog_endhh, dialog_endmm,firstmonth = 2,firstday = 27,firstweek,realweek,nowweek,bereplacedx, bereplacedy, bereplacedz;
-    private boolean activated=false,running = false,islonger=false,stop = false,onValueChange_have_changed = false,bot=false,top=false;
-    private NumberPicker daypicker, starthhpicker, startmmpicker, endhhpicker, endmmpicker;
-    private Calendar today = Calendar.getInstance(),first = Calendar.getInstance();
-    private ArrayList<ArrayList<ArrayList<Course>>> pcourse = new ArrayList<>();//pcourse.get(week).get(day).get(xth in day)
-    private ArrayList<ArrayList<TextView>> textarr = new ArrayList<>();//textarr.get(day).get(xth in day)
-    private ArrayList<ToggleButton> togglearray = new ArrayList<>();
-    private ArrayList<RelativeLayout> layout = new ArrayList<>();
-    private ArrayList<Course> course = new ArrayList<>();
-    private static final String TAG = "ScheduleFragment";
-    private Course nullCourse = new Course(),using;
-    private SharedPreferences sharedPreferences;
-    private EditText editname,editroom;
-    private TextView texttime,textweek;
-    private ImageView STRImageView2;
-    private View RunnableView,view;
-    private float lastY;
+public class ScheduleFragment extends Fragment {
+    int DialogDay, DialogStartHour, DialogStartMinute, DialogEndHour, DialogEndMinute, FirstMonth = 2, FirstDay = 27, FirstWeek, RealWeek, NowWeek, BeReplacedX, BeReplacedY, BeReplacedZ;
+    boolean Activated = false, Running = false, IsLonger = false, Stop = false, Bottom = false, Top = false;
+    NumberPicker DayPicker, StartHourPicker, StartMinutePicker, EndHourPicker, EndMinutePicker;
+    Calendar Today = Calendar.getInstance(), First = Calendar.getInstance();
+    ArrayList<ArrayList<ArrayList<Course>>> CourseArray = new ArrayList<>();//CourseArray.get(week).get(day).get(xth in day)
+    ArrayList<ArrayList<TextView>> TextViewArray = new ArrayList<>();//TextViewArray.get(day).get(xth in day)
+    ArrayList<ToggleButton> ToggleArray = new ArrayList<>();
+    ArrayList<RelativeLayout> Layout = new ArrayList<>();
+    ArrayList<Integer> Weeks = new ArrayList<>();
+    ArrayList<Course> course = new ArrayList<>();
+    static final String TAG = "ScheduleFragment";
+    Course NullCourse = new Course(), using;
+    SharedPreferences sharedPreferences;
+    EditText EditName, EditRoom;
+    TextView TextTime, TextWeek;
+    ImageView STRImageView2;
+    View RunnableView, view;
+    float lastY;
 
     @SuppressLint("NewApi")
     @Override
@@ -63,328 +67,89 @@ public class ScheduleFragment extends Fragment implements View.OnClickListener ,
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     public void onDestroy() {
-        if(activated)
-            for(int i=0;i<course.size();i++)
-                if(course.get(i).equals(nullCourse))
+        if (Activated)
+            for (int i = 0; i < course.size(); i++)
+                if (course.get(i).equals(NullCourse))
                     course.get(i).removeinfile(sharedPreferences);
         super.onDestroy();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    public void initializing() {
+    void initializing() {
         sharedPreferences = getActivity().getSharedPreferences("Schedule_Fragment_data0", Context.MODE_PRIVATE);
-        //pcourse
-        for (int i = 0; i < 20; i++) {
-            pcourse.add(new ArrayList<ArrayList<Course>>());
-            for (int j = 0; j < 7; j++)
-                pcourse.get(i).add(new ArrayList<Course>());
-        }
-        //initializing date
-        if (today.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY)
-            realweek = today.get(Calendar.WEEK_OF_YEAR) - 1;
-        else
-            realweek = today.get(Calendar.WEEK_OF_YEAR);
-        first.set(Calendar.YEAR, 2017);
-        first.set(Calendar.MONTH, firstmonth - 1);
-        first.set(Calendar.DATE, firstday);
-        firstweek = first.get(Calendar.WEEK_OF_YEAR);
-        nowweek = today.get(Calendar.WEEK_OF_YEAR);
-        //layout
-        layout.add((RelativeLayout) view.findViewById(R.id.SBrelative1));
-        layout.add((RelativeLayout) view.findViewById(R.id.SBrelative2));
-        layout.add((RelativeLayout) view.findViewById(R.id.SBrelative3));
-        layout.add((RelativeLayout) view.findViewById(R.id.SBrelative4));
-        layout.add((RelativeLayout) view.findViewById(R.id.SBrelative5));
-        layout.add((RelativeLayout) view.findViewById(R.id.SBrelative6));
-        layout.add((RelativeLayout) view.findViewById(R.id.SBrelative7));
-        for (int i = 0; i < 7; i++) {
-            layout.get(i).setOnTouchListener(new View.OnTouchListener() {
-                @RequiresApi(api = Build.VERSION_CODES.M)
-                @Override
-                public boolean onTouch(View view, MotionEvent motionEvent) {
-                    switch (motionEvent.getAction()) {
-                        case MotionEvent.ACTION_UP:
-                            if (!activated) {
-                                activated = true;
-                                {//对勾按钮
-                                    ImageView imageView = new ImageView(getActivity());
-                                    STRImageView2 = imageView;
-                                    imageView.setImageResource(R.drawable.v);
-                                    RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                                    layoutParams.leftMargin = 775;
-                                    imageView.setLayoutParams(layoutParams);
-                                    imageView.setOnClickListener(new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View view) {
-                                            TextView textView = textarr.get(nullCourse.day).get(textarr.get(nullCourse.day).size() - 1);
-                                            RelativeLayout.LayoutParams Params = (RelativeLayout.LayoutParams) textView.getLayoutParams();
-                                            int topMargin = px2dip(getActivity().getApplicationContext(), Params.topMargin);
-                                            int mins = topMargin * 6 / 5 + 420;
-                                            int len = px2dip(getActivity().getApplicationContext(), Params.height) * 6 / 5;
-                                            nullCourse.starthour = mins / 60;
-                                            nullCourse.startmin = mins % 60;
-                                            nullCourse.endhour = (mins + len) / 60;
-                                            nullCourse.endmin = (mins + len) % 60;
-                                            using.removeinfile(sharedPreferences);
-                                            nullCourse.addinfile(sharedPreferences);
-                                            readcourse();
-                                            addcourse();
-                                            view.setVisibility(View.INVISIBLE);
-                                            ((RelativeLayout) view.getParent()).removeView(view);
-                                            activated = false;
-                                        }
-                                    });
-                                    ((RelativeLayout) getActivity().findViewById(R.id.STRimageview).getParent()).addView(imageView);
-                                    imageView.postInvalidate();
-                                }
-                                using = new Course(-2);
-                                weeks.clear();
-                                weeks.add(nowweek - firstweek);
-                                weeks.add(nowweek - firstweek);
-                                using.week = weekproduce(weeks);
-                                for (int i = 0; i < 7; i++)
-                                    if (view == layout.get(i))
-                                        using.day = i;
-                                int dip = px2dip(getActivity().getApplicationContext(), motionEvent.getY());
-                                int min = dip * 6 / 5;
-                                if (min < 90) {
-                                    using.starthour = 7;
-                                    using.startmin = 0;
-                                    using.endhour = 10;
-                                    using.endmin = 0;
-                                } else if (min > 870) {
-                                    using.starthour = 20;
-                                    using.startmin = 0;
-                                    using.endhour = 23;
-                                    using.endmin = 0;
-                                } else {
-                                    min -= 90;
-                                    using.starthour = min / 60 + 7;
-                                    using.startmin = min % 60;
-                                    using.endhour = using.starthour + 3;
-                                    using.endmin = using.startmin;
-                                }
-                                nullCourse.clone(using);
-                                using.addinfile(sharedPreferences);
-                                readcourse();
-                                addcourse();
-                                for (int i = 0; i < course.size(); i++) {
-                                    if (course.get(i).equals(nullCourse)) {
-                                        TextView textView = textarr.get(nullCourse.day).get(textarr.get(nullCourse.day).size() - 1);
-                                        //滑动过程中第一次显示时间
-                                        final RelativeLayout.LayoutParams Params = (RelativeLayout.LayoutParams) textView.getLayoutParams();
-                                        int topMargin = px2dip(getActivity().getApplicationContext(), Params.topMargin);
-                                        Log.i(TAG, "onTouch: topmargin:" + topMargin);
-                                        int mins = topMargin * 6 / 5 + 420;
-                                        int hei = px2dip(getActivity().getApplicationContext(), Params.height);
-                                        int len = hei * 6 / 5;
-                                        String text = mins / 60 + ":" + mins % 60 + "\n";
-                                        for (int j = 0; j < hei / 28 - 1; j++)
-                                            text += "\n";
-                                        text += len + "min";
-                                        for (int j = 0; j < hei / 14 - hei / 28 - 1; j++)
-                                            text += "\n";
-                                        text += (mins + len) / 60 + ":" + (mins + len) % 60;
-                                        textView.setText(text);
-                                        textView.setOnTouchListener(new View.OnTouchListener() {
-                                            @Override
-                                            public boolean onTouch(View view, MotionEvent motionEvent) {
-                                                switch (motionEvent.getAction()) {
-                                                    case MotionEvent.ACTION_DOWN:
-                                                        lastY = motionEvent.getRawY();
-                                                        if (motionEvent.getY() <= view.getHeight() / 4) {
-                                                            islonger = true;
-                                                            top = true;
-                                                            bot = false;
-                                                        } else if (motionEvent.getY() >= 3 * view.getHeight() / 4) {
-                                                            islonger = true;
-                                                            top = false;
-                                                            bot = true;
-                                                        } else {
-                                                            islonger = false;
-                                                            top = false;
-                                                            bot = false;
-                                                        }
-                                                        break;
-                                                    case MotionEvent.ACTION_UP:
-                                                        break;
-                                                    case MotionEvent.ACTION_CANCEL:
-                                                        view.getParent().requestDisallowInterceptTouchEvent(false);
-                                                        break;
-                                                    case MotionEvent.ACTION_MOVE:
-                                                        view.getParent().requestDisallowInterceptTouchEvent(true);
-                                                        if (!islonger) {
-                                                            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                                                            if (view.getTop() >= 0)
-                                                                params.setMargins(0, (int) (view.getTop() + motionEvent.getRawY() - lastY), 0, 0);
-                                                            else
-                                                                params.setMargins(0, 0, 0, 0);
-                                                            if (px2dip(getActivity().getApplicationContext(), view.getHeight()) + px2dip(getActivity().getApplicationContext(), view.getTop()) <= 800)
-                                                                params.height = view.getHeight();
-                                                            else
-                                                                params.height = dip2px(getActivity().getApplicationContext(), 800 - px2dip(getActivity().getApplicationContext(), view.getTop()));
+        InitializeTextViewCourseArray();
+        InitializeDate();
+        InitializeRelativeLayout();
+        InitializeSpinner();
+        InitializeImageView();
+    }
 
-//                                                            params.height = view.getHeight();
-                                                            view.setLayoutParams(params);
-                                                            lastY = motionEvent.getRawY();
-                                                            view.postInvalidate();
-                                                        } else if (bot) {
-                                                            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                                                            params.setMargins(view.getLeft(), view.getTop(), 0, 0);
-                                                            if (px2dip(getActivity().getApplicationContext(), view.getHeight()) + px2dip(getActivity().getApplicationContext(), view.getTop()) <= 800)
-                                                                params.height = view.getHeight() + (int) (motionEvent.getRawY() - lastY);
-                                                            else
-                                                                params.height = dip2px(getActivity().getApplicationContext(), 800 - px2dip(getActivity().getApplicationContext(), view.getTop()));
-                                                            view.setLayoutParams(params);
-                                                            lastY = motionEvent.getRawY();
-                                                            view.postInvalidate();
-                                                        } else if (top) {
-                                                            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                                                            if (view.getTop() >= 0)
-                                                                params.setMargins(view.getLeft(), view.getTop() + (int) (motionEvent.getRawY() - lastY), 0, 0);
-                                                            else
-                                                                params.setMargins(view.getLeft(), 0, 0, 0);
-                                                            params.height = view.getHeight() - (int) (motionEvent.getRawY() - lastY);
-                                                            view.setLayoutParams(params);
-                                                            lastY = motionEvent.getRawY();
-                                                            view.postInvalidate();
-                                                        }
-                                                        break;
-                                                }
-                                                TextView textView = textarr.get(nullCourse.day).get(textarr.get(nullCourse.day).size() - 1);
-                                                //滑动过程中显示时间
-                                                RelativeLayout.LayoutParams Params = (RelativeLayout.LayoutParams) textView.getLayoutParams();
-                                                int topMargin = px2dip(getActivity().getApplicationContext(), Params.topMargin);
-                                                int mins = topMargin * 6 / 5 + 420;
-                                                int hei = px2dip(getActivity().getApplicationContext(), Params.height);
-                                                int len = hei * 6 / 5;
-                                                String text = mins / 60 + ":" + mins % 60 + "\n";
-                                                if (hei / 14 >= 3) {
-                                                    for (int j = 0; j < hei / 28 - 1; j++)
-                                                        text += "\n";
-                                                    text += len + "min";
-                                                    for (int j = 0; j < hei / 14 - hei / 28 - 1; j++)
-                                                        text += "\n";
-                                                    text += (mins + len) / 60 + ":" + (mins + len) % 60;
-                                                } else {
-                                                    text += len + "min";
-                                                }
-                                                textView.setText(text);
-                                                textView.postInvalidate();
-                                                return true;
-                                            }
-                                        });
-                                        textView.postInvalidate();
-                                    }
-                                }
-                            } else {
-                                activated = false;
-                                STRImageView2.setVisibility(View.INVISIBLE);
-                                ((RelativeLayout) STRImageView2.getParent()).removeView(view);
-                                nullCourse.removeinfile(sharedPreferences);
-                                readcourse();
-                                addcourse();
-                            }
-                            break;
-                        default:
-                            break;
-                    }
-                    return true;
-                }
-            });
-        }
-        //course
-//        course.add(new Course("0 6", 0, 8, 30, 10, 20, "大学生心理与健康教育(二)", "建筑A302", "未设置", 0xcf11ee11, 1));
-//        course.add(new Course("0 6", 0, 10, 40, 12, 30, "高等数学(二)", "信息A112", "宋叔尼", 0xcfff0000, 1));
-//        course.add(new Course("10 17", 0, 10, 40, 12, 30, "面向对象程序设计(C++)", "生命B502", "张天成", 0xcff7f709, 1));
-//        course.add(new Course("5 16", 0, 14, 0, 15, 50, "大学英语(二)(听说)", "信息A309", "马新", 0xcf9222dd, 1));
-//        course.add(new Course("0 8", 0, 16, 10, 18, 0, "大学物理(双语)(一)", "文管B230", "陈肖慧", 0xcf3CA9C4, 1));
-//        course.add(new Course("0 18", 1, 8, 30, 10, 20, "高等数学(二)", "生命B201", "宋叔尼", 0xcfff0000, 1));
-//        course.add(new Course("0 9", 1, 14, 0, 15, 50, "离散数学(二)", "文管A129", "张一飞", 0xcfDD9222, 1));
-//        course.add(new Course("13 16", 1, 16, 10, 18, 0, "形势与政策(1)", "文管A227", "未设置", 0xcf09F7F7, 1));
-//        course.add(new Course("5 16", 2, 8, 30, 10, 20, "大学英语(二)", "建筑B517", "马新", 0xcf9222dd, 1));
-//        course.add(new Course("0 5 7 8 10 15", 2, 10, 40, 12, 30, "大学物理(双语)(一)", "文管B230", "陈肖慧", 0xcf3CA9C4, 1));
-//        course.add(new Course("0 1 3 3 5 18", 3, 8, 30, 10, 20, "高等数学(二)", "建筑A302", "宋叔尼", 0xcfff0000, 1));
-//        course.add(new Course("2 2", 3, 8, 30, 10, 20, "高等数学(二)", "信息A211", "宋叔尼", 0xcfff0000, 1));
-//        course.add(new Course("0 9", 3, 10, 40, 12, 30, "离散数学(二)", "文管B230", "张一飞", 0xcfDD9222, 1));
-//        course.add(new Course("10 17", 3, 10, 40, 12, 30, "面向对象程序设计(C++)", "建筑B403", "张天成", 0xcff7f709, 1));
-//        course.add(new Course("3 14", 3, 14, 0, 15, 50, "体育(二)", "风雨操场", "厉中山", 0xcf0909F7, 1));
-//        course.add(new Course("0 15", 3, 16, 10, 18, 0, "创业基础", "文管A227", "未设置", 0xcf42E61A, 1));
-//        course.add(new Course("5 5", 4, 8, 30, 10, 20, "高等数学(二)", "信息A214", "宋叔尼", 0xcfff0000, 1));
-//        course.add(new Course("13 13 15 15 17 17", 4, 8, 30, 10, 20, "高等数学(二)", "生命B201", "宋叔尼", 0xcfff0000, 1));
-//        course.add(new Course("0 11", 4, 14, 0, 15, 50, "中国近现代史纲要", "生命B401", "段炼", 0xcf09F7F7, 1));
-//        course.add(new Course("2 11", 6, 18, 30, 21, 20, "程序设计技术", "信息A210", "赵长宽", 0xcfDD2248, 1));
-//        for(int i=0;i<course.size();i++)
-//            course.get(i).addinfile(sharedPreferences);
-        //textview
+    void InitializeTextViewCourseArray() {
+        TextViewArray.clear();
+        CourseArray.clear();
         for (int i = 0; i < 7; i++)
-            textarr.add(new ArrayList<TextView>());
-        //spinner
+            TextViewArray.add(new ArrayList<TextView>());
+        for (int i = 0; i < 20; i++) {
+            CourseArray.add(new ArrayList<ArrayList<Course>>());
+            for (int j = 0; j < 7; j++)
+                CourseArray.get(i).add(new ArrayList<Course>());
+        }
+    }
+
+    void InitializeDate() {
+        if (Today.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY)
+            RealWeek = Today.get(Calendar.WEEK_OF_YEAR) - 1;
+        else
+            RealWeek = Today.get(Calendar.WEEK_OF_YEAR);
+        First.set(Calendar.YEAR, 2017);
+        First.set(Calendar.MONTH, FirstMonth - 1);
+        First.set(Calendar.DATE, FirstDay);
+        FirstWeek = First.get(Calendar.WEEK_OF_YEAR);
+        NowWeek = Today.get(Calendar.WEEK_OF_YEAR);
+    }
+
+    void InitializeRelativeLayout() {
+        Layout.add((RelativeLayout) view.findViewById(R.id.SBrelative1));
+        Layout.add((RelativeLayout) view.findViewById(R.id.SBrelative2));
+        Layout.add((RelativeLayout) view.findViewById(R.id.SBrelative3));
+        Layout.add((RelativeLayout) view.findViewById(R.id.SBrelative4));
+        Layout.add((RelativeLayout) view.findViewById(R.id.SBrelative5));
+        Layout.add((RelativeLayout) view.findViewById(R.id.SBrelative6));
+        Layout.add((RelativeLayout) view.findViewById(R.id.SBrelative7));
+        for (int i = 0; i < 7; i++)
+            Layout.get(i).setOnTouchListener(RelativeLayoutOnTouchListener());
+    }
+
+    void InitializeSpinner() {
         Spinner spinner = (Spinner) view.findViewById(R.id.STMspinner);
         ArrayList<String> list = new ArrayList<>();
-        list.add("第一周");
-        list.add("第二周");
-        list.add("第三周");
-        list.add("第四周");
-        list.add("第五周");
-        list.add("第六周");
-        list.add("第七周");
-        list.add("第八周");
-        list.add("第九周");
-        list.add("第十周");
-        list.add("第十一周");
-        list.add("第十二周");
-        list.add("第十三周");
-        list.add("第十四周");
-        list.add("第十五周");
-        list.add("第十六周");
-        list.add("第十七周");
-        list.add("第十八周");
-        list.add("第十九周");
-        list.add("第二十周");
-        MyAdapter adapter = new MyAdapter(this.getActivity(), list, realweek - firstweek);//变红的!!!
+        String[] Items = {"第一周", "第二周", "第三周", "第四周", "第五周", "第六周", "第七周", "第八周",
+                "第九周", "第十周", "第十一周", "第十二周", "第十三周", "第十四周", "第十五周", "第十六周",
+                "第十七周", "第十八周", "第十九周", "第二十周"};
+        list.addAll(Arrays.asList(Items).subList(0, 20));
+        MyAdapter adapter = new MyAdapter(this.getActivity(), list, RealWeek - FirstWeek);//变红的!!!
         spinner.setAdapter(adapter);
-        spinner.setSelection(realweek - firstweek);
-        spinner.setOnItemSelectedListener(this);
-        //ImageButton
-        ImageView imageButton = (ImageView) view.findViewById(R.id.STRimageview);
-        imageButton.setOnClickListener(this);
-        imageButton.setOnTouchListener(this);
-
+        spinner.setSelection(RealWeek - FirstWeek);
+        spinner.setOnItemSelectedListener(SpinnerOnItemSelectedListener());
     }
 
-    private void logiCourse(String tag,Course x){
-        if(x.day==-1)
-            return ;
-        String[] dayname={"周一","周二","周三","周四","周五","周六","周日"};
-        Log.i(TAG,tag+": Course: name:" + x.name + "  room:" + x.room);
-        Log.i(TAG,tag+": Course: week:" +x.week);
-        Log.i(TAG,tag+": Course: day:" + dayname[x.day] + "  from " + x.starthour + ":" + x.startmin + " to " + x.endhour + ":" + x.endmin);
-        Log.i(TAG,tag+": Course: teacher" +x.teacher+"  color:"+x.color+"  priority:"+x.priority);
-        Log.i(TAG,tag);
+    void InitializeImageView() {
+        ImageView STRImageView = (ImageView) view.findViewById(R.id.STRimageview);
+        STRImageView.setOnClickListener(STRImageViewOnClickListener());
+        STRImageView.setOnTouchListener(STRImageViewOnTouchListener());
     }
 
-    private ArrayList<Integer> weekparse(String week) {
-        ArrayList<Integer> arrayList = new ArrayList<>();
-        int num = -1;
-        for (int i = 0; i < week.length(); i++)
-            if ('0' <= week.charAt(i) && week.charAt(i) <= '9')
-                if (num != -1)
-                    num = num * 10 + week.charAt(i) - '0';
-                else
-                    num = week.charAt(i) - '0';
-            else {
-                if (num != -1) {
-                    arrayList.add(num);
-                    num = -1;
-                }
-            }
-        if (num != -1)
-            arrayList.add(num);
-        return arrayList;
+    static int ToPix(Context context, double dpValue) {
+        final float scale = context.getResources().getDisplayMetrics().density;
+        return (int) (dpValue * scale + 0.5f);
     }
 
-    private String weekproduce(ArrayList<Integer> week) {
+    static int ToDip(Context context, float pxValue) {
+        final float scale = context.getResources().getDisplayMetrics().density;
+        return (int) (pxValue / scale + 0.5f);
+    }
+
+    String WeekProduct(ArrayList<Integer> week) {
         String string = "";
         for (int i = 0; i < week.size(); i++) {
             if (i != week.size() - 1)
@@ -395,7 +160,7 @@ public class ScheduleFragment extends Fragment implements View.OnClickListener ,
         return string;
     }
 
-    private ArrayList<Integer> timeparse(String time) {
+    ArrayList<Integer> TimeParse(String time) {
         ArrayList<Integer> arrayList = new ArrayList<>();
         String[] day = new String[]{"一", "二", "三", "四", "五", "六", "日"};
         for (int i = 0; i < 7; i++)
@@ -419,104 +184,43 @@ public class ScheduleFragment extends Fragment implements View.OnClickListener ,
         return arrayList;
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    private void addcourse() {
-        Log.i(TAG, "addcourse: ADD COURSE START!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-        for (int i = 0; i < textarr.size(); i++)
-            for (int j = 0; j < textarr.get(i).size(); j++) {
-                textarr.get(i).get(j).setVisibility(View.INVISIBLE);
-                textarr.get(i).get(j).postInvalidate();
+    ArrayList<Integer> WeekParse(String week) {
+        ArrayList<Integer> arrayList = new ArrayList<>();
+        int num = -1;
+        for (int i = 0; i < week.length(); i++)
+            if ('0' <= week.charAt(i) && week.charAt(i) <= '9')
+                if (num != -1)
+                    num = num * 10 + week.charAt(i) - '0';
+                else
+                    num = week.charAt(i) - '0';
+            else {
+                if (num != -1) {
+                    arrayList.add(num);
+                    num = -1;
+                }
             }
-        textarr.clear();
-        for (int i = 0; i < 7; i++)
-            textarr.add(new ArrayList<TextView>());
-        pcourse.clear();
-        for (int i = 0; i < 20; i++) {
-            pcourse.add(new ArrayList<ArrayList<Course>>());
-            for (int j = 0; j < 7; j++)
-                pcourse.get(i).add(new ArrayList<Course>());
-        }
-        for (int i = 0; i < course.size(); i++) {
-            boolean in = false;
-            ArrayList<Integer> parseweek = weekparse(course.get(i).week);
-            if(parseweek.size()%2==1)
-                course.get(i).removeinfile(sharedPreferences);
-            for (int j = 0; j < parseweek.size(); j += 2) {
-                if (parseweek.get(j) <= (nowweek - firstweek) && (nowweek - firstweek) <= parseweek.get(j + 1))
-                    in = true;
-                logiCourse("addcourse",course.get(i));
-                if (in) break;
-            }
-            if (!in) continue;
-            //25dp:30min
-            double min, length;
-            textarr.get(course.get(i).day).add(new TextView(getActivity()));
-            pcourse.get(nowweek - firstweek).get(course.get(i).day).add(course.get(i));
-            TextView textView = textarr.get(course.get(i).day).get(textarr.get(course.get(i).day).size() - 1);
-            min = (course.get(i).endhour - course.get(i).starthour) * 60 + (course.get(i).endmin - course.get(i).startmin);
-            length = min * 5.0 / 6;
-            min = (course.get(i).starthour) + course.get(i).startmin / 60.0;
-            min -= 7;
-            min *= 50;
-            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-                    RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-            params.setMargins(0, dip2px(getActivity().getApplicationContext(), min), 0, 0);
-            params.height=dip2px(getActivity().getApplicationContext(), length);
-            textView.setLayoutParams(params);
-            textView.setOnTouchListener(this);
-            textView.setOnClickListener(this);
-            textView.setText("@" + course.get(i).room + "\n" + course.get(i).name);
-            textView.setTextSize(12);
-            textView.setTextColor(0xffffffff);
-            textView.setEms(4);
-            textView.setPadding(10, 0, 0, 0);
-            textView.setEllipsize(TextUtils.TruncateAt.END);
-            textView.setBackgroundResource(R.drawable.textview_style);
-            GradientDrawable myGrad = (GradientDrawable) textView.getBackground();
-            myGrad.setColor(course.get(i).color);
-            layout.get(course.get(i).day).addView(textView);
-        }
-        //postinvalidate
-        for (int i = 0; i < textarr.size(); i++)
-            for (int j = 0; j < textarr.get(i).size(); j++)
-                textarr.get(i).get(j).postInvalidate();
-        Log.i(TAG, "addcourse: ADD CCOURSE END!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+        if (num != -1)
+            arrayList.add(num);
+        return arrayList;
     }
 
-    private void readcourse() {
-        Log.i(TAG, "readcourse: READ COURSE START!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-        course.clear();
-        int num;
-        for (num = 0; ; num++)
-            if (sharedPreferences.getString("week" + num, null) == null)
-                break;
-        Log.i(TAG, "readcourse: num:" + num);
-        for (int i = 0; i < num; i++) {
-            course.add(
-                    new Course(
-                            sharedPreferences.getString("week" + i, null),
-                            sharedPreferences.getInt("day" + i, -1),
-                            sharedPreferences.getInt("starthour" + i, -1),
-                            sharedPreferences.getInt("startmin" + i, -1),
-                            sharedPreferences.getInt("endhour" + i, -1),
-                            sharedPreferences.getInt("endmin" + i, -1),
-                            sharedPreferences.getString("name" + i, null),
-                            sharedPreferences.getString("room" + i, null),
-                            sharedPreferences.getString("teacher" + i, null),
-                            sharedPreferences.getInt("color" + i, -1),
-                            sharedPreferences.getInt("priority" + i, -1)
-                    )
-            );
-        }
-        Log.i(TAG, "readcourse: READ COURSE END!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+    void LogICourse(String tag, Course x) {
+        if (x.day == -1)
+            return;
+        String[] dayname = {"周一", "周二", "周三", "周四", "周五", "周六", "周日"};
+        Log.i(TAG, tag + ": Course: name:" + x.name + "  room:" + x.room);
+        Log.i(TAG, tag + ": Course: week:" + x.week);
+        Log.i(TAG, tag + ": Course: day:" + dayname[x.day] + "  from " + x.starthour + ":" + x.startmin + " to " + x.endhour + ":" + x.endmin);
+        Log.i(TAG, tag + ": Course: teacher" + x.teacher + "  color:" + x.color + "  priority:" + x.priority);
+        Log.i(TAG, tag);
     }
 
-    private void redate(int position) {
+    void SetDate(int position) {
         //更改SM日期
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.YEAR, 2017);
-        calendar.set(Calendar.MONTH, firstmonth - 1);
-        calendar.set(Calendar.DATE, firstday);
+        calendar.set(Calendar.MONTH, FirstMonth - 1);
+        calendar.set(Calendar.DATE, FirstDay);
         calendar.add(Calendar.DAY_OF_YEAR, 7 * position);
         TextView month = (TextView) view.findViewById(R.id.SMmonth);
 
@@ -535,7 +239,7 @@ public class ScheduleFragment extends Fragment implements View.OnClickListener ,
         String daystr[] = {"一", "二", "三", "四", "五", "六", "日"};
 
         int dayofweek = (Calendar.getInstance().get(Calendar.DAY_OF_WEEK) + 5) % 7;
-        if (realweek == nowweek)
+        if (RealWeek == NowWeek)
             day[dayofweek].setBackgroundColor(0x7f1AE6E6);
         else
             day[dayofweek].setBackgroundColor(0x7fC3C7C0);
@@ -552,24 +256,338 @@ public class ScheduleFragment extends Fragment implements View.OnClickListener ,
             day[i].postInvalidate();
     }
 
-    public static int dip2px(Context context, double dpValue) {
-        final float scale = context.getResources().getDisplayMetrics().density;
-        return (int) (dpValue * scale + 0.5f);
+    void ReadCourse() {
+        Log.i(TAG, "ReadCourse: READ COURSE START!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+        course.clear();
+        int num;
+        for (num = 0; ; num++)
+            if (sharedPreferences.getString("week" + num, null) == null)
+                break;
+        Log.i(TAG, "ReadCourse: num:" + num);
+        for (int i = 0; i < num; i++) {
+            course.add(
+                    new Course(
+                            sharedPreferences.getString("week" + i, null),
+                            sharedPreferences.getInt("day" + i, -1),
+                            sharedPreferences.getInt("starthour" + i, -1),
+                            sharedPreferences.getInt("startmin" + i, -1),
+                            sharedPreferences.getInt("endhour" + i, -1),
+                            sharedPreferences.getInt("endmin" + i, -1),
+                            sharedPreferences.getString("name" + i, null),
+                            sharedPreferences.getString("room" + i, null),
+                            sharedPreferences.getString("teacher" + i, null),
+                            sharedPreferences.getInt("color" + i, -1),
+                            sharedPreferences.getInt("priority" + i, -1)
+                    )
+            );
+        }
+        Log.i(TAG, "ReadCourse: READ COURSE END!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
     }
 
-    public static int px2dip(Context context, float pxValue){
-        final float scale = context.getResources().getDisplayMetrics().density;
-        return (int)(pxValue / scale + 0.5f);
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    void AddCourse() {
+        Log.i(TAG, "AddCourse: ADD COURSE START!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+        for (int i = 0; i < TextViewArray.size(); i++)
+            for (int j = 0; j < TextViewArray.get(i).size(); j++) {
+                TextViewArray.get(i).get(j).setVisibility(View.INVISIBLE);
+                TextViewArray.get(i).get(j).postInvalidate();
+            }
+        InitializeTextViewCourseArray();
+        for (int i = 0; i < course.size(); i++) {
+            boolean in = false;
+            ArrayList<Integer> parseweek = WeekParse(course.get(i).week);
+            if (parseweek.size() % 2 == 1)
+                course.get(i).removeinfile(sharedPreferences);
+            for (int j = 0; j < parseweek.size(); j += 2) {
+                if (parseweek.get(j) <= (NowWeek - FirstWeek) && (NowWeek - FirstWeek) <= parseweek.get(j + 1))
+                    in = true;
+                LogICourse("AddCourse", course.get(i));
+                if (in) break;
+            }
+            if (!in) continue;
+            //25dp:30min
+            double min, length;
+            TextViewArray.get(course.get(i).day).add(new TextView(getActivity()));
+            CourseArray.get(NowWeek - FirstWeek).get(course.get(i).day).add(course.get(i));
+            TextView textView = TextViewArray.get(course.get(i).day).get(TextViewArray.get(course.get(i).day).size() - 1);
+            min = (course.get(i).endhour - course.get(i).starthour) * 60 + (course.get(i).endmin - course.get(i).startmin);
+            length = min * 5.0 / 6;
+            min = (course.get(i).starthour) + course.get(i).startmin / 60.0;
+            min -= 7;
+            min *= 50;
+            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+                    RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+            params.setMargins(0, ToPix(getActivity().getApplicationContext(), min), 0, 0);
+            params.height = ToPix(getActivity().getApplicationContext(), length);
+            textView.setLayoutParams(params);
+            textView.setOnTouchListener(TextCourseOnTouchListener());
+            textView.setText("@" + course.get(i).room + "\n" + course.get(i).name);
+            textView.setTextSize(12);
+            textView.setTextColor(0xffffffff);
+            textView.setEms(4);
+            textView.setPadding(10, 0, 0, 0);
+            textView.setEllipsize(TextUtils.TruncateAt.END);
+            textView.setBackgroundResource(R.drawable.textview_style);
+            GradientDrawable myGrad = (GradientDrawable) textView.getBackground();
+            myGrad.setColor(course.get(i).color);
+            Layout.get(course.get(i).day).addView(textView);
+        }
+        for (int i = 0; i < TextViewArray.size(); i++)
+            for (int j = 0; j < TextViewArray.get(i).size(); j++)
+                TextViewArray.get(i).get(j).postInvalidate();
+        Log.i(TAG, "AddCourse: ADD CCOURSE END!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
     }
 
-    private ArrayList<Integer> weeks = new ArrayList<>();
+    @NonNull
+    AdapterView.OnItemSelectedListener SpinnerOnItemSelectedListener() {
+        return new AdapterView.OnItemSelectedListener() {
+            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
+                NowWeek = position + FirstWeek;
+                ReadCourse();
+                for (int i = 0; i < course.size(); i++)
+                    if (course.get(i).equals(NullCourse)) {
+                        course.get(i).removeinfile(sharedPreferences);
+                        course.remove(i);
+                        if (Activated) {
+                            Activated = false;
+                            STRImageView2.setVisibility(View.INVISIBLE);
+                            ((RelativeLayout) STRImageView2.getParent()).removeView(view);
+                        }
+                    }
+                AddCourse();
+                SetDate(position);
+            }
 
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    @Override
-    public void onClick(View view) {
-        Log.i("ON CLICK", "ON CLICK CLICK CLICK CLICK CLICK CLICK CLICK CLICK");
-        switch (view.getId()) {
-            case R.id.STRimageview:
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        };
+    }
+
+    View.OnTouchListener RelativeLayoutOnTouchListener() {
+        return new View.OnTouchListener() {
+            @RequiresApi(api = Build.VERSION_CODES.M)
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                switch (motionEvent.getAction()) {
+                    case MotionEvent.ACTION_UP:
+                        if (!Activated)
+                            AddNullCourse(view, motionEvent);
+                        else
+                            CancelNullCourse(view);
+                        break;
+                    default:
+                        break;
+                }
+                return true;
+            }
+
+            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+            private void AddNullCourse(View view, MotionEvent motionEvent) {
+                Activated = true;
+                // 对勾按钮
+                AddSTRImageView2();
+                using = new Course(-2);
+                Weeks.clear();
+                Weeks.add(NowWeek - FirstWeek);
+                Weeks.add(NowWeek - FirstWeek);
+                using.week = WeekProduct(Weeks);
+                for (int i = 0; i < 7; i++)
+                    if (view == Layout.get(i))
+                        using.day = i;
+                int dip = ToDip(getActivity().getApplicationContext(), motionEvent.getY());
+                int min = dip * 6 / 5;
+                if (min < 90) {
+                    using.starthour = 7;
+                    using.startmin = 0;
+                    using.endhour = 10;
+                    using.endmin = 0;
+                } else if (min > 870) {
+                    using.starthour = 20;
+                    using.startmin = 0;
+                    using.endhour = 23;
+                    using.endmin = 0;
+                } else {
+                    min -= 90;
+                    using.starthour = min / 60 + 7;
+                    using.startmin = min % 60;
+                    using.endhour = using.starthour + 3;
+                    using.endmin = using.startmin;
+                }
+                NullCourse.clone(using);
+                using.addinfile(sharedPreferences);
+                ReadCourse();
+                AddCourse();
+                for (int i = 0; i < course.size(); i++)
+                    if (course.get(i).equals(NullCourse)) {
+                        TextView textView = TextViewArray.get(NullCourse.day).get(TextViewArray.get(NullCourse.day).size() - 1);
+                        //滑动过程中第一次显示时间
+                        final RelativeLayout.LayoutParams Params = (RelativeLayout.LayoutParams) textView.getLayoutParams();
+                        int topMargin = ToDip(getActivity().getApplicationContext(), Params.topMargin);
+                        Log.i(TAG, "onTouch: topmargin:" + topMargin);
+                        int mins = topMargin * 6 / 5 + 420;
+                        int hei = ToDip(getActivity().getApplicationContext(), Params.height);
+                        int len = hei * 6 / 5;
+                        String text = mins / 60 + ":" + mins % 60 + "\n";
+                        for (int j = 0; j < hei / 28 - 1; j++)
+                            text += "\n";
+                        text += len + "min";
+                        for (int j = 0; j < hei / 14 - hei / 28 - 1; j++)
+                            text += "\n";
+                        text += (mins + len) / 60 + ":" + (mins + len) % 60;
+                        textView.setText(text);
+                        textView.setOnTouchListener(NullCourseOnTouchListener());
+                        textView.postInvalidate();
+                    }
+            }
+
+            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+            private void CancelNullCourse(View view) {
+                Activated = false;
+                STRImageView2.setVisibility(View.INVISIBLE);
+                ((RelativeLayout) STRImageView2.getParent()).removeView(view);
+                NullCourse.removeinfile(sharedPreferences);
+                ReadCourse();
+                AddCourse();
+            }
+
+            private void AddSTRImageView2() {
+                ImageView imageView = new ImageView(getActivity());
+                STRImageView2 = imageView;
+                imageView.setImageResource(R.drawable.v);
+                RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                layoutParams.leftMargin = 775;
+                imageView.setLayoutParams(layoutParams);
+                imageView.setOnClickListener(STRImageView2OnClickListener());
+                ((RelativeLayout) getActivity().findViewById(R.id.STRimageview).getParent()).addView(imageView);
+                imageView.postInvalidate();
+            }
+
+            @NonNull
+            private View.OnClickListener STRImageView2OnClickListener() {
+                return new View.OnClickListener() {
+                    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+                    @Override
+                    public void onClick(View view) {
+                        TextView textView = TextViewArray.get(NullCourse.day).get(TextViewArray.get(NullCourse.day).size() - 1);
+                        RelativeLayout.LayoutParams Params = (RelativeLayout.LayoutParams) textView.getLayoutParams();
+                        int topMargin = ToDip(getActivity().getApplicationContext(), Params.topMargin);
+                        int mins = topMargin * 6 / 5 + 420;
+                        int len = ToDip(getActivity().getApplicationContext(), Params.height) * 6 / 5;
+                        NullCourse.starthour = mins / 60;
+                        NullCourse.startmin = mins % 60;
+                        NullCourse.endhour = (mins + len) / 60;
+                        NullCourse.endmin = (mins + len) % 60;
+                        using.removeinfile(sharedPreferences);
+                        NullCourse.addinfile(sharedPreferences);
+                        ReadCourse();
+                        AddCourse();
+                        view.setVisibility(View.INVISIBLE);
+                        ((RelativeLayout) view.getParent()).removeView(view);
+                        Activated = false;
+                    }
+                };
+            }
+
+            @NonNull
+            private View.OnTouchListener NullCourseOnTouchListener() {
+                return new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View view, MotionEvent motionEvent) {
+                        switch (motionEvent.getAction()) {
+                            case MotionEvent.ACTION_DOWN:
+                                lastY = motionEvent.getRawY();
+                                if (motionEvent.getY() <= view.getHeight() / 4) {
+                                    IsLonger = true;
+                                    Top = true;
+                                    Bottom = false;
+                                } else if (motionEvent.getY() >= 3 * view.getHeight() / 4) {
+                                    IsLonger = true;
+                                    Top = false;
+                                    Bottom = true;
+                                } else {
+                                    IsLonger = false;
+                                    Top = false;
+                                    Bottom = false;
+                                }
+                                break;
+                            case MotionEvent.ACTION_UP:
+                                break;
+                            case MotionEvent.ACTION_CANCEL:
+                                view.getParent().requestDisallowInterceptTouchEvent(false);
+                                break;
+                            case MotionEvent.ACTION_MOVE:
+                                view.getParent().requestDisallowInterceptTouchEvent(true);
+                                if (!IsLonger) {
+                                    RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                                    if (view.getTop() >= 0)
+                                        params.setMargins(0, (int) (view.getTop() + motionEvent.getRawY() - lastY), 0, 0);
+                                    else
+                                        params.setMargins(0, 0, 0, 0);
+                                    if (ToDip(getActivity().getApplicationContext(), view.getHeight()) + ToDip(getActivity().getApplicationContext(), view.getTop()) <= 800)
+                                        params.height = view.getHeight();
+                                    else
+                                        params.height = ToPix(getActivity().getApplicationContext(), 800 - ToDip(getActivity().getApplicationContext(), view.getTop()));
+                                    view.setLayoutParams(params);
+                                    lastY = motionEvent.getRawY();
+                                    view.postInvalidate();
+                                } else if (Bottom) {
+                                    RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                                    params.setMargins(view.getLeft(), view.getTop(), 0, 0);
+                                    if (ToDip(getActivity().getApplicationContext(), view.getHeight()) + ToDip(getActivity().getApplicationContext(), view.getTop()) <= 800)
+                                        params.height = view.getHeight() + (int) (motionEvent.getRawY() - lastY);
+                                    else
+                                        params.height = ToPix(getActivity().getApplicationContext(), 800 - ToDip(getActivity().getApplicationContext(), view.getTop()));
+                                    view.setLayoutParams(params);
+                                    lastY = motionEvent.getRawY();
+                                    view.postInvalidate();
+                                } else if (Top) {
+                                    RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                                    if (view.getTop() >= 0)
+                                        params.setMargins(view.getLeft(), view.getTop() + (int) (motionEvent.getRawY() - lastY), 0, 0);
+                                    else
+                                        params.setMargins(view.getLeft(), 0, 0, 0);
+                                    params.height = view.getHeight() - (int) (motionEvent.getRawY() - lastY);
+                                    view.setLayoutParams(params);
+                                    lastY = motionEvent.getRawY();
+                                    view.postInvalidate();
+                                }
+                                break;
+                        }
+                        TextView textView = TextViewArray.get(NullCourse.day).get(TextViewArray.get(NullCourse.day).size() - 1);
+                        //滑动过程中显示时间
+                        RelativeLayout.LayoutParams Params = (RelativeLayout.LayoutParams) textView.getLayoutParams();
+                        int topMargin = ToDip(getActivity().getApplicationContext(), Params.topMargin);
+                        int mins = topMargin * 6 / 5 + 420;
+                        int hei = ToDip(getActivity().getApplicationContext(), Params.height);
+                        int len = hei * 6 / 5;
+                        String text = mins / 60 + ":" + mins % 60 + "\n";
+                        if (hei / 14 >= 3) {
+                            for (int j = 0; j < hei / 28 - 1; j++)
+                                text += "\n";
+                            text += len + "min";
+                            for (int j = 0; j < hei / 14 - hei / 28 - 1; j++)
+                                text += "\n";
+                            text += (mins + len) / 60 + ":" + (mins + len) % 60;
+                        } else {
+                            text += len + "min";
+                        }
+                        textView.setText(text);
+                        textView.postInvalidate();
+                        return true;
+                    }
+                };
+            }
+        };
+    }
+
+    View.OnClickListener STRImageViewOnClickListener() {
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
                 /* 分享 */
                 // send Information to server
                 // get return from server
@@ -591,9 +609,9 @@ public class ScheduleFragment extends Fragment implements View.OnClickListener ,
                 s.setTime("7:00", "23:59");
                 int count = 0;
                 for (int i = 0; i < course.size(); i++) {
-                    ArrayList<Integer> parseweek = weekparse(course.get(i).week);
+                    ArrayList<Integer> parseweek = WeekParse(course.get(i).week);
                     for (int j = 0; j < parseweek.size(); j += 2) {
-                        if (parseweek.get(j) <= (nowweek - firstweek) && (nowweek - firstweek) <= parseweek.get(j + 1)) {
+                        if (parseweek.get(j) <= (NowWeek - FirstWeek) && (NowWeek - FirstWeek) <= parseweek.get(j + 1)) {
                             Course c = course.get(i);
                             s.addPramas("" + (++count), c.name + "/" + (c.day + 1) + "/" + c.starthour + ":" + (c.startmin < 10 ? "0" + c.startmin : c.startmin) + "/" + c.endhour + ":" + (c.endmin < 10 ? "0" + c.endmin : c.endmin));
                         }
@@ -602,335 +620,266 @@ public class ScheduleFragment extends Fragment implements View.OnClickListener ,
                 s.setCount(count);
                 //(new SaveViewToImage()).save(schedule);
                 s.show(getActivity());
+            }
+        };
+    }
 
-                break;
-            case R.id.dialogweek:
-                LayoutInflater inflaterweek = LayoutInflater.from(getActivity());
-                View weekview = inflaterweek.inflate(R.layout.schedule_week_dialog, null);
-                final AlertDialog.Builder weekbuilder = new AlertDialog.Builder(getActivity());
-                weekbuilder.setTitle("周数选择");
-                //设置确定取消按钮
-                weekbuilder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int which) {//save
-                        boolean successive = false;
-                        int start = -1;
-                        weeks.clear();
-                        for (int i = 0; i < 20; i++)
-                            if (togglearray.get(i).isChecked()) {
-                                successive = true;
-                                if (start == -1) {
-                                    start = i;
-                                    weeks.add(i);
-                                }
-                            } else if (successive) {
-                                successive = false;
-                                weeks.add(i - 1);
-                                start = -1;
-                            }
-                        if (successive)
-                            weeks.add(19);
-                        textweek.setText("");
-                        for (int i = 0; i < weeks.size(); i += 2)
-                            if (Objects.equals(weeks.get(i), weeks.get(i + 1)))
-                                textweek.setText(textweek.getText() + "" + (weeks.get(i) + 1) + "周 ");
-                            else
-                                textweek.setText(textweek.getText() + "" + (weeks.get(i) + 1) + "-" + (weeks.get(i + 1) + 1) + "周 ");
-                        dialogInterface.dismiss();
-                    }
-                });
-                weekbuilder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int which) {//cancel
-                        for (int i = 0; i < togglearray.size(); i++)
-                            togglearray.get(i).setChecked(false);
-                        dialogInterface.dismiss();
-                    }
-                });
+    View.OnTouchListener STRImageViewOnTouchListener() {
+        return new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                switch (motionEvent.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        view.setBackgroundResource(R.drawable.plus_reverse);
+                        view.postInvalidate();
+                        break;
+                    case MotionEvent.ACTION_UP:
+                    case MotionEvent.ACTION_CANCEL:
+                        view.setBackgroundResource(R.drawable.plus);
+                        view.postInvalidate();
+                        break;
+                    default:
+                        break;
+                }
+                return true;
+            }
+        };
+    }
 
-                weekbuilder.setView(weekview);
-                AlertDialog weekdialog = weekbuilder.create();
-                weekdialog.show();
-                Window weekwindow = weekdialog.getWindow();
-                togglearray.clear();
-                assert weekwindow != null;
-                //togglearray.add((ToggleButton) weekwindow.findViewById);x28
-                togglearray.add((ToggleButton) weekwindow.findViewById(R.id.week_togglebutton1));
-                togglearray.add((ToggleButton) weekwindow.findViewById(R.id.week_togglebutton2));
-                togglearray.add((ToggleButton) weekwindow.findViewById(R.id.week_togglebutton3));
-                togglearray.add((ToggleButton) weekwindow.findViewById(R.id.week_togglebutton4));
-                togglearray.add((ToggleButton) weekwindow.findViewById(R.id.week_togglebutton5));
-                togglearray.add((ToggleButton) weekwindow.findViewById(R.id.week_togglebutton6));
-                togglearray.add((ToggleButton) weekwindow.findViewById(R.id.week_togglebutton7));
-                togglearray.add((ToggleButton) weekwindow.findViewById(R.id.week_togglebutton8));
-                togglearray.add((ToggleButton) weekwindow.findViewById(R.id.week_togglebutton9));
-                togglearray.add((ToggleButton) weekwindow.findViewById(R.id.week_togglebutton10));
-                togglearray.add((ToggleButton) weekwindow.findViewById(R.id.week_togglebutton11));
-                togglearray.add((ToggleButton) weekwindow.findViewById(R.id.week_togglebutton12));
-                togglearray.add((ToggleButton) weekwindow.findViewById(R.id.week_togglebutton13));
-                togglearray.add((ToggleButton) weekwindow.findViewById(R.id.week_togglebutton14));
-                togglearray.add((ToggleButton) weekwindow.findViewById(R.id.week_togglebutton15));
-                togglearray.add((ToggleButton) weekwindow.findViewById(R.id.week_togglebutton16));
-                togglearray.add((ToggleButton) weekwindow.findViewById(R.id.week_togglebutton17));
-                togglearray.add((ToggleButton) weekwindow.findViewById(R.id.week_togglebutton18));
-                togglearray.add((ToggleButton) weekwindow.findViewById(R.id.week_togglebutton19));
-                togglearray.add((ToggleButton) weekwindow.findViewById(R.id.week_togglebutton20));
-                togglearray.add((ToggleButton) weekwindow.findViewById(R.id.week_togglebutton1_5));
-                togglearray.add((ToggleButton) weekwindow.findViewById(R.id.week_togglebutton6_10));
-                togglearray.add((ToggleButton) weekwindow.findViewById(R.id.week_togglebutton11_15));
-                togglearray.add((ToggleButton) weekwindow.findViewById(R.id.week_togglebutton16_20));
-                togglearray.add((ToggleButton) weekwindow.findViewById(R.id.week_togglebuttonsingle));
-                togglearray.add((ToggleButton) weekwindow.findViewById(R.id.week_togglebuttondouble));
-                togglearray.add((ToggleButton) weekwindow.findViewById(R.id.week_togglebuttonall));
-                togglearray.add((ToggleButton) weekwindow.findViewById(R.id.week_togglebuttonthis));
-                //togglearray.get(?).set(OnCheckChangeListener/Checked)
-                for (int i = 0; i < togglearray.size(); i++)
-                    togglearray.get(i).setOnCheckedChangeListener(this);
-                for (int i = 0; i < 20; i++)
-                    togglearray.get(i).setChecked(false);
-                for (int i = 0; i < weeks.size(); i += 2)
-                    for (int j = weeks.get(i); j <= weeks.get(i + 1); j++)
-                        togglearray.get(j).setChecked(true);
-                break;
-            case R.id.starthhplus:
-                starthhpicker.setValue((starthhpicker.getValue() + 6) % (starthhpicker.getMaxValue() + 1));
-                break;
-            case R.id.startmmplus:
-                startmmpicker.setValue((startmmpicker.getValue() + 15) % (startmmpicker.getMaxValue() + 1));
-                break;
-            case R.id.endhhplus:
-                endhhpicker.setValue((endhhpicker.getValue() + 6) % (endhhpicker.getMaxValue() + 1));
-                break;
-            case R.id.endmmplus:
-                endmmpicker.setValue((endmmpicker.getValue() + 15) % (endmmpicker.getMaxValue() + 1));
-                break;
-            case R.id.dialogtime:
-                LayoutInflater timeinflater = LayoutInflater.from(getActivity());
-                View timeview = timeinflater.inflate(R.layout.schedule_time_dialog, null);
-                AlertDialog.Builder timebuilder = new AlertDialog.Builder(getActivity());
-                timebuilder.setTitle("时间选择");
-                //设置确定取消按钮
-                timebuilder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {//saving time
-                        dialog_starthh = starthhpicker.getValue() + 7;
-                        dialog_startmm = startmmpicker.getValue();
-                        dialog_endhh = endhhpicker.getValue() + 7;
-                        dialog_endmm = endmmpicker.getValue();
-                        texttime.setText(
-                                daypicker.getDisplayedValues()[(dialog_day = daypicker.getValue())] + " " +
-                                        starthhpicker.getDisplayedValues()[starthhpicker.getValue()] +
-                                        startmmpicker.getDisplayedValues()[startmmpicker.getValue()] + "到" +
-                                        endhhpicker.getDisplayedValues()[endhhpicker.getValue()] +
-                                        endmmpicker.getDisplayedValues()[endmmpicker.getValue()]);
-                        dialogInterface.dismiss();
+
+    View.OnTouchListener TextCourseOnTouchListener() {
+        return new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                RunnableView = view;
+                switch (motionEvent.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        LongClickEvent();
+                        BackGroundColorChange(view);
+                        break;
+                    case MotionEvent.ACTION_CANCEL:
+                        if (StopLongClickEvent()) break;
+                        BackGroundColorRecover(view);
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        //长按事件的时间不足 停止触发
+                        if (StopLongClickEvent()) break;
+                        BackGroundColorRecover(view);
+                        CreateDialog();
+                        break;
+                    default:
+                        break;
+                }
+                return false;
+            }
+
+            void BackGroundColorChange(View view) {
+                boolean is = false;
+                for (int i = 0; i < 7; i++)
+                    if (view.getParent() == Layout.get(i))
+                        is = true;
+                if (!is)
+                    return;
+                int backgroundColor;
+                int Break;
+                int i;
+                int j;
+                backgroundColor = 1;
+                Break = 0;
+                for (i = 0; i < TextViewArray.size(); i++) {
+                    for (j = 0; j < TextViewArray.get(i).size(); j++)
+                        if (TextViewArray.get(i).get(j).getText() == ((TextView) view).getText()
+                                && TextViewArray.get(i).get(j).getParent() == view.getParent()
+                                && TextViewArray.get(i).get(j).getY() == view.getY()) {
+                            backgroundColor = CourseArray.get(NowWeek - FirstWeek).get(i).get(j).color;
+                            Break = 1;
+                            break;
+                        }
+                    if (Break == 1)
+                        break;
+                }
+                backgroundColor = backgroundColor % 0x01000000 + 0x3f000000;
+                ((GradientDrawable) view.getBackground()).setColor(backgroundColor);
+                view.postInvalidate();
+            }
+
+            void BackGroundColorRecover(View view) {
+                boolean is = false;
+                for (int i = 0; i < 7; i++)
+                    if (view.getParent() == Layout.get(i))
+                        is = true;
+                if (!is)
+                    return;
+                int Break;
+                Break = 0;
+                for (int i = 0; i < TextViewArray.size(); i++) {
+                    for (int j = 0; j < TextViewArray.get(i).size(); j++) {
+                        Log.i(TAG, "onTouch: TextViewArray.get(" + i + ").get(" + j + "):" + TextViewArray.get(i).get(j).getText() + " Y" + TextViewArray.get(i).get(j).getY());
+                        if (TextViewArray.get(i).get(j).getText() == ((TextView) view).getText()
+                                && TextViewArray.get(i).get(j).getParent() == view.getParent()
+                                && TextViewArray.get(i).get(j).getY() == view.getY()) {
+                            using = new Course(CourseArray.get(NowWeek - FirstWeek).get(i).get(j));
+                            Log.i(TAG, "onTouch: usingname:" + using.name);
+                            BeReplacedX = NowWeek - FirstWeek;
+                            BeReplacedY = i;
+                            BeReplacedZ = j;
+                            Break = 1;
+                            break;
+                        }
                     }
-                });
-                timebuilder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                    if (Break == 1)
+                        break;
+                }
+                ((GradientDrawable) view.getBackground()).setColor(using.color);
+                view.postInvalidate();
+            }
+
+            void CreateDialog() {
+                LayoutInflater inflater = LayoutInflater.from(getActivity());
+                View dialogview = inflater.inflate(R.layout.schedule_course_dialog, null);
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                InitializeDialogText(dialogview, builder);
+                builder.setPositiveButton("保存", PositiveButtonOnClickListener());
+                builder.setNegativeButton("取消", NegativeButtonOnClickListener());
+                builder.setView(dialogview);
+                AlertDialog dialog = builder.create();
+                dialog.show();
+                assert dialog.getWindow() != null;
+                TextWeek = (TextView) dialog.getWindow().findViewById(R.id.dialogweek);
+                TextTime = (TextView) dialog.getWindow().findViewById(R.id.dialogtime);
+                TextWeek.setOnClickListener(TextWeekOnClickListener());
+                TextTime.setOnClickListener(TextTimeOnClickListener());
+            }
+
+            private void InitializeDialogText(View dialogview, AlertDialog.Builder builder) {
+                EditName = (EditText) dialogview.findViewById(R.id.SCourseEditTextName);
+                EditRoom = (EditText) dialogview.findViewById(R.id.SCourseEditTextRoom);
+                TextWeek = (TextView) dialogview.findViewById(R.id.dialogweek);
+                TextTime = (TextView) dialogview.findViewById(R.id.dialogtime);
+                EditName.setSingleLine(false);
+                EditRoom.setSingleLine(false);
+                EditName.setHorizontallyScrolling(false);
+                EditRoom.setHorizontallyScrolling(false);
+                EditName.setInputType(InputType.TYPE_TEXT_FLAG_MULTI_LINE);
+                EditRoom.setInputType(InputType.TYPE_TEXT_FLAG_MULTI_LINE);
+                builder.setTitle(using.name);
+                EditName.setText(using.name);
+                EditRoom.setText(using.room);
+                SetTextWeek();
+                UpdateTimeGlobalVariable();
+                SetTextTime();
+            }
+
+            void SetTextWeek() {
+                int i;
+                ArrayList<Integer> weekparse = WeekParse(using.week);
+                TextWeek.setText("");
+                Weeks = weekparse;
+                for (i = 0; i < weekparse.size(); i += 2)
+                    if (weekparse.get(i).equals(weekparse.get(i + 1)))
+                        TextWeek.setText(TextWeek.getText() + "" + (weekparse.get(i) + 1) + "周 ");
+                    else
+                        TextWeek.setText(TextWeek.getText() + "" + (weekparse.get(i) + 1) + "-" + (weekparse.get(i + 1) + 1) + "周 ");
+            }
+
+            void SetTextTime() {
+                String[] DayName = {"周一", "周二", "周三", "周四", "周五", "周六", "周日"};
+                String time = "" + DayName[DialogDay] + " ";
+                if (DialogStartHour < 10)
+                    time += "0";
+                time += DialogStartHour + "点";
+                if (DialogStartMinute < 10)
+                    time += "0";
+                time += DialogStartMinute + "分到";
+                if (DialogEndHour < 10)
+                    time += "0";
+                time += DialogEndHour + "点";
+                if (DialogEndMinute < 10)
+                    time += "0";
+                time += DialogEndMinute;
+                TextTime.setText(time);
+            }
+
+            @NonNull
+            DialogInterface.OnClickListener NegativeButtonOnClickListener() {
+                return new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         dialogInterface.dismiss();
                     }
-                });
-                timebuilder.setView(timeview);
-                AlertDialog timedialog = timebuilder.create();
-                timedialog.show();
-                Window timewindow = timedialog.getWindow();
-                assert timewindow != null;
-                //findViewById
-                daypicker = (NumberPicker) timewindow.findViewById(R.id.daypicker);
-                starthhpicker = (NumberPicker) timewindow.findViewById(R.id.starthhpicker);
-                startmmpicker = (NumberPicker) timewindow.findViewById(R.id.startmmpicker);
-                endhhpicker = (NumberPicker) timewindow.findViewById(R.id.endhhpicker);
-                endmmpicker = (NumberPicker) timewindow.findViewById(R.id.endmmpicker);
-                Button starthhplus = (Button) timewindow.findViewById(R.id.starthhplus);
-                Button startmmplus = (Button) timewindow.findViewById(R.id.startmmplus);
-                Button endhhplus = (Button) timewindow.findViewById(R.id.endhhplus);
-                Button endmmplus = (Button) timewindow.findViewById(R.id.endmmplus);
-                //setOnClickListener
-                starthhplus.setOnClickListener(this);
-                startmmplus.setOnClickListener(this);
-                endhhplus.setOnClickListener(this);
-                endmmplus.setOnClickListener(this);
-                String[] hh = new String[17];
-                for (int i = 7; i < 24; i++)
-                    if (i < 10)
-                        hh[i - 7] = "0" + ((Integer) i).toString() + "点";
-                    else
-                        hh[i - 7] = ((Integer) i).toString() + "点";
-                String[] mm = new String[60];
-                for (int i = 0; i < 60; i++)
-                    if (i < 10)
-                        mm[i] = "0" + ((Integer) i).toString() + "分";
-                    else
-                        mm[i] = ((Integer) i).toString() + "分";
-                //5picker setOnValueChangedListener setDisplayedValues setMinValue setMaxValue setDescendantFocusability
-                daypicker.setOnValueChangedListener(this);
-                starthhpicker.setOnValueChangedListener(this);
-                startmmpicker.setOnValueChangedListener(this);
-                endhhpicker.setOnValueChangedListener(this);
-                endmmpicker.setOnValueChangedListener(this);
-                daypicker.setDisplayedValues(new String[]{"周一", "周二", "周三", "周四", "周五", "周六", "周日"});
-                daypicker.setMinValue(0);
-                daypicker.setMaxValue(6);
-                starthhpicker.setDisplayedValues(hh);
-                starthhpicker.setMinValue(0);
-                starthhpicker.setMaxValue(16);
-                startmmpicker.setDisplayedValues(mm);
-                startmmpicker.setMinValue(0);
-                startmmpicker.setMaxValue(59);
-                endhhpicker.setDisplayedValues(hh);
-                endhhpicker.setMinValue(0);
-                endhhpicker.setMaxValue(16);
-                endmmpicker.setDisplayedValues(mm);
-                endmmpicker.setMinValue(0);
-                endmmpicker.setMaxValue(59);
-                daypicker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
-                starthhpicker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
-                startmmpicker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
-                endhhpicker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
-                endmmpicker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
-                ArrayList<Integer> time = timeparse(texttime.getText().toString());
-                if (time.size() == 5) {
-                    daypicker.setValue(time.get(0));
-                    starthhpicker.setValue(time.get(1) - 7);
-                    startmmpicker.setValue(time.get(2));
-                    endhhpicker.setValue(time.get(3) - 7);
-                    endmmpicker.setValue(time.get(4));
-                } else {
-                    daypicker.setValue(0);
-                    starthhpicker.setValue(1);
-                    startmmpicker.setValue(30);
-                    endhhpicker.setValue(3);
-                    endmmpicker.setValue(20);
-                }
-                break;
-            default:
-//                boolean is = false;
-//                for (int i = 0; i < 7; i++)
-//                    if (view.equals(layout.get(i)))
-//                        is = true;
-//                if (!is)
-//                    break;
-//                using = new Course();
-//                weeks.add(0);
-//                weeks.add(19);
-//                LayoutInflater inflater = LayoutInflater.from(getActivity());
-//                View dialogview = inflater.inflate(R.layout.schedule_course_dialog, null);
-//                //先注册一些控件
-//                editname = (EditText) dialogview.findViewById(R.id.SCourseEditTextName);
-//                editroom = (EditText) dialogview.findViewById(R.id.SCourseEditTextRoom);
-//                editname.setSingleLine(false);
-//                editroom.setSingleLine(false);
-//                editname.setHorizontallyScrolling(false);
-//                editroom.setHorizontallyScrolling(false);
-//                editname.setInputType(InputType.TYPE_TEXT_FLAG_MULTI_LINE);
-//                editroom.setInputType(InputType.TYPE_TEXT_FLAG_MULTI_LINE);
-//
-//                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-//                builder.setTitle("添加新课程");
-//                builder.setPositiveButton("保存", new DialogInterface.OnClickListener() {
-//                    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-//                    @Override
-//                    public void onClick(DialogInterface dialogInterface, int i) {
-//                        if (!Objects.equals(editname.getText().toString().trim(), "") && !Objects.equals(editroom.getText().toString().trim(), "")) {
-//                            using.name = editname.getText().toString().trim();
-//                            using.room = editroom.getText().toString().trim();
-//                            using.week = weekproduce(weeks);
-//                            Log.i(TAG, "onClick: the " + using.name + " is in the positive button!! And the weeks information is below:");
-//                            for (i = 0; i < weeks.size(); i++)
-//                                Log.i(TAG, "onClick: weeks[" + i + "]=" + weeks.get(i));
-//                            using.day = dialog_day;
-//                            using.starthour = dialog_starthh;
-//                            using.startmin = dialog_startmm;
-//                            using.endhour = dialog_endhh;
-//                            using.endmin = dialog_endmm;
-//                            using.addinfile(sharedPreferences);
-//                            Log.i(TAG, "onClick: addinfile successed!");
-//                            readcourse();
-//                            addcourse();
-//                            dialogInterface.dismiss();
-//                        }
-//                    }
-//                });
-//                builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialogInterface, int i) {
-//                        dialogInterface.dismiss();
-//                    }
-//                });
-//                builder.setView(dialogview);
-//                AlertDialog dialog = builder.create();
-//                dialog.show();
-//                assert dialog.getWindow() !=null;
-//                textweek = (TextView) dialog.getWindow().findViewById(R.id.dialogweek);
-//                texttime = (TextView) dialog.getWindow().findViewById(R.id.dialogtime);
-//                textweek.setOnClickListener(this);
-//                texttime.setOnClickListener(this);
-                break;
-        }
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    @Override
-    public void onItemSelected(AdapterView<?> adapterView, View view1, int position, long id) {
-        nowweek = position + firstweek;
-        readcourse();
-        for(int i=0;i<course.size();i++)
-            if(course.get(i).equals(nullCourse)){
-                course.get(i).removeinfile(sharedPreferences);
-                course.remove(i);
-                if(activated){
-                    activated = false;
-                    STRImageView2.setVisibility(View.INVISIBLE);
-                    ((RelativeLayout) STRImageView2.getParent()).removeView(view);
-                }
+                };
             }
-        addcourse();
-        redate(position);
-    }
 
-    @Override
-    public void onNothingSelected(AdapterView<?> adapterView) {
-    }
+            @NonNull
+            DialogInterface.OnClickListener PositiveButtonOnClickListener() {
+                return new DialogInterface.OnClickListener() {
+                    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        using.name = EditName.getText().toString().trim();
+                        using.room = EditRoom.getText().toString().trim();
+                        using.week = WeekProduct(Weeks);
+                        using.day = DialogDay;
+                        using.starthour = DialogStartHour;
+                        using.startmin = DialogStartMinute;
+                        using.endhour = DialogEndHour;
+                        using.endmin = DialogEndMinute;
+                        Log.i(TAG, "onClick: now you release the " + using.name + "     room:" + using.room + "          day:" + using.day + "         from" + using.starthour + ":" + using.startmin + " to " + using.endhour + ":" + using.endmin);
+                        Log.i(TAG, "onClick: now you release the " + CourseArray.get(BeReplacedX).get(BeReplacedY).get(BeReplacedZ).name + "     room:" + CourseArray.get(BeReplacedX).get(BeReplacedY).get(BeReplacedZ).room + "          day:" + CourseArray.get(BeReplacedX).get(BeReplacedY).get(BeReplacedZ).day + "         from" + CourseArray.get(BeReplacedX).get(BeReplacedY).get(BeReplacedZ).starthour + ":" + CourseArray.get(BeReplacedX).get(BeReplacedY).get(BeReplacedZ).startmin + " to " + CourseArray.get(BeReplacedX).get(BeReplacedY).get(BeReplacedZ).endhour + ":" + CourseArray.get(BeReplacedX).get(BeReplacedY).get(BeReplacedZ).endmin);
+                        CourseArray.get(BeReplacedX).get(BeReplacedY).get(BeReplacedZ).removeinfile(sharedPreferences);
+                        using.addinfile(sharedPreferences);
+                        ReadCourse();
+                        AddCourse();
+                        dialogInterface.dismiss();
+                    }
+                };
+            }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
-    @Override
-    public boolean onTouch(final View view, MotionEvent motionEvent) {
-        RunnableView = view;
-        int backgroundColor;
-        int i, j, Break;
-        boolean is;
-        switch (motionEvent.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-                //长按事件
-                stop = false;
+            void UpdateTimeGlobalVariable() {
+                DialogDay = using.day;
+                DialogStartHour = using.starthour;
+                DialogStartMinute = using.startmin;
+                DialogEndHour = using.endhour;
+                DialogEndMinute = using.endmin;
+            }
+
+            boolean StopLongClickEvent() {
+                if (Running) {
+                    Running = false;
+                    return true;
+                }
+                Stop = true;
+                return false;
+            }
+
+            void LongClickEvent() {
+                Stop = false;
                 android.os.Handler handler = new android.os.Handler();
                 final Runnable runnable = new Runnable() {
                     @Override
                     public void run() {//删除课程dialog
-                        if (stop) return;
-                        running = true;
+                        if (Stop) return;
+                        Running = true;
                         boolean is = false;
                         int Break = 0;
                         for (int i = 0; i < 7; i++)
-                            if (RunnableView.getParent() == layout.get(i))
+                            if (RunnableView.getParent() == Layout.get(i))
                                 is = true;
                         if (!is)
                             return;
 
                         //背景色变换
-                        for (int i = 0; i < textarr.size(); i++) {
-                            for (int j = 0; j < textarr.get(i).size(); j++) {
-                                Log.i(TAG, "onTouch: textarr.get(" + i + ").get(" + j + "):" + textarr.get(i).get(j).getText() + " Y" + textarr.get(i).get(j).getY());
-                                if (textarr.get(i).get(j).getText() == ((TextView) RunnableView).getText()
-                                        && textarr.get(i).get(j).getParent() == RunnableView.getParent()
-                                        && textarr.get(i).get(j).getY() == RunnableView.getY()) {
-                                    using = new Course(pcourse.get(nowweek - firstweek).get(i).get(j));
+                        for (int i = 0; i < TextViewArray.size(); i++) {
+                            for (int j = 0; j < TextViewArray.get(i).size(); j++) {
+                                Log.i(TAG, "onTouch: TextViewArray.get(" + i + ").get(" + j + "):" + TextViewArray.get(i).get(j).getText() + " Y" + TextViewArray.get(i).get(j).getY());
+                                if (TextViewArray.get(i).get(j).getText() == ((TextView) RunnableView).getText()
+                                        && TextViewArray.get(i).get(j).getParent() == RunnableView.getParent()
+                                        && TextViewArray.get(i).get(j).getY() == RunnableView.getY()) {
+                                    using = new Course(CourseArray.get(NowWeek - FirstWeek).get(i).get(j));
                                     Log.i(TAG, "onTouch: usingname:" + using.name);
-                                    bereplacedx = nowweek - firstweek;
-                                    bereplacedy = i;
-                                    bereplacedz = j;
+                                    BeReplacedX = NowWeek - FirstWeek;
+                                    BeReplacedY = i;
+                                    BeReplacedZ = j;
                                     Break = 1;
                                     break;
                                 }
@@ -947,18 +896,19 @@ public class ScheduleFragment extends Fragment implements View.OnClickListener ,
                         builder.setTitle("删除课程");
                         //设置确定取消按钮
                         builder.setPositiveButton("是", new DialogInterface.OnClickListener() {
+                            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                running = false;
+                                Running = false;
                                 using.removeinfile(sharedPreferences);
-                                readcourse();
-                                addcourse();
+                                ReadCourse();
+                                AddCourse();
                             }
                         });
                         builder.setNegativeButton("否", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                running = false;
+                                Running = false;
                                 dialogInterface.dismiss();
                             }
                         });
@@ -968,411 +918,465 @@ public class ScheduleFragment extends Fragment implements View.OnClickListener ,
                     }
                 };
                 handler.postDelayed(runnable, 1000);
-                switch (view.getId()) {
-                    case R.id.STRimageview:
-                        view.setBackgroundResource(R.drawable.plus_reverse);
-                        view.postInvalidate();
-                        break;
-                    default:
-                        //筛选出 在RelativeLayout上的课程TextView
-                        is = false;
-                        Break = 0;
-                        for (i = 0; i < 7; i++)
-                            if (view.getParent() == layout.get(i))
-                                is = true;
-                        if (!is)
-                            return false;
+            }
+        };
+    }
 
-                        //背景色变换
-                        backgroundColor = 1;
-                        for (i = 0; i < textarr.size(); i++) {
-                            for (j = 0; j < textarr.get(i).size(); j++)
-                                if (textarr.get(i).get(j).getText() == ((TextView) view).getText()
-                                        && textarr.get(i).get(j).getParent() == view.getParent()
-                                        && textarr.get(i).get(j).getY() == view.getY()) {
-                                    backgroundColor = pcourse.get(nowweek - firstweek).get(i).get(j).color;
-                                    Break = 1;
-                                    break;
-                                }
-                            if (Break == 1)
+    View.OnClickListener TextTimeOnClickListener() {
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                LayoutInflater timeinflater = LayoutInflater.from(getActivity());
+                View timeview = timeinflater.inflate(R.layout.schedule_time_dialog, null);
+                AlertDialog.Builder timebuilder = new AlertDialog.Builder(getActivity());
+                timebuilder.setTitle("时间选择");
+                timebuilder.setPositiveButton("确定", PositiveButtonOnClickListener());
+                timebuilder.setNegativeButton("取消", NegativeButtonOnClickListener());
+                timebuilder.setView(timeview);
+                AlertDialog timedialog = timebuilder.create();
+                timedialog.show();
+                Window timewindow = timedialog.getWindow();
+                assert timewindow != null;
+                InitializePlusButton(timewindow);
+                InitializePicker(timewindow);
+            }
+
+            void InitializePlusButton(Window timewindow) {
+                Button starthhplus = (Button) timewindow.findViewById(R.id.starthhplus);
+                Button startmmplus = (Button) timewindow.findViewById(R.id.startmmplus);
+                Button endhhplus = (Button) timewindow.findViewById(R.id.endhhplus);
+                Button endmmplus = (Button) timewindow.findViewById(R.id.endmmplus);
+                starthhplus.setOnClickListener(PlusButtonOnClickListener());
+                startmmplus.setOnClickListener(PlusButtonOnClickListener());
+                endhhplus.setOnClickListener(PlusButtonOnClickListener());
+                endmmplus.setOnClickListener(PlusButtonOnClickListener());
+            }
+
+            void InitializePicker(Window timewindow) {
+                DayPicker = (NumberPicker) timewindow.findViewById(R.id.daypicker);
+                StartHourPicker = (NumberPicker) timewindow.findViewById(R.id.starthhpicker);
+                StartMinutePicker = (NumberPicker) timewindow.findViewById(R.id.startmmpicker);
+                EndHourPicker = (NumberPicker) timewindow.findViewById(R.id.endhhpicker);
+                EndMinutePicker = (NumberPicker) timewindow.findViewById(R.id.endmmpicker);
+                String[] hh = new String[17];
+                for (int i = 7; i < 24; i++)
+                    if (i < 10)
+                        hh[i - 7] = "0" + ((Integer) i).toString() + "点";
+                    else
+                        hh[i - 7] = ((Integer) i).toString() + "点";
+                String[] mm = new String[60];
+                for (int i = 0; i < 60; i++)
+                    if (i < 10)
+                        mm[i] = "0" + ((Integer) i).toString() + "分";
+                    else
+                        mm[i] = ((Integer) i).toString() + "分";
+                DayPicker.setOnValueChangedListener(PickerOnValueChangeListener());
+                StartHourPicker.setOnValueChangedListener(PickerOnValueChangeListener());
+                StartMinutePicker.setOnValueChangedListener(PickerOnValueChangeListener());
+                EndHourPicker.setOnValueChangedListener(PickerOnValueChangeListener());
+                EndMinutePicker.setOnValueChangedListener(PickerOnValueChangeListener());
+                DayPicker.setDisplayedValues(new String[]{"周一", "周二", "周三", "周四", "周五", "周六", "周日"});
+                DayPicker.setMinValue(0);
+                DayPicker.setMaxValue(6);
+                StartHourPicker.setDisplayedValues(hh);
+                StartHourPicker.setMinValue(0);
+                StartHourPicker.setMaxValue(16);
+                StartMinutePicker.setDisplayedValues(mm);
+                StartMinutePicker.setMinValue(0);
+                StartMinutePicker.setMaxValue(59);
+                EndHourPicker.setDisplayedValues(hh);
+                EndHourPicker.setMinValue(0);
+                EndHourPicker.setMaxValue(16);
+                EndMinutePicker.setDisplayedValues(mm);
+                EndMinutePicker.setMinValue(0);
+                EndMinutePicker.setMaxValue(59);
+                DayPicker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
+                StartHourPicker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
+                StartMinutePicker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
+                EndHourPicker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
+                EndMinutePicker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
+                ArrayList<Integer> time = TimeParse(TextTime.getText().toString());
+                if (time.size() == 5) {
+                    DayPicker.setValue(time.get(0));
+                    StartHourPicker.setValue(time.get(1) - 7);
+                    StartMinutePicker.setValue(time.get(2));
+                    EndHourPicker.setValue(time.get(3) - 7);
+                    EndMinutePicker.setValue(time.get(4));
+                } else {
+                    DayPicker.setValue(0);
+                    StartHourPicker.setValue(1);
+                    StartMinutePicker.setValue(30);
+                    EndHourPicker.setValue(3);
+                    EndMinutePicker.setValue(20);
+                }
+            }
+
+            View.OnClickListener PlusButtonOnClickListener() {
+                return new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        switch (view.getId()) {
+                            case R.id.starthhplus:
+                                StartHourPicker.setValue((StartHourPicker.getValue() + 6) % (StartHourPicker.getMaxValue() + 1));
+                                break;
+                            case R.id.startmmplus:
+                                StartMinutePicker.setValue((StartMinutePicker.getValue() + 15) % (StartMinutePicker.getMaxValue() + 1));
+                                break;
+                            case R.id.endhhplus:
+                                EndHourPicker.setValue((EndHourPicker.getValue() + 6) % (EndHourPicker.getMaxValue() + 1));
+                                break;
+                            case R.id.endmmplus:
+                                EndMinutePicker.setValue((EndMinutePicker.getValue() + 15) % (EndMinutePicker.getMaxValue() + 1));
+                                break;
+                            default:
                                 break;
                         }
-                        backgroundColor = backgroundColor % 0x01000000 + 0x3f000000;
-                        ((GradientDrawable) view.getBackground()).setColor(backgroundColor);
-                        view.postInvalidate();
-                        break;
-                }
-                break;
-            case MotionEvent.ACTION_CANCEL:
-            case MotionEvent.ACTION_UP:
-                //长按事件的时间不足 停止触发
-                if (running) {
-                    running = false;
-                    break;
-                }
-                stop = true;
-                switch (view.getId()) {
-                    case R.id.STRimageview:
-                        view.setBackgroundResource(R.drawable.plus);
-                        view.postInvalidate();
-                        break;
-                    default:
-                        //筛选出 在RelativeLayout上的课程TextView
-                        is = false;
-                        Break = 0;
-                        for (i = 0; i < 7; i++)
-                            if (view.getParent() == layout.get(i))
-                                is = true;
-                        if (!is)
-                            return false;
-                        //背景色变换
-                        for (i = 0; i < textarr.size(); i++) {
-                            for (j = 0; j < textarr.get(i).size(); j++) {
-                                Log.i(TAG, "onTouch: textarr.get(" + i + ").get(" + j + "):" + textarr.get(i).get(j).getText() + " Y" + textarr.get(i).get(j).getY());
-                                if (textarr.get(i).get(j).getText() == ((TextView) view).getText()
-                                        && textarr.get(i).get(j).getParent() == view.getParent()
-                                        && textarr.get(i).get(j).getY() == view.getY()) {
-                                    using = new Course(pcourse.get(nowweek - firstweek).get(i).get(j));
-                                    Log.i(TAG, "onTouch: usingname:" + using.name);
-                                    bereplacedx = nowweek - firstweek;
-                                    bereplacedy = i;
-                                    bereplacedz = j;
-                                    Break = 1;
-                                    break;
+                    }
+                };
+            }
+
+            @NonNull
+            DialogInterface.OnClickListener NegativeButtonOnClickListener() {
+                return new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                };
+            }
+
+            @NonNull
+            DialogInterface.OnClickListener PositiveButtonOnClickListener() {
+                return new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {//saving time
+                        DialogStartHour = StartHourPicker.getValue() + 7;
+                        DialogStartMinute = StartMinutePicker.getValue();
+                        DialogEndHour = EndHourPicker.getValue() + 7;
+                        DialogEndMinute = EndMinutePicker.getValue();
+                        TextTime.setText(
+                                DayPicker.getDisplayedValues()[(DialogDay = DayPicker.getValue())] + " " +
+                                        StartHourPicker.getDisplayedValues()[StartHourPicker.getValue()] +
+                                        StartMinutePicker.getDisplayedValues()[StartMinutePicker.getValue()] + "到" +
+                                        EndHourPicker.getDisplayedValues()[EndHourPicker.getValue()] +
+                                        EndMinutePicker.getDisplayedValues()[EndMinutePicker.getValue()]);
+                        dialogInterface.dismiss();
+                    }
+                };
+            }
+
+            NumberPicker.OnValueChangeListener PickerOnValueChangeListener() {
+                return new NumberPicker.OnValueChangeListener() {
+                    @Override
+                    public void onValueChange(NumberPicker numberPicker, int i, int i1) {
+                        switch (numberPicker.getId()) {
+                            case R.id.daypicker:
+                                //do nothing
+                                break;
+                            case R.id.starthhpicker:
+                                EndHourPicker.setValue((StartHourPicker.getValue() + 2) % 24);
+                                break;
+                            case R.id.startmmpicker:
+                                EndMinutePicker.setValue(StartMinutePicker.getValue());
+                                break;
+                            case R.id.endhhpicker:
+                                if (EndHourPicker.getValue() < StartHourPicker.getValue())
+                                    EndHourPicker.setValue(StartHourPicker.getValue());
+                                if (EndMinutePicker.getValue() < StartMinutePicker.getValue())
+                                    EndMinutePicker.setValue(StartMinutePicker.getValue());
+                                break;
+                            case R.id.endmmpicker:
+                                if (EndMinutePicker.getValue() < StartMinutePicker.getValue() && EndHourPicker.getValue() <= StartHourPicker.getValue())
+                                    EndMinutePicker.setValue(StartMinutePicker.getValue());
+                                break;
+                        }
+                    }
+                };
+            }
+        };
+    }
+
+    View.OnClickListener TextWeekOnClickListener() {
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                LayoutInflater inflaterweek = LayoutInflater.from(getActivity());
+                View weekview = inflaterweek.inflate(R.layout.schedule_week_dialog, null);
+                final AlertDialog.Builder weekbuilder = new AlertDialog.Builder(getActivity());
+                weekbuilder.setTitle("周数选择");
+                //设置确定取消按钮
+                weekbuilder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int which) {//save
+                        boolean successive = false;
+                        int start = -1;
+                        Weeks.clear();
+                        for (int i = 0; i < 20; i++)
+                            if (ToggleArray.get(i).isChecked()) {
+                                successive = true;
+                                if (start == -1) {
+                                    start = i;
+                                    Weeks.add(i);
                                 }
+                            } else if (successive) {
+                                successive = false;
+                                Weeks.add(i - 1);
+                                start = -1;
                             }
-                            if (Break == 1)
+                        if (successive)
+                            Weeks.add(19);
+                        TextWeek.setText("");
+                        for (int i = 0; i < Weeks.size(); i += 2)
+                            if (Weeks.get(i).equals(Weeks.get(i + 1)))
+                                TextWeek.setText(TextWeek.getText() + "" + (Weeks.get(i) + 1) + "周 ");
+                            else
+                                TextWeek.setText(TextWeek.getText() + "" + (Weeks.get(i) + 1) + "-" + (Weeks.get(i + 1) + 1) + "周 ");
+                        dialogInterface.dismiss();
+                    }
+                });
+                weekbuilder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int which) {//cancel
+                        for (int i = 0; i < ToggleArray.size(); i++)
+                            ToggleArray.get(i).setChecked(false);
+                        dialogInterface.dismiss();
+                    }
+                });
+
+                weekbuilder.setView(weekview);
+                AlertDialog weekdialog = weekbuilder.create();
+                weekdialog.show();
+                Window weekwindow = weekdialog.getWindow();
+                ToggleArray.clear();
+                assert weekwindow != null;
+                //ToggleArray.add((ToggleButton) weekwindow.findViewById);x28
+                int[] ids = {R.id.week_togglebutton1, R.id.week_togglebutton2, R.id.week_togglebutton3,
+                        R.id.week_togglebutton4, R.id.week_togglebutton5, R.id.week_togglebutton6,
+                        R.id.week_togglebutton7, R.id.week_togglebutton8, R.id.week_togglebutton9,
+                        R.id.week_togglebutton10, R.id.week_togglebutton11, R.id.week_togglebutton12,
+                        R.id.week_togglebutton13, R.id.week_togglebutton14, R.id.week_togglebutton15,
+                        R.id.week_togglebutton16, R.id.week_togglebutton17, R.id.week_togglebutton18,
+                        R.id.week_togglebutton19, R.id.week_togglebutton20, R.id.week_togglebutton1_5,
+                        R.id.week_togglebutton6_10, R.id.week_togglebutton11_15, R.id.week_togglebutton16_20,
+                        R.id.week_togglebuttonsingle, R.id.week_togglebuttondouble, R.id.week_togglebuttonall,
+                        R.id.week_togglebuttonthis};
+                for (int i = 0; i < 28; i++)
+                    ToggleArray.add((ToggleButton) weekwindow.findViewById(ids[i]));
+                //ToggleArray.get(?).set(OnCheckChangeListener/Checked)
+                for (int i = 0; i < ToggleArray.size(); i++)
+                    ToggleArray.get(i).setOnCheckedChangeListener(ToggleButtonOnCheckedChangedListener());
+                for (int i = 0; i < 20; i++)
+                    ToggleArray.get(i).setChecked(false);
+                for (int i = 0; i < Weeks.size(); i += 2)
+                    for (int j = Weeks.get(i); j <= Weeks.get(i + 1); j++)
+                        ToggleArray.get(j).setChecked(true);
+            }
+
+            ToggleButton.OnCheckedChangeListener ToggleButtonOnCheckedChangedListener() {
+                return new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                        boolean togglebuttonbool[] = new boolean[27];
+                        switch (compoundButton.getId()) {
+                            case R.id.week_togglebutton1:
+                            case R.id.week_togglebutton2:
+                            case R.id.week_togglebutton3:
+                            case R.id.week_togglebutton4:
+                            case R.id.week_togglebutton5:
+                            case R.id.week_togglebutton6:
+                            case R.id.week_togglebutton7:
+                            case R.id.week_togglebutton8:
+                            case R.id.week_togglebutton9:
+                            case R.id.week_togglebutton10:
+                            case R.id.week_togglebutton11:
+                            case R.id.week_togglebutton12:
+                            case R.id.week_togglebutton13:
+                            case R.id.week_togglebutton14:
+                            case R.id.week_togglebutton15:
+                            case R.id.week_togglebutton16:
+                            case R.id.week_togglebutton17:
+                            case R.id.week_togglebutton18:
+                            case R.id.week_togglebutton19:
+                            case R.id.week_togglebutton20:
+                                compoundButton.setChecked(b);
+                                save(togglebuttonbool);
+                                check();
+                                recover(togglebuttonbool);
+                                break;
+                            case R.id.week_togglebutton1_5:
+                                compoundButton.setChecked(b);
+                                if (b) {
+                                    for (int i = 0; i < 5; i++)
+                                        ToggleArray.get(i).setChecked(true);
+                                } else {
+                                    for (int i = 0; i < 5; i++)
+                                        ToggleArray.get(i).setChecked(false);
+                                }
+                                save(togglebuttonbool);
+                                check();
+                                recover(togglebuttonbool);
+                                break;
+                            case R.id.week_togglebutton6_10:
+                                compoundButton.setChecked(b);
+                                if (b) {
+                                    for (int i = 5; i < 10; i++)
+                                        ToggleArray.get(i).setChecked(true);
+                                } else {
+                                    for (int i = 5; i < 10; i++)
+                                        ToggleArray.get(i).setChecked(false);
+                                }
+                                save(togglebuttonbool);
+                                check();
+                                recover(togglebuttonbool);
+                                break;
+                            case R.id.week_togglebutton11_15:
+                                compoundButton.setChecked(b);
+                                if (b) {
+                                    for (int i = 10; i < 15; i++)
+                                        ToggleArray.get(i).setChecked(true);
+                                } else {
+                                    for (int i = 10; i < 15; i++)
+                                        ToggleArray.get(i).setChecked(false);
+                                }
+                                save(togglebuttonbool);
+                                check();
+                                recover(togglebuttonbool);
+                                break;
+                            case R.id.week_togglebutton16_20:
+                                compoundButton.setChecked(b);
+                                if (b) {
+                                    for (int i = 15; i < 20; i++)
+                                        ToggleArray.get(i).setChecked(true);
+                                } else {
+                                    for (int i = 15; i < 20; i++)
+                                        ToggleArray.get(i).setChecked(false);
+                                }
+                                save(togglebuttonbool);
+                                check();
+                                recover(togglebuttonbool);
+                                break;
+                            case R.id.week_togglebuttonsingle:
+                                compoundButton.setChecked(b);
+                                if (b)
+                                    for (int i = 0; i < 20; i += 2)
+                                        ToggleArray.get(i).setChecked(true);
+                                else
+                                    for (int i = 0; i < 20; i += 2)
+                                        ToggleArray.get(i).setChecked(false);
+                                save(togglebuttonbool);
+                                check();
+                                recover(togglebuttonbool);
+                                break;
+                            case R.id.week_togglebuttondouble:
+                                compoundButton.setChecked(b);
+                                if (b)
+                                    for (int i = 1; i < 20; i += 2)
+                                        ToggleArray.get(i).setChecked(true);
+                                else
+                                    for (int i = 1; i < 20; i += 2)
+                                        ToggleArray.get(i).setChecked(false);
+                                save(togglebuttonbool);
+                                check();
+                                recover(togglebuttonbool);
+                                break;
+                            case R.id.week_togglebuttonall:
+                                compoundButton.setChecked(b);
+                                if (b)
+                                    for (int i = 0; i < 20; i++)
+                                        ToggleArray.get(i).setChecked(true);
+                                else
+                                    for (int i = 0; i < 20; i++)
+                                        ToggleArray.get(i).setChecked(false);
+                                save(togglebuttonbool);
+                                check();
+                                recover(togglebuttonbool);
+                                break;
+                            case R.id.week_togglebuttonthis:
+                                compoundButton.setChecked(b);
+                                if (b)
+                                    ToggleArray.get(RealWeek - FirstWeek).setChecked(true);
+                                else
+                                    ToggleArray.get(RealWeek - FirstWeek).setChecked(false);
+                                save(togglebuttonbool);
+                                check();
+                                recover(togglebuttonbool);
                                 break;
                         }
-                        ((GradientDrawable) view.getBackground()).setColor(using.color);
-                        view.postInvalidate();
-                        //响应up事件 弹出dialog
-                        if (motionEvent.getAction() != MotionEvent.ACTION_CANCEL) {
-                            LayoutInflater inflater = LayoutInflater.from(getActivity());
-                            View dialogview = inflater.inflate(R.layout.schedule_course_dialog, null);
-                            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                            //findViewById setSingleLine setHorizontallyScrolling setInputType
-                            editname = (EditText) dialogview.findViewById(R.id.SCourseEditTextName);
-                            editroom = (EditText) dialogview.findViewById(R.id.SCourseEditTextRoom);
-                            textweek = (TextView) dialogview.findViewById(R.id.dialogweek);
-                            texttime = (TextView) dialogview.findViewById(R.id.dialogtime);
-                            editname.setSingleLine(false);
-                            editroom.setSingleLine(false);
-                            editname.setHorizontallyScrolling(false);
-                            editroom.setHorizontallyScrolling(false);
-                            editname.setInputType(InputType.TYPE_TEXT_FLAG_MULTI_LINE);
-                            editroom.setInputType(InputType.TYPE_TEXT_FLAG_MULTI_LINE);
+                        for (int i = 0; i < 20; i++)
+                            ToggleArray.get(i).postInvalidate();
+                    }
+                };
+            }
 
-                            //设置 dialog title为课名 根据using设置文本编辑框内容
-                            builder.setTitle(using.name);
-                            editname.setText(using.name);
-                            editroom.setText(using.room);
-                            //解析周数并设置dialogweek的文本内容
-                            ArrayList<Integer> weekparse = weekparse(using.week);
-                            textweek.setText("");
-                            weeks = weekparse;
-                            for (i = 0; i < weekparse.size(); i += 2)
-                                if (Objects.equals(weekparse.get(i), weekparse.get(i + 1)))
-                                    textweek.setText(textweek.getText() + "" + (weekparse.get(i) + 1) + "周 ");
-                                else
-                                    textweek.setText(textweek.getText() + "" + (weekparse.get(i) + 1) + "-" + (weekparse.get(i + 1) + 1) + "周 ");
-                            //更新时间全局变量
-                            dialog_day = using.day;
-                            dialog_starthh = using.starthour;
-                            dialog_startmm = using.startmin;
-                            dialog_endhh = using.endhour;
-                            dialog_endmm = using.endmin;
-                            //根据时间设置dialogtime的文本内容
-                            String[] dayname = {"周一", "周二", "周三", "周四", "周五", "周六", "周日"};
-                            String time = "" + dayname[dialog_day] + " ";
-                            if (dialog_starthh < 10)
-                                time += "0";
-                            time += dialog_starthh + ":";
-                            if (dialog_startmm < 10)
-                                time += "0";
-                            time += dialog_startmm + "-";
-                            if (dialog_endhh < 10)
-                                time += "0";
-                            time += dialog_endhh + ":";
-                            if (dialog_endmm < 10)
-                                time += "0";
-                            time += dialog_endmm;
-                            texttime.setText(time);
-                            //设置确定取消按钮
-                            builder.setPositiveButton("保存", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    using.name = editname.getText().toString().trim();
-                                    using.room = editroom.getText().toString().trim();
-                                    using.week = weekproduce(weeks);
-                                    using.day = dialog_day;
-                                    using.starthour = dialog_starthh;
-                                    using.startmin = dialog_startmm;
-                                    using.endhour = dialog_endhh;
-                                    using.endmin = dialog_endmm;
-                                    Log.i(TAG, "onClick: now you release the " + using.name + "     room:" + using.room + "          day:" + using.day + "         from" + using.starthour + ":" + using.startmin + " to " + using.endhour + ":" + using.endmin);
-                                    Log.i(TAG, "onClick: now you release the " + pcourse.get(bereplacedx).get(bereplacedy).get(bereplacedz).name + "     room:" + pcourse.get(bereplacedx).get(bereplacedy).get(bereplacedz).room + "          day:" + pcourse.get(bereplacedx).get(bereplacedy).get(bereplacedz).day + "         from" + pcourse.get(bereplacedx).get(bereplacedy).get(bereplacedz).starthour + ":" + pcourse.get(bereplacedx).get(bereplacedy).get(bereplacedz).startmin + " to " + pcourse.get(bereplacedx).get(bereplacedy).get(bereplacedz).endhour + ":" + pcourse.get(bereplacedx).get(bereplacedy).get(bereplacedz).endmin);
-                                    pcourse.get(bereplacedx).get(bereplacedy).get(bereplacedz).removeinfile(sharedPreferences);
-                                    using.addinfile(sharedPreferences);
-                                    readcourse();
-                                    addcourse();
-                                    dialogInterface.dismiss();
-                                }
-                            });
-                            builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    dialogInterface.dismiss();
-                                }
-                            });
-                            builder.setView(dialogview);
-                            AlertDialog dialog = builder.create();
-                            dialog.show();
-                            //设置dialogweek和dialogtime的OnClickListener
-                            assert dialog.getWindow() != null;
-                            textweek = (TextView) dialog.getWindow().findViewById(R.id.dialogweek);
-                            texttime = (TextView) dialog.getWindow().findViewById(R.id.dialogtime);
-                            textweek.setOnClickListener(this);
-                            texttime.setOnClickListener(this);
-                        }
-                        break;
-                }
-                break;
-            default:
-                break;
-        }
-        Log.i(TAG, "onTouch: OUT TOUCH !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-        return false;
-    }
+            void check() {
+                boolean line1, line2, line3, line4, dialine1, dialine2;
+                line1 = true;
+                line2 = true;
+                line3 = true;
+                line4 = true;
+                dialine1 = true;
+                dialine2 = true;
+                for (int i = 0; i < 5; i++)
+                    if (!ToggleArray.get(i).isChecked())
+                        line1 = false;
+                for (int i = 5; i < 10; i++)
+                    if (!ToggleArray.get(i).isChecked())
+                        line2 = false;
+                for (int i = 10; i < 15; i++)
+                    if (!ToggleArray.get(i).isChecked())
+                        line3 = false;
+                for (int i = 15; i < 20; i++)
+                    if (!ToggleArray.get(i).isChecked())
+                        line4 = false;
+                for (int i = 0; i < 20; i += 2)
+                    if (!ToggleArray.get(i).isChecked())
+                        dialine1 = false;
+                for (int i = 1; i < 20; i += 2)
+                    if (!ToggleArray.get(i).isChecked())
+                        dialine2 = false;
+                if (ToggleArray.get(RealWeek - FirstWeek).isChecked() && !ToggleArray.get(27).isChecked())
+                    ToggleArray.get(27).setChecked(true);
+                if (!ToggleArray.get(RealWeek - FirstWeek).isChecked() && ToggleArray.get(27).isChecked())
+                    ToggleArray.get(27).setChecked(false);
+                if (line1 && !ToggleArray.get(20).isChecked())
+                    ToggleArray.get(20).setChecked(true);
+                if (!line1 && ToggleArray.get(20).isChecked())
+                    ToggleArray.get(20).setChecked(false);
+                if (line2 && !ToggleArray.get(21).isChecked())
+                    ToggleArray.get(21).setChecked(true);
+                if (!line2 && ToggleArray.get(21).isChecked())
+                    ToggleArray.get(21).setChecked(false);
+                if (line3 && !ToggleArray.get(22).isChecked())
+                    ToggleArray.get(22).setChecked(true);
+                if (!line3 && ToggleArray.get(22).isChecked())
+                    ToggleArray.get(22).setChecked(false);
+                if (line4 && !ToggleArray.get(23).isChecked())
+                    ToggleArray.get(23).setChecked(true);
+                if (!line4 && ToggleArray.get(23).isChecked())
+                    ToggleArray.get(23).setChecked(false);
+                if (dialine1 && !ToggleArray.get(24).isChecked())
+                    ToggleArray.get(24).setChecked(true);
+                if (!dialine1 && ToggleArray.get(24).isChecked())
+                    ToggleArray.get(24).setChecked(false);
+                if (dialine2 && !ToggleArray.get(25).isChecked())
+                    ToggleArray.get(25).setChecked(true);
+                if (!dialine2 && ToggleArray.get(25).isChecked())
+                    ToggleArray.get(25).setChecked(false);
+                if (dialine1 && dialine2 && !ToggleArray.get(26).isChecked())
+                    ToggleArray.get(26).setChecked(true);
+                else if (!(dialine1 && dialine2) && ToggleArray.get(26).isChecked())
+                    ToggleArray.get(26).setChecked(false);
+            }
 
-    @Override
-    public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-        boolean togglebuttonbool[] = new boolean[27];
-        switch (compoundButton.getId()) {
-            case R.id.week_togglebutton1:
-            case R.id.week_togglebutton2:
-            case R.id.week_togglebutton3:
-            case R.id.week_togglebutton4:
-            case R.id.week_togglebutton5:
-            case R.id.week_togglebutton6:
-            case R.id.week_togglebutton7:
-            case R.id.week_togglebutton8:
-            case R.id.week_togglebutton9:
-            case R.id.week_togglebutton10:
-            case R.id.week_togglebutton11:
-            case R.id.week_togglebutton12:
-            case R.id.week_togglebutton13:
-            case R.id.week_togglebutton14:
-            case R.id.week_togglebutton15:
-            case R.id.week_togglebutton16:
-            case R.id.week_togglebutton17:
-            case R.id.week_togglebutton18:
-            case R.id.week_togglebutton19:
-            case R.id.week_togglebutton20:
-                compoundButton.setChecked(b);
-                save(togglebuttonbool);
-                check();
-                recover(togglebuttonbool);
-                break;
-            case R.id.week_togglebutton1_5:
-                compoundButton.setChecked(b);
-                if (b) {
-                    for (int i = 0; i < 5; i++)
-                        togglearray.get(i).setChecked(true);
-                } else {
-                    for (int i = 0; i < 5; i++)
-                        togglearray.get(i).setChecked(false);
-                }
-                save(togglebuttonbool);
-                check();
-                recover(togglebuttonbool);
-                break;
-            case R.id.week_togglebutton6_10:
-                compoundButton.setChecked(b);
-                if (b) {
-                    for (int i = 5; i < 10; i++)
-                        togglearray.get(i).setChecked(true);
-                } else {
-                    for (int i = 5; i < 10; i++)
-                        togglearray.get(i).setChecked(false);
-                }
-                save(togglebuttonbool);
-                check();
-                recover(togglebuttonbool);
-                break;
-            case R.id.week_togglebutton11_15:
-                compoundButton.setChecked(b);
-                if (b) {
-                    for (int i = 10; i < 15; i++)
-                        togglearray.get(i).setChecked(true);
-                } else {
-                    for (int i = 10; i < 15; i++)
-                        togglearray.get(i).setChecked(false);
-                }
-                save(togglebuttonbool);
-                check();
-                recover(togglebuttonbool);
-                break;
-            case R.id.week_togglebutton16_20:
-                compoundButton.setChecked(b);
-                if (b) {
-                    for (int i = 15; i < 20; i++)
-                        togglearray.get(i).setChecked(true);
-                } else {
-                    for (int i = 15; i < 20; i++)
-                        togglearray.get(i).setChecked(false);
-                }
-                save(togglebuttonbool);
-                check();
-                recover(togglebuttonbool);
-                break;
-            case R.id.week_togglebuttonsingle:
-                compoundButton.setChecked(b);
-                if (b)
-                    for (int i = 0; i < 20; i += 2)
-                        togglearray.get(i).setChecked(true);
-                else
-                    for (int i = 0; i < 20; i += 2)
-                        togglearray.get(i).setChecked(false);
-                save(togglebuttonbool);
-                check();
-                recover(togglebuttonbool);
-                break;
-            case R.id.week_togglebuttondouble:
-                compoundButton.setChecked(b);
-                if (b)
-                    for (int i = 1; i < 20; i += 2)
-                        togglearray.get(i).setChecked(true);
-                else
-                    for (int i = 1; i < 20; i += 2)
-                        togglearray.get(i).setChecked(false);
-                save(togglebuttonbool);
-                check();
-                recover(togglebuttonbool);
-                break;
-            case R.id.week_togglebuttonall:
-                compoundButton.setChecked(b);
-                if (b)
-                    for (int i = 0; i < 20; i++)
-                        togglearray.get(i).setChecked(true);
-                else
-                    for (int i = 0; i < 20; i++)
-                        togglearray.get(i).setChecked(false);
-                save(togglebuttonbool);
-                check();
-                recover(togglebuttonbool);
-                break;
-            case R.id.week_togglebuttonthis:
-                compoundButton.setChecked(b);
-                if (b)
-                    togglearray.get(realweek - firstweek).setChecked(true);
-                else
-                    togglearray.get(realweek - firstweek).setChecked(false);
-                save(togglebuttonbool);
-                check();
-                recover(togglebuttonbool);
-                break;
-        }
-        for (int i = 0; i < 20; i++)
-            togglearray.get(i).postInvalidate();
-    }
+            void save(boolean[] togglebuttonbool) {
+                for (int i = 0; i < 20; i++)
+                    togglebuttonbool[i] = ToggleArray.get(i).isChecked();
+            }
 
-    public void check() {
-        boolean line1, line2, line3, line4, dialine1, dialine2;
-        line1 = true;
-        line2 = true;
-        line3 = true;
-        line4 = true;
-        dialine1 = true;
-        dialine2 = true;
-        for (int i = 0; i < 5; i++)
-            if (!togglearray.get(i).isChecked())
-                line1 = false;
-        for (int i = 5; i < 10; i++)
-            if (!togglearray.get(i).isChecked())
-                line2 = false;
-        for (int i = 10; i < 15; i++)
-            if (!togglearray.get(i).isChecked())
-                line3 = false;
-        for (int i = 15; i < 20; i++)
-            if (!togglearray.get(i).isChecked())
-                line4 = false;
-        for (int i = 0; i < 20; i += 2)
-            if (!togglearray.get(i).isChecked())
-                dialine1 = false;
-        for (int i = 1; i < 20; i += 2)
-            if (!togglearray.get(i).isChecked())
-                dialine2 = false;
-        if (togglearray.get(realweek - firstweek).isChecked() && !togglearray.get(27).isChecked())
-            togglearray.get(27).setChecked(true);
-        if (!togglearray.get(realweek - firstweek).isChecked() && togglearray.get(27).isChecked())
-            togglearray.get(27).setChecked(false);
-        if (line1 && !togglearray.get(20).isChecked())
-            togglearray.get(20).setChecked(true);
-        if (!line1 && togglearray.get(20).isChecked())
-            togglearray.get(20).setChecked(false);
-        if (line2 && !togglearray.get(21).isChecked())
-            togglearray.get(21).setChecked(true);
-        if (!line2 && togglearray.get(21).isChecked())
-            togglearray.get(21).setChecked(false);
-        if (line3 && !togglearray.get(22).isChecked())
-            togglearray.get(22).setChecked(true);
-        if (!line3 && togglearray.get(22).isChecked())
-            togglearray.get(22).setChecked(false);
-        if (line4 && !togglearray.get(23).isChecked())
-            togglearray.get(23).setChecked(true);
-        if (!line4 && togglearray.get(23).isChecked())
-            togglearray.get(23).setChecked(false);
-        if (dialine1 && !togglearray.get(24).isChecked())
-            togglearray.get(24).setChecked(true);
-        if (!dialine1 && togglearray.get(24).isChecked())
-            togglearray.get(24).setChecked(false);
-        if (dialine2 && !togglearray.get(25).isChecked())
-            togglearray.get(25).setChecked(true);
-        if (!dialine2 && togglearray.get(25).isChecked())
-            togglearray.get(25).setChecked(false);
-        if (dialine1 && dialine2 && !togglearray.get(26).isChecked())
-            togglearray.get(26).setChecked(true);
-        else if (!(dialine1 && dialine2) && togglearray.get(26).isChecked())
-            togglearray.get(26).setChecked(false);
-    }
-
-    public void save(boolean[] togglebuttonbool) {
-        for (int i = 0; i < 20; i++)
-            togglebuttonbool[i] = togglearray.get(i).isChecked();
-    }
-
-    public void recover(boolean[] togglebuttonbool) {
-        for (int i = 0; i < 20; i++)
-            togglearray.get(i).setChecked(togglebuttonbool[i]);
-    }
-
-    @Override
-    public void onValueChange(NumberPicker numberPicker, int i, int i1) {
-        switch (numberPicker.getId()) {
-            case R.id.daypicker:
-                //do nothing
-                break;
-            case R.id.starthhpicker:
-                if (!onValueChange_have_changed)
-                    endhhpicker.setValue((starthhpicker.getValue() + 2) % 24);
-                break;
-            case R.id.startmmpicker:
-                if (!onValueChange_have_changed)
-                    endmmpicker.setValue(startmmpicker.getValue());
-                break;
-            case R.id.endhhpicker:
-                onValueChange_have_changed = true;
-                if (endhhpicker.getValue() < starthhpicker.getValue())
-                    endhhpicker.setValue(starthhpicker.getValue());
-                if (endmmpicker.getValue() < startmmpicker.getValue())
-                    endmmpicker.setValue(startmmpicker.getValue());
-                break;
-            case R.id.endmmpicker:
-                onValueChange_have_changed = true;
-                if (endmmpicker.getValue() < startmmpicker.getValue() && endhhpicker.getValue() <= starthhpicker.getValue())
-                    endmmpicker.setValue(startmmpicker.getValue());
-                break;
-        }
+            void recover(boolean[] togglebuttonbool) {
+                for (int i = 0; i < 20; i++)
+                    ToggleArray.get(i).setChecked(togglebuttonbool[i]);
+            }
+        };
     }
 }
