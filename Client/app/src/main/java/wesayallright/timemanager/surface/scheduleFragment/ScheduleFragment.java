@@ -21,9 +21,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.text.InputType;
 import android.text.TextUtils;
-import android.widget.Button;
 import android.widget.Spinner;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.view.Window;
 import android.os.Bundle;
 import android.view.View;
@@ -646,7 +646,6 @@ public class ScheduleFragment extends Fragment {
         };
     }
 
-
     View.OnTouchListener TextCourseOnTouchListener() {
         return new View.OnTouchListener() {
             @Override
@@ -654,32 +653,37 @@ public class ScheduleFragment extends Fragment {
                 RunnableView = view;
                 switch (motionEvent.getAction()) {
                     case MotionEvent.ACTION_DOWN:
+                        if(!ViewFilter(view)) break;
                         LongClickEvent();
                         BackGroundColorChange(view);
                         break;
                     case MotionEvent.ACTION_CANCEL:
                         if (StopLongClickEvent()) break;
+                        if(!ViewFilter(view)) break;
                         BackGroundColorRecover(view);
                         break;
                     case MotionEvent.ACTION_UP:
-                        //长按事件的时间不足 停止触发
                         if (StopLongClickEvent()) break;
+                        if(!ViewFilter(view)) break;
                         BackGroundColorRecover(view);
                         CreateDialog();
                         break;
                     default:
                         break;
                 }
-                return false;
+                return true;
             }
 
-            void BackGroundColorChange(View view) {
+            boolean ViewFilter(View view){
                 boolean is = false;
                 for (int i = 0; i < 7; i++)
                     if (view.getParent() == Layout.get(i))
                         is = true;
-                if (!is)
-                    return;
+                return is;
+            }
+
+            void BackGroundColorChange(View view) {
+
                 int backgroundColor;
                 int Break;
                 int i;
@@ -704,12 +708,6 @@ public class ScheduleFragment extends Fragment {
             }
 
             void BackGroundColorRecover(View view) {
-                boolean is = false;
-                for (int i = 0; i < 7; i++)
-                    if (view.getParent() == Layout.get(i))
-                        is = true;
-                if (!is)
-                    return;
                 int Break;
                 Break = 0;
                 for (int i = 0; i < TextViewArray.size(); i++) {
