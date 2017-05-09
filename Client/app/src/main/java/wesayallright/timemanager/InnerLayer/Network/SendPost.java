@@ -1,6 +1,8 @@
 package wesayallright.timemanager.InnerLayer.Network;
 
+import android.annotation.TargetApi;
 import android.content.res.Resources;
+import android.os.Build;
 import android.provider.Settings;
 
 import java.io.BufferedReader;
@@ -13,6 +15,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Created by mj on 17-5-2.
@@ -47,17 +50,39 @@ public class SendPost extends Thread{
         params.putAll(m);
     }
 
+    @TargetApi(Build.VERSION_CODES.N)
+    private String makeRequestNew()
+    {
+        return params.entrySet().stream()
+                .map(e -> e.getKey() + " - " + e.getValue())
+                .collect(Collectors.joining("&"));
+    }
+
+    private String makeRequestOld()
+    {
+        StringBuilder request = new StringBuilder();
+        Iterator<Map.Entry<String, String>> entry = params.entrySet().iterator();
+        while(entry.hasNext()) {
+            Map.Entry i = entry.next();
+            request.append(i.getKey() + "=" + i.getValue());
+            if (entry.hasNext())
+                request.append("&");
+        }
+
+        return new String(request);
+    }
+
     @Override
     public void run() {
         finish = false;
 
 
         try {
-            StringBuilder d = new StringBuilder();
-            for (Map.Entry<String, String> i : params.entrySet()) {
-                d.append(i.getKey() + "=" + i.getValue() + "&");
-            }
-            String sd = new String(d);
+            String sd;
+            if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) // API24以上才能使用joining方法
+                sd = makeRequestNew();
+            else
+                sd = makeRequestOld();
 
             URL url = new URL(addr);
             HttpURLConnection con = (HttpURLConnection)url.openConnection();
