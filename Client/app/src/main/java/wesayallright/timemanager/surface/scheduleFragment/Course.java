@@ -23,8 +23,9 @@ class Course {
     public String id;
     int priority;//0:normal 1:course 2:alert
     private static final String TAG = "Course";
+
     Course(String week, int day, int starthour, int startmin, int endhour, int endmin, String name, String room, String teacher, int color, int priority) {
-        this.week=week;
+        this.week = week;
         this.day = day;
         this.starthour = starthour;
         this.startmin = startmin;
@@ -36,8 +37,9 @@ class Course {
         this.color = color;
         this.priority = priority;
     }
-    Course(Course copy){
-        this.week=copy.week;
+
+    Course(Course copy) {
+        this.week = copy.week;
         this.day = copy.day;
         this.starthour = copy.starthour;
         this.startmin = copy.startmin;
@@ -49,8 +51,9 @@ class Course {
         this.color = copy.color;
         this.priority = copy.priority;
     }
-    Course(int pro){
-        week=null;
+
+    Course(int pro) {
+        week = null;
         day = -1;
         starthour = -1;
         startmin = -1;
@@ -59,11 +62,12 @@ class Course {
         name = "未填写";
         room = "未填写";
         teacher = "未填写";
-        color = (new RandomColor()).randomColor()-0x30000000;
+        color = (new RandomColor()).randomColor() - 0x30000000;
         priority = pro;
     }
+
     Course() {
-        week=null;
+        week = null;
         day = -1;
         starthour = -1;
         startmin = -1;
@@ -72,11 +76,12 @@ class Course {
         name = "未填写";
         room = "未填写";
         teacher = "未填写";
-        color = (new RandomColor()).randomColor()-0x30000000;
+        color = (new RandomColor()).randomColor() - 0x30000000;
         priority = 0;
     }
-    void clone(Course copy){
-        this.week=copy.week;
+
+    void clone(Course copy) {
+        this.week = copy.week;
         this.day = copy.day;
         this.starthour = copy.starthour;
         this.startmin = copy.startmin;
@@ -88,11 +93,12 @@ class Course {
         this.color = copy.color;
         this.priority = copy.priority;
     }
+
     @Override
     public boolean equals(Object obj) {
-        if(((Course)obj).day==-1)
+        if (((Course) obj).day == -1)
             return false;
-        Course c = new Course((Course)obj);
+        Course c = new Course((Course) obj);
         return c.week.equals(week) &&
                 c.day == day &&
                 c.starthour == starthour &&
@@ -105,6 +111,7 @@ class Course {
                 c.color == color &&
                 c.priority == priority;
     }
+
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     void addinfile(SharedPreferences sharedPreferences) {
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -126,6 +133,7 @@ class Course {
         editor.putInt("priority" + num, priority);
         editor.apply();
     }
+
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     void removeinfile(SharedPreferences sharedPreferences) {
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -134,14 +142,14 @@ class Course {
         for (num = 0; ; num++)
             if (sharedPreferences.getString("week" + num, null) == null)
                 break;
-        Log.i(TAG, "removeinfile: week="+week+" day="+day+" "+starthour+":"+startmin+"-"+endhour+":"+endmin+" name"+name+" room"+room+" teacher="+teacher+" color"+color+" priority"+priority);
+        Log.i(TAG, "removeinfile: week=" + week + " day=" + day + " " + starthour + ":" + startmin + "-" + endhour + ":" + endmin + " name" + name + " room" + room + " teacher=" + teacher + " color" + color + " priority" + priority);
         for (int i = 0; i < num; i++) {
-            Log.i(TAG, "removeinfile: week="+sharedPreferences.getString("week" + i, null)
-                    +" day="+sharedPreferences.getInt("day" + i, -1)+" "+sharedPreferences.getInt("starthour" + i, -1) +":"+
-                    sharedPreferences.getInt("startmin" + i, -1) +"-"+sharedPreferences.getInt("endhour" + i, -1)
-                    +":"+sharedPreferences.getInt("endmin" + i, -1) +" name"+sharedPreferences.getString("name" + i, null)
-                    +" room"+sharedPreferences.getString("room" + i, null) +" teacher="+sharedPreferences.getString("teacher" + i, null)
-                    +" color"+sharedPreferences.getInt("color" + i, -1) +" priority"+sharedPreferences.getInt("priority" + i, -1));
+            Log.i(TAG, "removeinfile: week=" + sharedPreferences.getString("week" + i, null)
+                    + " day=" + sharedPreferences.getInt("day" + i, -1) + " " + sharedPreferences.getInt("starthour" + i, -1) + ":" +
+                    sharedPreferences.getInt("startmin" + i, -1) + "-" + sharedPreferences.getInt("endhour" + i, -1)
+                    + ":" + sharedPreferences.getInt("endmin" + i, -1) + " name" + sharedPreferences.getString("name" + i, null)
+                    + " room" + sharedPreferences.getString("room" + i, null) + " teacher=" + sharedPreferences.getString("teacher" + i, null)
+                    + " color" + sharedPreferences.getInt("color" + i, -1) + " priority" + sharedPreferences.getInt("priority" + i, -1));
             if (Objects.equals(sharedPreferences.getString("week" + i, null), week) &&
                     sharedPreferences.getInt("day" + i, -1) == day &&
                     sharedPreferences.getInt("starthour" + i, -1) == starthour &&
@@ -154,29 +162,29 @@ class Course {
                     sharedPreferences.getInt("color" + i, -1) == color &&
                     sharedPreferences.getInt("priority" + i, -1) == priority) {
                 Log.i(TAG, "removeinfile: DELETE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-                editor.putString("week" + i     ,sharedPreferences.getString( "week" + (num-1),null));
-                editor.putInt("day" + i         ,sharedPreferences.getInt( "day" + (num-1),-1));
-                editor.putInt("starthour" + i   ,sharedPreferences.getInt( "starthour" + (num-1),-1));
-                editor.putInt("startmin" + i    ,sharedPreferences.getInt( "startmin" + (num-1),-1));
-                editor.putInt("endhour" + i     ,sharedPreferences.getInt( "endhour" + (num-1),-1));
-                editor.putInt("endmin" + i      ,sharedPreferences.getInt( "endmin" + (num-1),-1));
-                editor.putString("name" + i     ,sharedPreferences.getString( "name" + (num-1),null));
-                editor.putString("room" + i     ,sharedPreferences.getString( "room" + (num-1),null));
-                editor.putString("teacher" + i  ,sharedPreferences.getString( "teacher" + (num-1),null));
-                editor.putInt("color" + i       ,sharedPreferences.getInt( "color" + (num-1),-1));
-                editor.putInt("priority" +  i   ,sharedPreferences.getInt( "priority" + (num-1),-1));
+                editor.putString("week" + i, sharedPreferences.getString("week" + (num - 1), null));
+                editor.putInt("day" + i, sharedPreferences.getInt("day" + (num - 1), -1));
+                editor.putInt("starthour" + i, sharedPreferences.getInt("starthour" + (num - 1), -1));
+                editor.putInt("startmin" + i, sharedPreferences.getInt("startmin" + (num - 1), -1));
+                editor.putInt("endhour" + i, sharedPreferences.getInt("endhour" + (num - 1), -1));
+                editor.putInt("endmin" + i, sharedPreferences.getInt("endmin" + (num - 1), -1));
+                editor.putString("name" + i, sharedPreferences.getString("name" + (num - 1), null));
+                editor.putString("room" + i, sharedPreferences.getString("room" + (num - 1), null));
+                editor.putString("teacher" + i, sharedPreferences.getString("teacher" + (num - 1), null));
+                editor.putInt("color" + i, sharedPreferences.getInt("color" + (num - 1), -1));
+                editor.putInt("priority" + i, sharedPreferences.getInt("priority" + (num - 1), -1));
                 editor.apply();
-                editor.remove("week" + (num-1));
-                editor.remove("day" + (num-1));
-                editor.remove("starthour" + (num-1));
-                editor.remove("startmin" + (num-1));
-                editor.remove("endhour" + (num-1));
-                editor.remove("endmin" + (num-1));
-                editor.remove("name" + (num-1));
-                editor.remove("room" + (num-1));
-                editor.remove("teacher" + (num-1));
-                editor.remove("color" + (num-1));
-                editor.remove("priority" + (num-1));
+                editor.remove("week" + (num - 1));
+                editor.remove("day" + (num - 1));
+                editor.remove("starthour" + (num - 1));
+                editor.remove("startmin" + (num - 1));
+                editor.remove("endhour" + (num - 1));
+                editor.remove("endmin" + (num - 1));
+                editor.remove("name" + (num - 1));
+                editor.remove("room" + (num - 1));
+                editor.remove("teacher" + (num - 1));
+                editor.remove("color" + (num - 1));
+                editor.remove("priority" + (num - 1));
                 editor.commit();
                 break;
             }

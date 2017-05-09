@@ -30,6 +30,7 @@ class User(models.Model):
 
     school_id = models.ForeignKey(School, on_delete=models.CASCADE)
     major = models.CharField(max_length=30)
+    entry_date = models.DateField()
     def __str__(self):
         return self.realname
 
@@ -54,5 +55,9 @@ class Group_User(models.Model):
                                 ))
     visible = models.BooleanField(default=True)
     update_time = models.DateTimeField(auto_now_add=True)
-    # def __str__(self):
-    #     return str(self.group_id.group_name)
+
+class ScheTime(models.Model):
+    place = models.CharField(max_length=20)
+    day = models.CharField(max_length=10)
+    start_date = models.DateField()
+    end_date = models.DateField()
