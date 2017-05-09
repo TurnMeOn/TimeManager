@@ -28,7 +28,9 @@
             startTime="08-30"
             endTime="10-30"
         />
-        <expectTime time="08-31"/>
+        <expectTimes>
+            <expectTime time="8-31" >
+        </expectTime>
         
     </item>
     <!-- course和target为重复任务，只设置起始日期和终止日期，time里仅设在具体每周哪天的时间地点
