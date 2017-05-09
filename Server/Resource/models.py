@@ -55,3 +55,9 @@ class Group_User(models.Model):
                                 ))
     visible = models.BooleanField(default=True)
     update_time = models.DateTimeField(auto_now_add=True)
+
+class ScheTime(models.Model):
+    place = models.CharField(max_length=20)
+    day = models.CharField(max_length=10)
+    start_date = models.DateField()
+    end_date = models.DateField()
