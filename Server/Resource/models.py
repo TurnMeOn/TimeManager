@@ -55,5 +55,3 @@ class Group_User(models.Model):
                                 ))
     visible = models.BooleanField(default=True)
     update_time = models.DateTimeField(auto_now_add=True)
-    # def __str__(self):
-    #     return str(self.group_id.group_name)

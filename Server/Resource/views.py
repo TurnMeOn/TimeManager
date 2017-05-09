@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from Resource.models import School, User, Group, Group_User
 from django.utils import timezone
+from lxml import etree
 # Create your views here.
 
 def index(request):
@@ -62,7 +63,6 @@ def QueryGroupList(request, user_id):
 
 
 def WriteUser(request,):
-    from lxml import etree
     xml = etree.parse(filename)
     person = xml.xpath('//*')[0]
     user_id = person.get('id')
