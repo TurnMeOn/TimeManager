@@ -1,5 +1,6 @@
 package wesayallright.timemanager.InnerLayer.Network;
 
+import android.content.res.Resources;
 import android.provider.Settings;
 
 import java.io.BufferedReader;
@@ -18,36 +19,37 @@ import java.util.Map;
  * 发送POST请求
  */
 
-public class SendPost implements Runnable{
-    public boolean finished;
+public class SendPost extends Thread{
+    public boolean finish;
     public String result;
 
     private HashMap<String, String> params;
 
     private String addr;
+    private String url;
 
     public SendPost() {
-        finished = false;
-        result = "";
         params = new HashMap<>();
-        addr = "http://alphamj.cn/timemanager/share.php";
+        url = "127.0.0.1:8080";
 
     }
 
-    public void setUrl(String url) {
-        this.addr = url;
+    public void setUri(String uri) {
+        switch (addr = url + '/' + uri) {
+        }
     }
 
-    public void addPrama(String key, String value) {
+    public void addParam(String key, String value) {
         params.put(key, value);
     }
 
-    public void addPrama(HashMap<String, String> m) {
+    public void addParam(HashMap<String, String> m) {
         params.putAll(m);
     }
 
     @Override
     public void run() {
+        finish = false;
 
 
         try {
@@ -93,6 +95,6 @@ public class SendPost implements Runnable{
             result = "fail";
             e.printStackTrace();
         }
-        finished = true;
+        finish = true;
     }
 }

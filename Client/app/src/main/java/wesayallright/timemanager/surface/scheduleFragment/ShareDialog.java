@@ -61,12 +61,12 @@ public class ShareDialog {
 //        data.put("10",  "课10/3/10:00/12:00");
 
         SendPost remote = new SendPost();
-        remote.addPrama(data);
+        remote.addParam(data);
         Thread t = new Thread(remote);
 
         t.start();
 
-        while (!remote.finished)
+        while (!remote.finish)
             ;
 
         Log.i("返回结果", "11" + remote.result);
