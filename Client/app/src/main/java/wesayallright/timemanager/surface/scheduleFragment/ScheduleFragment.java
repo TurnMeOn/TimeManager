@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
+import android.support.v4.util.Pair;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Log;
@@ -33,11 +34,18 @@ import android.widget.ToggleButton;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+import java.text.DateFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.Map;
+import java.util.TreeMap;
 
 import wesayallright.timemanager.InnerLayer.ItemType;
 import wesayallright.timemanager.InnerLayer.Package;
@@ -289,49 +297,7 @@ public class ScheduleFragment extends Fragment {
 //                    )
 //            );
 //        }
-        try {
 
-            Element rootElement = Package.calendarXMLTree.getDocumentElement();
-            int schoolWeek = Integer.valueOf(rootElement.getAttribute("schoolWeek"));
-            NodeList items = rootElement.getElementsByTagName("item");
-            for (int i = 0; i < items.getLength(); i++) {
-                Element item = (Element) items.item(i);
-                ItemType type = ItemType.valueOf(item.getAttribute("type"));
-                String id = item.getAttribute("id");
-                String name = item.getAttribute("name");
-                int priority = Integer.valueOf(item.getAttribute("priority"));
-                String detail = item.getAttribute("details");
-                Date firstDate = Package.dateFormatter.parse(item.getAttribute("firstDate"));
-                Date lastDate = Package.dateFormatter.parse(item.getAttribute("lastDate"));
-                //first date and last date are both includes
-
-                if (type == ItemType.Course) {
-                    detail = detail.split(":")[1]; // 教师: 小明
-                }
-                NodeList timeList = item.getElementsByTagName("time");
-                for (int j = 0; j < timeList.getLength(); j++) {
-                    Element time = (Element) timeList.item(j);
-                    course.add(
-                            new Course(
-                                    "sha?", //schoolWeek + j, TODO:星期为啥是String
-                                    Integer.valueOf(time.getAttribute("day")),
-                                    Integer.valueOf(time.getAttribute("startTime").split("-")[0]),
-                                    Integer.valueOf(time.getAttribute("startTime").split("-")[1]),
-                                    Integer.valueOf(time.getAttribute("endTime").split("-")[0]),
-                                    Integer.valueOf(time.getAttribute("endTime").split("-")[1]),
-                                    name,
-                                    time.getAttribute("place"),
-                                    detail,
-                                    0xffffffff,// TODO: color
-                                    priority
-                            )
-                    );
-                }
-            }
-        } catch (ParseException e) {
-            e.printStackTrace();
-            Log.e(TAG, "解析日期错误");
-        }
 
 
         Log.i(TAG, "ReadCourse: READ COURSE END!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
