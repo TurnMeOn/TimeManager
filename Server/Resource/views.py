@@ -32,6 +32,7 @@ def QueryUser(request, user_id):
         'city': school.school_city,
         'major': user.major,
         'updatetime': str(user.user_updatetime),
+        'entry_date': str(user.entry_date)
     }
     return render(request, 'Resource/person-information.xml', data, content_type='application/xml')
 
@@ -58,3 +59,15 @@ def QueryGroupList(request, user_id):
         'groups': groups,
     }
     return render(request, 'Resource/groupList.xml', data, content_type='application/xml')
+
+
+def WriteUser(request,):
+    from lxml import etree
+    xml = etree.parse(filename)
+    person = xml.xpath('//*')[0]
+    user_id = person.get('id')
+    schoolID = person.get('schoolID')
+    major = person.get('major')
+    mobile = person.get('mobile')
+    entry_date = person.get('entryDate')
+    pass

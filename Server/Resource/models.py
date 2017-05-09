@@ -30,6 +30,7 @@ class User(models.Model):
 
     school_id = models.ForeignKey(School, on_delete=models.CASCADE)
     major = models.CharField(max_length=30)
+    entry_date = models.DateField()
     def __str__(self):
         return self.realname
 

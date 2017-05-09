@@ -13,7 +13,7 @@
     location="{{ province }}"
     zipCode="{{ 10000 }}"
     major="{{ major }}"
-    grade="{{ 'NULL' }}"
+    entryDate="{{ entry_date }}"
     enrollDate="{{ 'NULL' }}"
     >
 </person>
