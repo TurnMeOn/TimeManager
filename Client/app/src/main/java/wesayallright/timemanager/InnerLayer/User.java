@@ -47,7 +47,7 @@ public class User {
     public Date enrollDate;
 
     public GroupList groups;
-    //CalendarList calendar;
+    // CalendarList calendar;
 
     // 空的构造函数
     public User() {}

@@ -12,19 +12,19 @@
             id="C-NEU-大学生心理与健康教育㈡"
             name="大学生心理与健康教育㈡"
             details="教师：小明"
-            priority="true"
+            priority="1"
             firstDate="2017-2-27"
             lastDate="2017-4-17"
     >
         <time
             place="建筑A302"
-            day="Monday"
+            day="1"
             startTime="08-30"
             endTime="10-30"
         />
         <time
             place="建筑A309"
-            day="Tuesday"
+            day="2"
             startTime="08-30"
             endTime="10-30"
         />

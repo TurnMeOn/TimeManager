@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.support.v4.app.Fragment;
+import android.text.format.DateFormat;
 import android.widget.CompoundButton;
 import android.widget.RelativeLayout;
 import android.view.LayoutInflater;
@@ -30,10 +31,19 @@ import android.view.View;
 import android.util.Log;
 import android.os.Build;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Arrays;
+import java.util.Date;
 
+import wesayallright.timemanager.InnerLayer.ItemType;
+import wesayallright.timemanager.InnerLayer.Package;
 import wesayallright.timemanager.R;
 
 public class ScheduleFragment extends Fragment {
@@ -257,30 +267,76 @@ public class ScheduleFragment extends Fragment {
     }
 
     void ReadCourse() {
+        // 这里读入数据
         Log.i(TAG, "ReadCourse: READ COURSE START!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         course.clear();
-        int num;
-        for (num = 0; ; num++)
-            if (sharedPreferences.getString("week" + num, null) == null)
-                break;
-        Log.i(TAG, "ReadCourse: num:" + num);
-        for (int i = 0; i < num; i++) {
-            course.add(
-                    new Course(
-                            sharedPreferences.getString("week" + i, null),
-                            sharedPreferences.getInt("day" + i, -1),
-                            sharedPreferences.getInt("starthour" + i, -1),
-                            sharedPreferences.getInt("startmin" + i, -1),
-                            sharedPreferences.getInt("endhour" + i, -1),
-                            sharedPreferences.getInt("endmin" + i, -1),
-                            sharedPreferences.getString("name" + i, null),
-                            sharedPreferences.getString("room" + i, null),
-                            sharedPreferences.getString("teacher" + i, null),
-                            sharedPreferences.getInt("color" + i, -1),
-                            sharedPreferences.getInt("priority" + i, -1)
-                    )
-            );
+//        int num;
+//        for (num = 0; ; num++)
+//            if (sharedPreferences.getString("week" + num, null) == null)
+//                break;
+//        Log.i(TAG, "ReadCourse: num:" + num);
+//        for (int i = 0; i < num; i++) {
+//            course.add(
+//                    new Course(
+//                            sharedPreferences.getString("week" + i, null),
+//                            sharedPreferences.getInt("day" + i, -1),
+//                            sharedPreferences.getInt("starthour" + i, -1),
+//                            sharedPreferences.getInt("startmin" + i, -1),
+//                            sharedPreferences.getInt("endhour" + i, -1),
+//                            sharedPreferences.getInt("endmin" + i, -1),
+//                            sharedPreferences.getString("name" + i, null),
+//                            sharedPreferences.getString("room" + i, null),
+//                            sharedPreferences.getString("teacher" + i, null),
+//                            sharedPreferences.getInt("color" + i, -1),
+//                            sharedPreferences.getInt("priority" + i, -1)
+//                    )
+//            );
+//        }
+        try {
+
+            Element rootElement = Package.calendarXMLTree.getDocumentElement();
+            int schoolWeek = Integer.valueOf(rootElement.getAttribute("schoolWeek"));
+            NodeList items = rootElement.getElementsByTagName("item");
+            for (int i = 0; i < items.getLength(); i++) {
+                Element item = (Element) items.item(i);
+                ItemType type = ItemType.valueOf(item.getAttribute("type"));
+                String id = item.getAttribute("id");
+                String name = item.getAttribute("name");
+                int priority = Integer.valueOf(item.getAttribute("priority"));
+                String detail = item.getAttribute("details");
+                Date firstDate = Package.dateFormatter.parse(item.getAttribute("firstDate"));
+                Date lastDate = Package.dateFormatter.parse(item.getAttribute("lastDate"));
+                //first date and last date are both includes
+
+                if (type == ItemType.Course) {
+                    detail = detail.split(":")[1]; // 教师: 小明
+                }
+                NodeList timeList = item.getElementsByTagName("time");
+                for (int j = 0; j < timeList.getLength(); j++) {
+                    Element time = (Element) timeList.item(j);
+                    course.add(
+                            new Course(
+                                    "sha?", //schoolWeek + j, TODO:星期为啥是String
+                                    Integer.valueOf(time.getAttribute("day")),
+                                    Integer.valueOf(time.getAttribute("startTime").split("-")[0]),
+                                    Integer.valueOf(time.getAttribute("startTime").split("-")[1]),
+                                    Integer.valueOf(time.getAttribute("endTime").split("-")[0]),
+                                    Integer.valueOf(time.getAttribute("endTime").split("-")[1]),
+                                    name,
+                                    time.getAttribute("place"),
+                                    detail,
+                                    0xffffffff,// TODO: color
+                                    priority
+                            )
+                    );
+                }
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+            Log.e(TAG, "解析日期错误");
         }
+
+
         Log.i(TAG, "ReadCourse: READ COURSE END!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
     }
 

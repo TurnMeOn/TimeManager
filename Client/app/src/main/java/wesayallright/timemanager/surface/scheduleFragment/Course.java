@@ -20,6 +20,7 @@ class Course {
     String room;
     String teacher;
     public int color;
+    public String id;
     int priority;//0:normal 1:course 2:alert
     private static final String TAG = "Course";
     Course(String week, int day, int starthour, int startmin, int endhour, int endmin, String name, String room, String teacher, int color, int priority) {
