@@ -1,4 +1,5 @@
 .directory 
 __pycache__
-*.sqlite3
-migrations
+*.pyc
+migrations/*
+db.sqlite3
