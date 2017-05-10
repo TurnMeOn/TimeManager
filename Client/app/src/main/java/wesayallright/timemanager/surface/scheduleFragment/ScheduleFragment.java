@@ -274,32 +274,29 @@ public class ScheduleFragment extends Fragment {
     void ReadCourse() {
         // 这里读入数据
         Log.i(TAG, "ReadCourse: READ COURSE START!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-//        course.clear();
-//        int num;
-//        for (num = 0; ; num++)
-//            if (sharedPreferences.getString("week" + num, null) == null)
-//                break;
-//        Log.i(TAG, "ReadCourse: num:" + num);
-//        for (int i = 0; i < num; i++) {
-//            course.add(
-//                    new Course(
-//                            sharedPreferences.getString("week" + i, null),
-//                            sharedPreferences.getInt("day" + i, -1),
-//                            sharedPreferences.getInt("starthour" + i, -1),
-//                            sharedPreferences.getInt("startmin" + i, -1),
-//                            sharedPreferences.getInt("endhour" + i, -1),
-//                            sharedPreferences.getInt("endmin" + i, -1),
-//                            sharedPreferences.getString("name" + i, null),
-//                            sharedPreferences.getString("room" + i, null),
-//                            sharedPreferences.getString("teacher" + i, null),
-//                            sharedPreferences.getInt("color" + i, -1),
-//                            sharedPreferences.getInt("priority" + i, -1)
-//                    )
-//            );
-//        }
-
-
-
+        course.clear();
+        int num;
+        for (num = 0; ; num++)
+            if (sharedPreferences.getString("week" + num, null) == null)
+                break;
+        Log.i(TAG, "ReadCourse: num:" + num);
+        for (int i = 0; i < num; i++) {
+            course.add(
+                    new Course(
+                            sharedPreferences.getString("week" + i, null),
+                            sharedPreferences.getInt("day" + i, -1),
+                            sharedPreferences.getInt("starthour" + i, -1),
+                            sharedPreferences.getInt("startmin" + i, -1),
+                            sharedPreferences.getInt("endhour" + i, -1),
+                            sharedPreferences.getInt("endmin" + i, -1),
+                            sharedPreferences.getString("name" + i, null),
+                            sharedPreferences.getString("room" + i, null),
+                            sharedPreferences.getString("teacher" + i, null),
+                            sharedPreferences.getInt("color" + i, -1),
+                            sharedPreferences.getInt("priority" + i, -1)
+                    )
+            );
+        }
         Log.i(TAG, "ReadCourse: READ COURSE END!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
     }
 
