@@ -1,5 +1,7 @@
 package wesayallright.timemanager.InnerLayer;
 
+import android.database.sqlite.SQLiteDatabase;
+
 import org.w3c.dom.Document;
 
 import java.text.DateFormat;
@@ -19,4 +21,8 @@ public class Package {
     public static DateFormat  timeFormatter;
     public static DateFormat  dateTimeFormatter;
     public static Calendar today;
+
+    public static SQLiteDatabase db;
+    public static final String DB_NAME = "timeManager.db";
+
 }
