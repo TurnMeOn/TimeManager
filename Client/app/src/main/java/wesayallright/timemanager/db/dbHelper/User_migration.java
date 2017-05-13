@@ -6,38 +6,20 @@ import android.database.sqlite.SQLiteOpenHelper;
 import wesayallright.timemanager.InnerLayer.Package;
 
 /**
- * Created by mj on 17-5-11.
- * 用户表
+ * MyModel 自动生成 at: 2017-05-13 17:46:14
  */
 
 public class User_migration extends SQLiteOpenHelper
 {
     private static final int DB_VERSION = 1;
-    public static final String TABLE_NAME = "users";
+    public static final String TABLE_NAME = "User";
     public User_migration(Context context) {
         super(context, Package.DB_NAME, null, DB_VERSION);
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String sql = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME +
-                "(\"id\" integer NOT NULL PRIMARY KEY , " +
-                "\"password\" varchar(64) NOT NULL, " +
-                "\"stu_id\" varchar(20) NOT NULL, " +
-                "\"nickname\" varchar(15) NOT NULL, " +
-                "\"realname\" varchar(10) NULL, " +
-                "\"gender\" smallint NOT NULL, " +
-                "\"birthday\" date NULL, " +
-                "\"mobile\" varchar(21) NOT NULL, " +
-                "\"email\" varchar(254) NULL, " +
-                "\"updatetime\" date NOT NULL, " +
-                "\"major\" varchar(30) NOT NULL, " +
-                "\"entry_date\" date NOT NULL, " +
-                "\"school_index_id\" integer NOT NULL REFERENCES \""+ School_migration.TABLE_NAME+"\" (\"id\"), " +
-                "\"user_id\" varchar(10) NOT NULL)";
-
-
-
+        String sql = " CREATE TABLE IF NOT EXISTS User (user_id vchar(10) NOT NULL ,password vchar(64) NOT NULL ,stu_id vchar(20) NOT NULL ,nickname vchar(15) NOT NULL ,realname vchar(10) NOT NULL ,birthday date NOT NULL ,mobile vchar(21) NOT NULL ,email vchar NOT NULL ,updatetime date NOT NULL ,id INTEGER NOT NULL PRIMER KEY)";
         db.execSQL(sql);
     }
 
@@ -48,3 +30,4 @@ public class User_migration extends SQLiteOpenHelper
         onCreate(db);
     }
 }
+ 

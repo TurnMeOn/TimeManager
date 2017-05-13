@@ -22,7 +22,7 @@ public class In_Group_migration extends SQLiteOpenHelper
     @Override
     public void onCreate(SQLiteDatabase db) {
         String sql = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME +
-                "(\"id\" integer NOT NULL PRIMARY KEY AUTOINCREMENT, " +
+                "(\"id\" integer NOT NULL PRIMARY KEY, " +
                 "\"group_index_id\" integer NOT NULL REFERENCES \""+ Group_migration.TABLE_NAME+"\" (\"id\"), " +
                 "\"role_index_id\" integer NOT NULL REFERENCES \""+Group_user_migration.TABLE_NAME+"\" (\"id\"), " +
                 "\"user_index_id\" integer NOT NULL REFERENCES \""+User_migration.TABLE_NAME+"\" (\"id\"))";

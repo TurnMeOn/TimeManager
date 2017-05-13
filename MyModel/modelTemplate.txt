@@ -1,0 +1,44 @@
+ 
+package wesayallright.timemanager.db.Models;
+
+import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
+import java.util.Date;
+
+import wesayallright.timemanager.db.DAO;
+import wesayallright.timemanager.db.dbHelper.{{tableName}}_migration;
+
+/**
+ * {{comment}}
+ *
+ */
+
+public class {{tableName}}  extends DAO {
+    private SQLiteDatabase db;
+    private {{tableName}}_migration helper;
+
+    {{content}}
+
+
+    public {{tableName}}(Context c) {
+        super(c, {{tableName}}_migration.class, {{tableName}}_migration.TABLE_NAME);
+        helper = new {{tableName}}_migration(c);
+        db = helper.getWritableDatabase();
+    }
+
+
+    public void save() {
+        super.saveOrInsert(this);
+    }
+
+    public void insert() {
+        super.insert(this);
+    }
+    public void delete() {
+        super.delete(this);
+    }
+    
+    public int valueOf() {
+        return id;
+    }
+}

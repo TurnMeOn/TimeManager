@@ -1,4 +1,4 @@
-package wesayallright.timemanager.db.dbAccess;
+package wesayallright.timemanager.db;
 
 import android.annotation.TargetApi;
 import android.content.Context;

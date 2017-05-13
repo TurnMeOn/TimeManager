@@ -3,32 +3,20 @@ package wesayallright.timemanager.db.Models;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
-import java.util.Date;
 
-import wesayallright.timemanager.db.DAO;
+import wesayallright.timemanager.db.dbAccess.DAO;
 import wesayallright.timemanager.db.dbHelper.User_migration;
 
 /**
- * MyModel 自动生成 at: 2017-05-13 17:46:14
+ * MyModel 自动生成 at: 2017-05-13 17:29:43
  *
  */
 
-public class User  extends DAO {
+public class User extends DAO {
     private SQLiteDatabase db;
-    private User_migration helper;
+    private Affair_migration helper;
 
-        public String user_id;
-    public String password;
-    public String stu_id;
-    public String nickname;
-    public String realname;
-    public Date birthday;
-    public String mobile;
-    public String email;
-    public Date updatetime;
-
- public Integer id;
-
+     CREATE TABLE IF NOT EXISTS User (user_id vchar(10) NOT NULL ,password vchar(64) NOT NULL ,stu_id vchar(20) NOT NULL ,nickname vchar(15) NOT NULL ,realname vchar(10) NOT NULL ,birthday date NOT NULL ,mobile vchar(21) NOT NULL ,email vchar NOT NULL ,updatetime date NOT NULL ,id INTEGER NOT NULL PRIMER KEY)
 
 
     public User(Context c) {
